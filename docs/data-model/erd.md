@@ -1,0 +1,49 @@
+
+# Entity Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+
+USER ||--|| ATHLETE_PROFILE : has
+USER ||--|| GUARDIAN_PROFILE : has
+USER ||--o{ORGANISATION_USER : belongs_to
+USER ||--|| COACH_PROFILE : has
+USER ||--|| SCOUT_PROFILE : has
+
+ATHLETE_PROFILE}o--|| GUARDIAN_PROFILE : linked_to
+ATHLETE_PROFILE ||--o{ ATHLETE_SPORT_PROFILE : plays
+SPORT ||--o{ ATHLETE_SPORT_PROFILE : defines
+
+ATHLETE_PROFILE ||--o{ ACTIVITY : performs
+ACTIVITY ||--o{ ACTIVITY_METRIC : contains
+METRIC ||--o{ ACTIVITY_METRIC : defines
+
+ACTIVITY ||--o{ ACTIVITY_VERIFICATION : verified_by
+VERIFICATION_TOKEN ||--o{ ACTIVITY_VERIFICATION : uses
+COACH_PROFILE ||--o{ ACTIVITY_VERIFICATION : verifies
+
+ACTIVITY ||--o{ VERIFICATION_REQUEST : may_request
+COACH_PROFILE ||--o{ VERIFICATION_REQUEST : responds
+
+ATHLETE_PROFILE ||--o{VIDEO : uploads
+VIDEO}o--|| ACTIVITY : linked_to
+VIDEO }o--|| EVENT : linked_to
+
+ORGANISATION ||--o{ ORGANISATION_USER : has
+ORGANISATION ||--o{ OPPORTUNITY : creates
+OPPORTUNITY ||--o{ OPPORTUNITY_APPLICATION : receives
+
+ATHLETE_PROFILE ||--o{ OPPORTUNITY_APPLICATION : applies
+
+ATHLETE_PROFILE ||--o{ CONNECTION : receives
+SCOUT_PROFILE ||--o{ CONNECTION : initiates
+
+SCOUT_PROFILE ||--o{ SCOUT_NOTE : writes
+ATHLETE_PROFILE ||--o{ SCOUT_NOTE : about
+
+ORGANISATION ||--o{ EVENT : hosts
+EVENT ||--o{ PARTICIPATION : includes
+ATHLETE_PROFILE ||--o{ PARTICIPATION : participates
+
+PARTICIPATION ||--o{ ACTIVITY_VERIFICATION : verified_by_event
+  
