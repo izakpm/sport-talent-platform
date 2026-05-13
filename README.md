@@ -26,3 +26,11 @@ in South Africa.
 - Activity Tracking
 - Verification System (QR, Coach, AI)
 - Talent Discovery (Scouts, Clubs, Universities)
+
+
+## 📊 Documentation
+
+- docs/data-model/data-model-v1.md
+- docs/data-model/erd.md
+- docs/api/api-spec-v1.md
+
