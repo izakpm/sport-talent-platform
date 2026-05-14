@@ -1,0 +1,124 @@
+
+### Create Activity
+POST http://localhost:3000/activities
+Content-Type: application/json
+
+{
+  "athlete_id": "50eb4b53-bfa3-4131-84a5-450cd6385665",
+  "type": "PRACTICE",
+  "title": "Afternoon Training",
+  "location": "School Field"
+}
+
+
+### Verify Activity
+POST http://localhost:3000/verification/verify
+Content-Type: application/json
+
+{
+  "activity_id": "073cafea-3401-4914-aee2-c9534e415bfd",
+  "method": "QR_SCAN"
+}
+
+### Verify Activity
+POST http://localhost:3000/verification/token
+
+### Verify Activity
+POST http://localhost:3000/verification/scan
+Content-Type: application/json
+
+{
+  "activity_id": "073cafea-3401-4914-aee2-c9534e415bfd",
+  "code": "8I9WC8"
+}
+
+### Verify Activity
+POST http://localhost:3000/verification/request
+Content-Type: application/json
+
+{
+  "activity_id": "073cafea-3401-4914-aee2-c9534e415bfd",
+  "athlete_id": "50eb4b53-bfa3-4131-84a5-450cd6385665",
+  "coach_id": "f49bf02d-15d9-4a23-8e1c-8875a65da862"
+}
+
+
+### Approve Verification
+POST http://localhost:3000/verification/approve
+Content-Type: application/json
+
+{
+  "request_id": "1ec1735f-c882-489f-8d92-1f63f97f4ae6"
+}
+
+### Get Trust Score
+GET http://localhost:3000/trust/50eb4b53-bfa3-4131-84a5-450cd6385665
+
+
+### Create User
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "anrujm@test.com",
+  "password": "123456",
+  "role": "ATHLETE",
+  "first_name": "Anru",
+  "last_name": "Meyer",
+  "phone": "0832045542"
+}
+
+
+### Create Athlete Profile
+POST http://localhost:3000/athletes
+Content-Type: application/json
+
+{
+  "user_id": "850e7c49-dc6a-4abf-97f7-2bf5b2a23ae8"
+}
+
+### Create Athlete Profile
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "athlete2@test.com",
+  "password": "123456",
+  "role": "ATHLETE",
+  "first_name": "Test",
+  "last_name": "Player"
+}
+
+
+### Add Athlete Sport
+POST http://localhost:3000/athlete-sports
+Content-Type: application/json
+
+{
+  "athlete_id": "50eb4b53-bfa3-4131-84a5-450cd6385665",
+  "sport_id": "32816ef3-3423-49c5-9c79-d2842a4d7a44",
+  "position_id": "3dbaa9af-6c7c-4747-875b-bc42786963a8",
+  "is_primary": true
+}
+
+### Register Athlete (FULL FLOW)
+POST http://localhost:3000/register/athlete
+Content-Type: application/json
+
+{
+  "email": "full12345@tests.com",
+  "password": "123456",
+  "first_name": "Test",
+  "last_name": "Athlete",
+
+  "sports": [
+    {
+      "sport_id": "32816ef3-3423-49c5-9c79-d2842a4d7a44",
+      "position_ids": [
+        "11c99394-f908-4751-850a-d3283b637f87",
+        "57e1b096-cbf5-4dfb-82c6-a46dee6fe8dd"
+      ],
+      "is_primary": true
+    }
+  ]
+}
