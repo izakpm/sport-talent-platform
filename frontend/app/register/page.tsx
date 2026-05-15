@@ -10,12 +10,12 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('');
 
   const register = async () => {
-    if (!role) {
-      alert('Please select a role');
+    if (!role || !email || !password || !firstName || !lastName) {
+      alert('Please complete all fields');
       return;
     }
 
-    const res = await fetch('http://localhost:3000/users', {
+    const res = await fetch('http://localhost:3000/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -27,14 +27,22 @@ export default function RegisterPage() {
       }),
     });
 
+    if (!res.ok) {
+      alert('Registration failed');
+      return;
+    }
+
     const data = await res.json();
-    
-    // ✅ Save user locally
+
+    // ✅ Save user
     localStorage.setItem('user', JSON.stringify(data));
 
-    console.log(data);
-
-    alert('Account created successfully');
+    // ✅ Redirect based on role
+    if (data.role === 'ATHLETE') {
+      window.location.href = '/onboarding/athlete';
+    } else {
+      window.location.href = '/dashboard';
+    }
   };
 
   return (

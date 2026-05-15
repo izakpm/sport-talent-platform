@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { theme } from '../styles/theme';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,9 +11,17 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, []);
+
   const handleLogin = async () => {
     try {
-      const res = await fetch('http://localhost:3000/users/login', {
+      const res = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -26,7 +35,8 @@ export default function LoginPage() {
       const user = await res.json();
 
       // ✅ Save session
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', user.access_token);
+      localStorage.setItem('user', JSON.stringify(user.user));
 
       // ✅ Redirect to dashboard
       router.push('/dashboard');

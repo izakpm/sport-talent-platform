@@ -11,9 +11,9 @@ import { TrustModule } from './trust/trust.module';
 import { AthleteSportsModule } from './athlete-sports/athlete-sports.module';
 import { UsersModule } from './users/users.module';
 import { AthletesModule } from './athletes/athletes.module';
-import { RegisterModule } from './register/register.module';
 import { SportsModule } from './sports/sports.module';
 import { PositionsModule } from './positions/positions.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -50,11 +50,11 @@ import { PositionsModule } from './positions/positions.module';
 
     AthletesModule,
 
-    RegisterModule,
-
     SportsModule,
 
     PositionsModule,
+
+    AuthModule,
   ],
   controllers: [TrustController],
   providers: [TrustService],
