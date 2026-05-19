@@ -1,55 +1,102 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { theme } from '../../../styles/theme';
 
 export default function AthleteDetails() {
   const router = useRouter();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load existing user data (TEMP simulation)
-  useEffect(() => {
-    // ⚠️ In future: load from logged-in user
-    setFirstName('Test');
-    setLastName('Athlete');
-  }, []);
-
   const handleSave = async () => {
-    if (!firstName || !lastName) {
-      alert('Please complete your details');
+    if (!dateOfBirth || !gender) {
+      alert('Please complete all required fields');
       return;
     }
 
     setLoading(true);
 
     try {
-      // ⚠️ TEMP: Replace with real user_id later
-      const user_id = 'PASTE-USER-ID-HERE';
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const token = localStorage.getItem('token');
 
-      await fetch(`http://localhost:3000/users/${user_id}`, {
+      if (!user?.id || !token) {
+        alert('Session error. Please login again.');
+        return;
+      }
+
+      // ✅ STEP 1 — UPDATE USER
+      await fetch(`http://localhost:3000/users/${user.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // ✅ REQUIRED
         },
         body: JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
+          date_of_birth: dateOfBirth,
+          gender,
           phone,
         }),
       });
 
-      alert('Profile saved ✅');
+      // ✅ STEP 2 — CREATE ATHLETE PROFILE
+      const profileRes = await fetch('http://localhost:3000/athletes/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // ✅ REQUIRED
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          nationality: 'South Africa',
+          province: 'Gauteng',
+        }),
+      });
 
-      // ✅ DONE → go to dashboard
+      if (!profileRes.ok) {
+        alert('Failed to create athlete profile');
+        return;
+      }
+
+      const athlete = await profileRes.json();
+
+      // ✅ SAVE athlete_id for later use
+      localStorage.setItem('athlete_id', athlete.id);
+
+      // ✅ STEP 3 — SAVE SPORTS (FROM STEP 1)
+      const selectedSport = localStorage.getItem('onboarding_sport');
+      const selectedPositions = JSON.parse(
+        localStorage.getItem('onboarding_positions') || '[]'
+      );
+
+      if (selectedSport && selectedPositions.length > 0) {
+        await fetch('http://localhost:3000/athletes/sports', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // ✅ REQUIRED
+          },
+          body: JSON.stringify({
+            athlete_id: athlete.id,
+            sports: selectedPositions.map((posId: string, index: number) => ({
+              sport_id: selectedSport,
+              position_id: posId,
+              is_primary: index === 0,
+            })),
+          }),
+        });
+      }
+
+      // ✅ DONE → Dashboard
       router.push('/dashboard');
 
     } catch (err) {
       console.error(err);
-      alert('Error saving details');
+      alert('Error completing onboarding');
     } finally {
       setLoading(false);
     }
@@ -57,7 +104,6 @@ export default function AthleteDetails() {
 
   return (
     <div style={styles.container}>
-      
       <div style={styles.overlay}></div>
 
       <div style={styles.content}>
@@ -71,40 +117,39 @@ export default function AthleteDetails() {
             Tell us a little more about yourself
           </p>
 
-          {/* ✅ First Name */}
+          {/* ✅ Date of Birth */}
           <input
-          style={{
-              ...styles.input,
-              color: firstName ? '#111' : '#6b7280',
-          }}
-          placeholder="First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+            type="date"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            style={styles.input}
           />
 
-          {/* ✅ Last Name */}   
-          <input
-          style={{
+          {/* ✅ Gender */}
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            style={{
               ...styles.input,
-              color: lastName ? '#111' : '#6b7280',
-          }}
-          placeholder="Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          />
+              color: gender
+                ? theme.colors.textPrimary
+                : theme.colors.textMuted,
+            }}
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
 
           {/* ✅ Phone */}
           <input
-          style={{
-              ...styles.input,
-              color: phone ? '#111' : '#6b7280',
-          }}
-          placeholder="Phone Number"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+            placeholder="Phone Number (optional)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={styles.input}
           />
 
-          {/* ✅ Save */}
+          {/* ✅ Submit */}
           <button
             style={styles.submit}
             onClick={handleSave}
@@ -132,8 +177,7 @@ const styles = {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    background:
-      'linear-gradient(to right, rgba(11,31,46,0.7), rgba(11,31,46,0.3))',
+    background: theme.colors.overlay,
   },
 
   content: {
@@ -146,7 +190,7 @@ const styles = {
   },
 
   card: {
-    background: '#fff',
+    background: theme.colors.card,
     padding: 35,
     width: 420,
     borderRadius: 14,
@@ -156,37 +200,38 @@ const styles = {
   step: {
     textAlign: 'center',
     fontSize: 13,
-    color: '#64748b',
+    color: theme.colors.textMuted,
   },
 
   title: {
+    ...theme.typography.heading,
     textAlign: 'center',
-    fontSize: 26,
     marginBottom: 10,
   },
 
   subtitle: {
+    ...theme.typography.body,
     textAlign: 'center',
     marginBottom: 20,
-    color: '#475569',
+    color: theme.colors.textMuted,
   },
 
-  
   input: {
     width: '100%',
     padding: 14,
     marginBottom: 15,
     borderRadius: 10,
-    border: '1px solid #cbd5e1',
+    border: `1px solid ${theme.colors.border}`,
+    background: theme.colors.inputBackground,
+    color: theme.colors.textPrimary,
     fontSize: 15,
-    backgroundColor: '#fff',
   },
 
   submit: {
     width: '100%',
     padding: 14,
-    background: '#1f6f8b',
-    color: '#fff',
+    background: theme.colors.primary,
+    color: theme.colors.white,
     border: 'none',
     borderRadius: 10,
     cursor: 'pointer',

@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Patch } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
@@ -22,5 +23,10 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
+  }
+  
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() body: any) {
+    return this.service.update(id, body);
   }
 }

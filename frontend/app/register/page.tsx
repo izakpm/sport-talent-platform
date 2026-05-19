@@ -1,19 +1,25 @@
+
 'use client';
 
 import { useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+import { theme } from '../styles/theme';
+
 export default function RegisterPage() {
+  const router = useRouter();
+
   const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
+  const isFormValid =
+    role && email && password && firstName && lastName;
+
   const register = async () => {
-    if (!role || !email || !password || !firstName || !lastName) {
-      alert('Please complete all fields');
-      return;
-    }
+    if (!isFormValid) return;
 
     const res = await fetch('http://localhost:3000/auth/register', {
       method: 'POST',
@@ -32,17 +38,10 @@ export default function RegisterPage() {
       return;
     }
 
-    const data = await res.json();
+    alert('Account created ✅');
 
-    // ✅ Save user
-    localStorage.setItem('user', JSON.stringify(data));
-
-    // ✅ Redirect based on role
-    if (data.role === 'ATHLETE') {
-      window.location.href = '/onboarding/athlete';
-    } else {
-      window.location.href = '/dashboard';
-    }
+    // ✅ Move user to login
+    router.push('/login');
   };
 
   return (
@@ -51,7 +50,23 @@ export default function RegisterPage() {
       {/* ✅ Overlay */}
       <div style={styles.overlay}></div>
 
-      {/* ✅ LEFT SIDE (Branding) */}
+      {/* ✅ LOGIN BUTTON TOP RIGHT */}
+      <div style={styles.topRight}>
+        <button
+          style={styles.loginBtn}
+          onClick={() => router.push('/login')}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.background = theme.colors.primary)
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.background = theme.colors.card)
+          }
+        >
+          Login
+        </button>
+      </div>
+
+      {/* ✅ LEFT (Brand) */}
       <div style={styles.left}>
         <h1 style={styles.brandName}>VeriPlay</h1>
 
@@ -60,8 +75,8 @@ export default function RegisterPage() {
         </h2>
 
         <p style={styles.brandText}>
-          Build your verified athlete profile, track performance, and connect
-          with coaches, scouts, and organisations.
+          Build your verified athlete profile, track performance,
+          and connect with coaches, scouts, and organisations.
         </p>
 
         <p style={styles.brandSubText}>
@@ -69,12 +84,12 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      {/* ✅ RIGHT SIDE (Form) */}
+      {/* ✅ RIGHT (Form) */}
       <div style={styles.right}>
         <div style={styles.card}>
           <h2 style={styles.title}>Create your account</h2>
 
-          {/* ✅ Role selection */}
+          {/* ✅ Role */}
           <div style={styles.roleContainer}>
             {['ATHLETE', 'COACH', 'GUARDIAN', 'ORG'].map((r) => (
               <button
@@ -82,14 +97,14 @@ export default function RegisterPage() {
                 onClick={() => setRole(r)}
                 style={{
                   ...styles.roleButton,
-                  backgroundColor: role === r ? '#1f6f8b' : '#e5e7eb',
-                  color: role === r ? '#fff' : '#111',
-                }}
-                onMouseOver={(e) => {
-                  if (role !== r) e.currentTarget.style.background = '#d1d5db';
-                }}
-                onMouseOut={(e) => {
-                  if (role !== r) e.currentTarget.style.background = '#e5e7eb';
+                  background:
+                    role === r
+                      ? theme.colors.primary
+                      : theme.colors.accent,
+                  color:
+                    role === r
+                      ? theme.colors.white
+                      : theme.colors.textPrimary,
                 }}
               >
                 {r}
@@ -129,43 +144,78 @@ export default function RegisterPage() {
 
           {/* ✅ Submit */}
           <button
-            style={styles.submit}
+            style={{
+              ...styles.submit,
+              background: isFormValid
+                ? theme.colors.primary
+                : theme.colors.border,
+              cursor: isFormValid ? 'pointer' : 'not-allowed',
+            }}
             onClick={register}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.background = '#155e75')
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.background = '#1f6f8b')
-            }
+            disabled={!isFormValid}
           >
             Create Account
           </button>
+        </div>
+      </div>
+
+      {/* ✅ PARTNER RIBBON */}   
+      <div style={styles.ribbon}>
+        <div style={styles.logoRow}>
+          <img src="/Virseker.png" alt="Virseker" style={styles.logo} />
+          <img src="/Bulperd.png" alt="Bulperd" style={styles.logo} />
+          <img src="/SuperSportSchools.png" alt="SuperSportSchools" style={styles.logo} />
         </div>
       </div>
     </div>
   );
 }
 
+/* ✅ STYLES */
+
 const styles = {
   container: {
     display: 'flex',
     height: '100vh',
-    fontFamily: 'Arial, sans-serif',
     backgroundImage: "url('/register-bg.jpg')",
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
     position: 'relative',
+  },
+
+  logo: {
+    height: 60,
+    objectFit: 'contain' as const,
+    filter: 'opacity(0.85)', // ✅ subtle blend into background
   },
 
   overlay: {
     position: 'absolute',
-    top: 0,
-    left: 0,
     width: '100%',
     height: '100%',
-    background:
-      'linear-gradient(to right, rgba(11,31,46,0.7), rgba(11,31,46,0.3))',
-    zIndex: 0,
+    background: theme.colors.overlay,
+  },
+
+  logoRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 40,
+  },
+
+  topRight: {
+    position: 'absolute',
+    top: 20,
+    right: 30,
+    zIndex: 2,
+  },
+
+  loginBtn: {
+    padding: '10px 18px',
+    borderRadius: 10,
+    border: 'none',
+    background: theme.colors.card,
+    color: theme.colors.textPrimary,
+    fontWeight: 'bold',
+    cursor: 'pointer',
   },
 
   left: {
@@ -175,7 +225,6 @@ const styles = {
     flexDirection: 'column' as const,
     justifyContent: 'center',
     padding: 60,
-    position: 'relative',
     zIndex: 1,
   },
 
@@ -184,28 +233,23 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
     zIndex: 1,
   },
 
   brandName: {
     fontSize: 48,
-    fontWeight: 'bold' as const,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
 
   tagline: {
     fontSize: 22,
-    fontWeight: 500,
     marginBottom: 20,
-    color: '#e2e8f0',
   },
 
   brandText: {
     fontSize: 18,
     maxWidth: 420,
-    lineHeight: 1.6,
-    color: '#cbd5f5',
     marginBottom: 10,
   },
 
@@ -215,7 +259,7 @@ const styles = {
   },
 
   card: {
-    background: '#ffffff',
+    background: theme.colors.card,
     padding: 30,
     width: 360,
     borderRadius: 12,
@@ -225,7 +269,6 @@ const styles = {
   title: {
     textAlign: 'center' as const,
     marginBottom: 20,
-    color: '#111',
   },
 
   roleContainer: {
@@ -237,11 +280,10 @@ const styles = {
 
   roleButton: {
     padding: 12,
-    border: 'none',
     borderRadius: 8,
+    border: 'none',
     cursor: 'pointer',
-    fontWeight: 'bold' as const,
-    transition: '0.2s',
+    fontWeight: 'bold',
   },
 
   input: {
@@ -249,22 +291,44 @@ const styles = {
     padding: 12,
     marginBottom: 12,
     borderRadius: 8,
-    border: '1px solid #ccc',
-    fontSize: 14,
-    color: '#111',
-    backgroundColor: '#fff',
+    border: `1px solid ${theme.colors.border}`,
+    background: theme.colors.inputBackground,
+    color: theme.colors.textPrimary,
   },
 
   submit: {
     width: '100%',
     padding: 14,
-    background: '#1f6f8b',
-    color: '#fff',
-    border: 'none',
     borderRadius: 8,
-    cursor: 'pointer',
-    fontWeight: 'bold' as const,
-    marginTop: 10,
-    transition: '0.2s',
+    border: 'none',
+    color: theme.colors.white,
+    fontWeight: 'bold',
+  },
+
+  ribbon: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center', // ✅ center horizontally
+    alignItems: 'center',
+    gap: 30,
+    padding: '20px 0',
+    background: 'transparent', // ✅ transparent
+  },
+
+  ribbonText: {
+    fontWeight: 'bold',
+    color: theme.colors.textMuted,
+  },
+
+  logoBox: {
+    width: 80,
+    height: 30,
+    background: theme.colors.border,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 12,
   },
 };

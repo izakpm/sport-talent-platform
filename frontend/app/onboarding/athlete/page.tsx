@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { theme } from '../../styles/theme';
 
 export default function AthleteOnboarding() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function AthleteOnboarding() {
       });
   }, [selectedSport]);
 
-  // ✅ CONTINUE BUTTON LOGIC
+  // ✅ CONTINUE BUTTON LOGIC (FIXED)
   const handleContinue = async () => {
     if (!selectedSport) {
       alert('Please select a sport');
@@ -53,26 +54,14 @@ export default function AthleteOnboarding() {
     setLoading(true);
 
     try {
-      // ⚠️ TEMP: Replace with real athlete_id later
-      const athlete_id = 'PASTE-YOUR-ATHLETE-ID-HERE';
+      // ✅ Store selections for next step (IMPORTANT FIX)
+      localStorage.setItem('onboarding_sport', selectedSport);
+      localStorage.setItem(
+        'onboarding_positions',
+        JSON.stringify(selectedPositions)
+      );
 
-      // ✅ Save each position
-      for (let i = 0; i < selectedPositions.length; i++) {
-        await fetch('http://localhost:3000/athlete-sports', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            athlete_id,
-            sport_id: selectedSport,
-            position_id: selectedPositions[i],
-            is_primary: i === 0, // ✅ only first = primary
-          }),
-        });
-      }
-
-      // ✅ Success → next step
+      // ✅ Go to step 2
       router.push('/onboarding/athlete/details');
 
     } catch (err) {
@@ -107,12 +96,12 @@ export default function AthleteOnboarding() {
             }}
             style={{
               ...styles.select,
-              color: selectedSport ? '#111' : '#6b7280',
+              color: selectedSport
+                ? theme.colors.textPrimary
+                : theme.colors.textMuted,
             }}
           >
-            <option value="" disabled hidden>
-              Choose a sport
-            </option>
+            <option value="">Choose a sport</option>
 
             {sports.map((sport) => (
               <option key={sport.id} value={sport.id}>
@@ -142,10 +131,12 @@ export default function AthleteOnboarding() {
                       }}
                       style={{
                         ...styles.positionButton,
-                        backgroundColor: isSelected
-                          ? '#1f6f8b'
-                          : '#e5e7eb',
-                        color: isSelected ? '#fff' : '#111',
+                        background: isSelected
+                          ? theme.colors.primary
+                          : theme.colors.inputBackground,
+                        color: isSelected
+                          ? theme.colors.white
+                          : theme.colors.textPrimary,
                       }}
                     >
                       {pos.name}
@@ -184,8 +175,7 @@ const styles = {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    background:
-      'linear-gradient(to right, rgba(11,31,46,0.7), rgba(11,31,46,0.3))',
+    background: theme.colors.overlay,
   },
 
   content: {
@@ -198,7 +188,7 @@ const styles = {
   },
 
   card: {
-    background: '#fff',
+    background: theme.colors.card,
     padding: 35,
     width: 440,
     borderRadius: 14,
@@ -208,19 +198,20 @@ const styles = {
   step: {
     textAlign: 'center',
     fontSize: 13,
-    color: '#64748b',
+    color: theme.colors.textMuted,
   },
 
   title: {
+    ...theme.typography.heading,
     textAlign: 'center',
-    fontSize: 26,
     marginBottom: 10,
   },
 
   subtitle: {
+    ...theme.typography.body,
     textAlign: 'center',
     marginBottom: 20,
-    color: '#475569',
+    color: theme.colors.textMuted,
   },
 
   select: {
@@ -228,11 +219,13 @@ const styles = {
     padding: 14,
     marginBottom: 20,
     borderRadius: 10,
-    border: '1px solid #ccc',
+    border: `1px solid ${theme.colors.border}`,
+    background: theme.colors.inputBackground,
   },
 
   positionsTitle: {
     marginBottom: 10,
+    ...theme.typography.subheading,
   },
 
   positionsContainer: {
@@ -252,10 +245,11 @@ const styles = {
   submit: {
     width: '100%',
     padding: 14,
-    background: '#1f6f8b',
-    color: '#fff',
+    background: theme.colors.primary,
+    color: theme.colors.white,
     border: 'none',
     borderRadius: 10,
     cursor: 'pointer',
+    fontWeight: 'bold',
   },
 };

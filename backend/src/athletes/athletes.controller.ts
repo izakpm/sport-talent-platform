@@ -13,6 +13,16 @@ export class AthletesController {
     return this.service.create(body.user_id);
   }
 
+  @Post('profile')
+  createProfile(@Body() body: any) {
+    return this.service.createProfile(body);
+  }
+
+  @Post('sports')
+  addSports(@Body() body: any) {
+    return this.service.addSports(body);
+  }
+
   @Get('user/:user_id')
   findByUser(@Param('user_id') user_id: string) {
     return this.service.findByUser(user_id);

@@ -18,12 +18,12 @@ export class UsersService {
     const user = this.repo.create(data);
     const savedUser = await this.repo.save(user);
 
-    // ✅ If athlete → create athlete profile
-    if (savedUser.role === 'ATHLETE') {
-      await this.athletesService.create(savedUser.id);
-    }
-
     return savedUser;
+  }
+
+  async update(id: string, data: any) {
+    await this.repo.update({ id }, data);
+    return this.repo.findOne({ where: { id } });
   }
 
   findOne(id: string) {

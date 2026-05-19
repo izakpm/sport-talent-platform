@@ -1,42 +1,52 @@
 export const theme = {
   colors: {
-    background: '#0b1f2e',
-    overlay: 'rgba(11,31,46,0.5)',
+      // ✅ Base
+      primary: '#1f6f8b',
+      primaryHover: '#155e75',
 
-    card: 'rgba(255,255,255,0.70)',
+      // ✅ Layout
+      background: '#f8fafc',
+      card: '#ffffff',
 
-    textPrimary: '#111827',
-    textSecondary: '#475569',
+      // ✅ Overlay
+      overlay: 'linear-gradient(to right, rgba(11,31,46,0.7), rgba(11,31,46,0.3))',
 
-    accent: '#1f6f8b',
-    accentDark: '#14532d',
+      // ✅ Inputs (match register page exactly)
+      inputBackground: '#ffffff',
+      border: '#d1d5db',
 
-    warning: '#f59e0b',
+      // ✅ Text
+      textPrimary: '#111827',
+      textMuted: '#6b7280',
+      white: '#ffffff',
 
-    white: '#ffffff',
-  },
-
-  typography: {
-    heading: {
-      fontSize: 22,
-      fontWeight: 'bold',
-      color: '#111827',
+      // ✅ Buttons / accents
+      accent: '#e5e7eb',
+      accentDark: '#1f6f8b',
     },
 
+
+    typography: {
+      heading: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#111827',
+      },
+
     subheading: {
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontSize: 16,
+      fontWeight: 600,
       color: '#111827',
     },
 
     body: {
       fontSize: 14,
-      color: '#111827',
+      color: '#374151',
     },
 
     muted: {
       fontSize: 13,
-      color: '#475569',
+      color: '#6b7280',
     },
   },
 
