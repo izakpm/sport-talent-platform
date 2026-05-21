@@ -14,6 +14,7 @@ import { AthletesModule } from './athletes/athletes.module';
 import { SportsModule } from './sports/sports.module';
 import { PositionsModule } from './positions/positions.module';
 import { AuthModule } from './auth/auth.module';
+import { DiscoveryModule } from './discovery/discovery.module';
 
 @Module({
   imports: [
@@ -53,6 +54,8 @@ import { AuthModule } from './auth/auth.module';
     SportsModule,
 
     PositionsModule,
+
+    DiscoveryModule,
 
     AuthModule,
   ],

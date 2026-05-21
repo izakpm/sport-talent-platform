@@ -20,6 +20,26 @@ in South Africa.
 
 ---
 
+## Getting Started
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
 ## 🧱 Core Features
 
 - Athlete Profiles

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { theme } from '../styles/theme';
@@ -17,6 +17,17 @@ export default function RegisterPage() {
 
   const isFormValid =
     role && email && password && firstName && lastName;
+  const isGoogleReady = Boolean(role);
+
+  const handleGoogleAuth = () => {
+    if (!role) {
+      alert('Please select a role before continuing with Google.');
+      return;
+    }
+
+    const query = `?state=${encodeURIComponent(role)}`;
+    window.location.href = `http://localhost:3000/auth/google${query}`;
+  };
 
   const register = async () => {
     if (!isFormValid) return;
@@ -88,6 +99,25 @@ export default function RegisterPage() {
       <div style={styles.right}>
         <div style={styles.card}>
           <h2 style={styles.title}>Create your account</h2>
+
+          <button
+            type="button"
+            style={{
+              ...styles.googleButton,
+              opacity: isGoogleReady ? 1 : 0.55,
+              cursor: isGoogleReady ? 'pointer' : 'not-allowed',
+            }}
+            onClick={handleGoogleAuth}
+            disabled={!isGoogleReady}
+          >
+            Continue with Google
+          </button>
+
+          {!isGoogleReady && (
+            <p style={styles.googleHint}>
+              Select a role above before signing up with Google.
+            </p>
+          )}
 
           {/* ✅ Role */}
           <div style={styles.roleContainer}>
@@ -173,7 +203,7 @@ export default function RegisterPage() {
 
 /* ✅ STYLES */
 
-const styles = {
+const styles: Record<string, CSSProperties> = {
   container: {
     display: 'flex',
     height: '100vh',
@@ -303,6 +333,24 @@ const styles = {
     border: 'none',
     color: theme.colors.white,
     fontWeight: 'bold',
+  },
+
+  googleButton: {
+    width: '100%',
+    padding: 14,
+    borderRadius: 8,
+    border: '1px solid rgba(148, 163, 184, 0.35)',
+    background: theme.colors.white,
+    color: '#111827',
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+
+  googleHint: {
+    marginTop: -6,
+    marginBottom: 16,
+    color: theme.colors.textMuted,
+    fontSize: 13,
   },
 
   ribbon: {

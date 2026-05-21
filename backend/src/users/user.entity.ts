@@ -22,4 +22,7 @@ export class User {
 
   @Column({ nullable: true })
   phone: string;
+
+  @Column({ nullable: true, type: 'text' })
+  profile_image: string;
 }

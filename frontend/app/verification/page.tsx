@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { fetchWithAuth } from '../lib/api';
 
 export default function VerificationPage() {
   const [activities, setActivities] = useState<any[]>([]);
@@ -10,22 +11,25 @@ export default function VerificationPage() {
 
   // ✅ Load activities automatically
   useEffect(() => {
-    fetch('http://localhost:3000/activities')
-      .then(res => res.json())
-      .then(data => setActivities(data));
+    const loadActivities = async () => {
+      const res = await fetchWithAuth('/activities');
+      const data = res?.ok ? await res.json() : [];
+      setActivities(data || []);
+    };
+
+    loadActivities();
   }, []);
 
   const verify = async () => {
-    const res = await fetch('http://localhost:3000/verification/scan', {
+    const res = await fetchWithAuth('/verification/scan', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         activity_id: selectedActivity,
         code,
       }),
     });
 
-    const data = await res.json();
+    const data = res ? await res.json() : null;
     setResult(data);
   };
 

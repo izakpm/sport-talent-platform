@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { theme } from '../../../styles/theme';
+import { fetchWithAuth } from '../../../lib/api';
 
 export default function AthleteDetails() {
   const router = useRouter();
@@ -30,12 +31,8 @@ export default function AthleteDetails() {
       }
 
       // ✅ STEP 1 — UPDATE USER
-      await fetch(`http://localhost:3000/users/${user.id}`, {
+      await fetchWithAuth(`/users/${user.id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // ✅ REQUIRED
-        },
         body: JSON.stringify({
           date_of_birth: dateOfBirth,
           gender,
@@ -44,12 +41,8 @@ export default function AthleteDetails() {
       });
 
       // ✅ STEP 2 — CREATE ATHLETE PROFILE
-      const profileRes = await fetch('http://localhost:3000/athletes/profile', {
+      const profileRes = await fetchWithAuth('/athletes/profile', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // ✅ REQUIRED
-        },
         body: JSON.stringify({
           user_id: user.id,
           nationality: 'South Africa',
@@ -57,7 +50,7 @@ export default function AthleteDetails() {
         }),
       });
 
-      if (!profileRes.ok) {
+      if (!profileRes?.ok) {
         alert('Failed to create athlete profile');
         return;
       }
@@ -74,22 +67,18 @@ export default function AthleteDetails() {
       );
 
       if (selectedSport && selectedPositions.length > 0) {
-        await fetch('http://localhost:3000/athletes/sports', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // ✅ REQUIRED
-          },
-          body: JSON.stringify({
-            athlete_id: athlete.id,
-            sports: selectedPositions.map((posId: string, index: number) => ({
-              sport_id: selectedSport,
-              position_id: posId,
-              is_primary: index === 0,
-            })),
-          }),
-        });
-      }
+          await fetchWithAuth('/athletes/sports', {
+            method: 'POST',
+            body: JSON.stringify({
+              athlete_id: athlete.id,
+              sports: selectedPositions.map((posId: string, index: number) => ({
+                sport_id: selectedSport,
+                position_id: posId,
+                is_primary: index === 0,
+              })),
+            }),
+          });
+        }
 
       // ✅ DONE → Dashboard
       router.push('/dashboard');
@@ -164,7 +153,7 @@ export default function AthleteDetails() {
   );
 }
 
-const styles = {
+const styles: Record<string, CSSProperties> = {
   container: {
     height: '100vh',
     backgroundImage: "url('/register-bg.jpg')",

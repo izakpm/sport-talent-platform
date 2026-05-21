@@ -23,6 +23,14 @@ export const theme = {
       // ✅ Buttons / accents
       accent: '#e5e7eb',
       accentDark: '#1f6f8b',
+      warning: '#f59e0b',
+      error: '#ef4444',
+      success: '#10b981',
+      grey: {
+        100: '#f3f4f6',
+        200: '#e5e7eb',
+        600: '#4b5563',
+      },
     },
 
 

@@ -32,6 +32,12 @@ export class UsersService {
     });
   }
 
+  findByRole(role: string) {
+    return this.repo.find({
+      where: { role },
+    });
+  }
+
   findByEmail(email: string) {
     return this.repo.findOne({ where: { email } });
   }

@@ -7,4 +7,7 @@ export class Sport {
 
   @Column()
   name: string;
+
+  @Column({ nullable: true })
+  category: string;
 }

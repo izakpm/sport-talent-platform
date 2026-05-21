@@ -31,6 +31,26 @@
 $ npm install
 ```
 
+## Environment variables
+
+Create a `.env` file in the `backend` folder with your database and Google OAuth credentials.
+
+Example:
+
+```env
+DB_HOST=aws-0-eu-west-1.pooler.supabase.com
+DB_PORT=5432
+DB_USERNAME=postgres.jodixynusoaccfjusmmp
+DB_PASSWORD="Ode74cor)!831225"
+DB_DATABASE=postgres
+
+GOOGLE_CLIENT_ID=<your-google-client-id>
+GOOGLE_CLIENT_SECRET=<your-google-client-secret>
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+```
+
+For Google OAuth, create a Web application credential in the Google Cloud Console and set the authorized redirect URI to the same `GOOGLE_CALLBACK_URL` value.
+
 ## Compile and run the project
 
 ```bash

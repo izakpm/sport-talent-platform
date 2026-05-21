@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { theme } from '../styles/theme';
-import { useEffect } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,15 +10,49 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
+  const isFormValid = email && password;
 
-    if (token) {
-      router.push('/dashboard');
-    }
-  }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (!token) return;
+
+    const processGoogleLogin = async () => {
+      localStorage.setItem('token', token);
+
+      try {
+        const res = await fetch('http://localhost:3000/auth/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error('Unable to verify Google session');
+        }
+
+        const user = await res.json();
+        localStorage.setItem('user', JSON.stringify({ id: user.userId, email: user.email }));
+        router.push('/dashboard');
+      } catch (err) {
+        console.error('Google login failed', err);
+      } finally {
+        params.delete('token');
+        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+      }
+    };
+
+    processGoogleLogin();
+  }, [router]);
+
+  const handleGoogleAuth = () => {
+    window.location.href = 'http://localhost:3000/auth/google';
+  };
 
   const handleLogin = async () => {
+    if (!isFormValid) return;
+
     try {
       const res = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
@@ -28,22 +61,22 @@ export default function LoginPage() {
       });
 
       if (!res.ok) {
-        alert('Invalid login credentials');
+        alert('Invalid credentials');
         return;
       }
 
-      const user = await res.json();
+      const data = await res.json();
 
       // ✅ Save session
-      localStorage.setItem('token', user.access_token);
-      localStorage.setItem('user', JSON.stringify(user.user));
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
 
-      // ✅ Redirect to dashboard
+      // ✅ Go to dashboard
       router.push('/dashboard');
 
     } catch (err) {
-      console.error('Login error:', err);
-      alert('Something went wrong');
+      console.error(err);
+      alert('Error logging in');
     }
   };
 
@@ -51,29 +84,45 @@ export default function LoginPage() {
     <div style={styles.container}>
       <div style={styles.overlay}></div>
 
-      <div style={styles.content}>
+      <div style={styles.topRight}>
+        <button
+          style={styles.registerBtn}
+          onClick={() => router.push('/register')}
+        >
+          Register
+        </button>
+      </div>
 
-        {/* ✅ LEFT SIDE */}
-        <div style={styles.left}>
-          <h1 style={styles.brand}>VeriPlay</h1>
+      {/* ✅ LEFT (Branding SAME AS REGISTER) */}
+      <div style={styles.left}>
+        <h1 style={styles.brandName}>VeriPlay</h1>
 
-          <h2 style={styles.tagline}>
-            Where performance meets proof.
-          </h2>
+        <h2 style={styles.tagline}>
+          Where performance meets proof.
+        </h2>
 
-          <p style={styles.description}>
-            Build your verified athlete profile, track performance,
-            and connect with coaches and scouts.
-          </p>
+        <p style={styles.brandText}>
+          Build your verified athlete profile, track performance,
+          and connect with coaches, scouts, and organisations.
+        </p>
 
-          <p style={styles.subText}>
-            A trusted platform for athletes and professionals in sport.
-          </p>
-        </div>
+        <p style={styles.brandSubText}>
+          A trusted platform for athletes and professionals in sport.
+        </p>
+      </div>
 
-        {/* ✅ RIGHT SIDE */}
+      {/* ✅ RIGHT (LOGIN FORM) */}
+      <div style={styles.right}>
         <div style={styles.card}>
-          <h2 style={styles.cardTitle}>Welcome Back</h2>
+          <h2 style={styles.title}>Welcome back</h2>
+
+          <button
+            type="button"
+            style={styles.googleButton}
+            onClick={handleGoogleAuth}
+          >
+            Sign in with Google
+          </button>
 
           <input
             style={styles.input}
@@ -83,28 +132,57 @@ export default function LoginPage() {
           />
 
           <input
-            type="password"
             style={styles.input}
+            type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button style={styles.button} onClick={handleLogin}>
+          <button
+            style={{
+              ...styles.submit,
+              background: isFormValid
+                ? theme.colors.primary
+                : theme.colors.border,
+              cursor: isFormValid ? 'pointer' : 'not-allowed',
+            }}
+            onClick={handleLogin}
+            disabled={!isFormValid}
+          >
             Login
           </button>
-        </div>
 
+          {/* ✅ LINK BACK TO REGISTER */}
+          <p style={styles.linkText}>
+            Don't have an account?{' '}
+            <span
+              style={styles.link}
+              onClick={() => router.push('/register')}
+            >
+              Register
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {/* ✅ PARTNER RIBBON */}   
+      <div style={styles.ribbon}>
+        <div style={styles.logoRow}>
+          <img src="/Virseker.png" alt="Virseker" style={styles.logo} />
+          <img src="/Bulperd.png" alt="Bulperd" style={styles.logo} />
+          <img src="/SuperSportSchools.png" alt="SuperSportSchools" style={styles.logo} />
+        </div>
       </div>
     </div>
   );
 }
 
+/* ✅ SAME STYLE SYSTEM AS REGISTER */
 
-/* ✅ STYLES */
-
-const styles = {
+const styles: Record<string, CSSProperties> = {
   container: {
+    display: 'flex',
     height: '100vh',
     backgroundImage: "url('/register-bg.jpg')",
     backgroundSize: 'cover',
@@ -113,86 +191,143 @@ const styles = {
 
   overlay: {
     position: 'absolute',
-    top: 0,
-    left: 0,
     width: '100%',
     height: '100%',
-    background: 'linear-gradient(to right, rgba(11,31,46,0.9), rgba(11,31,46,0.5))',
+    background: theme.colors.overlay,
   },
 
-  content: {
-    position: 'relative',
-    zIndex: 1,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: '100%',
-    padding: '0 80px',
+  topRight: {
+    position: 'absolute',
+    top: 20,
+    right: 32,
+    zIndex: 2,
   },
 
-  /* ✅ LEFT CONTENT */
-  left: {
-    maxWidth: 450,
-    color: '#ffffff',
-  },
-
-  brand: {
-    fontSize: 42,
+  registerBtn: {
+    padding: '12px 22px',
+    borderRadius: 999,
+    border: 'none',
+    background: theme.colors.card,
+    color: theme.colors.textPrimary,
     fontWeight: 'bold',
-    marginBottom: 20,
+    cursor: 'pointer',
+  },
+
+  left: {
+    flex: 1,
+    color: '#fff',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+    padding: 60,
+    zIndex: 1,
+  },
+
+  right: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+
+  brandName: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 
   tagline: {
-    fontSize: 24,
-    marginBottom: 15,
+    fontSize: 22,
+    marginBottom: 20,
   },
 
-  description: {
-    fontSize: 16,
+  brandText: {
+    fontSize: 18,
+    maxWidth: 420,
     marginBottom: 10,
-    lineHeight: 1.5,
   },
 
-  subText: {
+  brandSubText: {
     fontSize: 14,
-    opacity: 0.8,
+    color: '#94a3b8',
   },
 
-  /* ✅ RIGHT CARD */
   card: {
     background: theme.colors.card,
     padding: 30,
-    borderRadius: 18,
-    width: 350,
+    width: 360,
+    borderRadius: 12,
     boxShadow: '0 15px 40px rgba(0,0,0,0.25)',
   },
 
-  cardTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  title: {
+    textAlign: 'center' as const,
     marginBottom: 20,
-    color: '#111',
+    ...theme.typography.heading,
   },
 
   input: {
     width: '100%',
     padding: 12,
-    marginBottom: 15,
-    borderRadius: 10,
-    border: '1px solid #ccc',
-    fontSize: 14,
-    color: '#111',
-    backgroundColor: '#fff',
+    marginBottom: 12,
+    borderRadius: 8,
+    border: `1px solid ${theme.colors.border}`,
+    background: theme.colors.inputBackground,
+    color: theme.colors.textPrimary,
   },
 
-  button: {
+  submit: {
     width: '100%',
-    padding: 12,
-    background: '#1f6f8b',
-    color: '#fff',
+    padding: 14,
+    borderRadius: 8,
     border: 'none',
-    borderRadius: 10,
+    color: theme.colors.white,
     fontWeight: 'bold',
+  },
+
+  googleButton: {
+    width: '100%',
+    padding: 14,
+    borderRadius: 8,
+    border: '1px solid rgba(148, 163, 184, 0.35)',
+    background: theme.colors.white,
+    color: '#111827',
+    fontWeight: 'bold',
+    marginBottom: 16,
     cursor: 'pointer',
+  },
+
+  linkText: {
+    marginTop: 15,
+    textAlign: 'center' as const,
+    color: theme.colors.textMuted,
+  },
+
+  link: {
+    color: theme.colors.primary,
+    cursor: 'pointer',
+    fontWeight: 'bold',
+  },
+
+  ribbon: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px 0',
+  },
+
+  logoRow: {
+    display: 'flex',
+    gap: 40,
+  },
+
+  logo: {
+    height: 60,
+    objectFit: 'contain' as const,
+    filter: 'opacity(0.85)', // ✅ subtle blend into background
   },
 };

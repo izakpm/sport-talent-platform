@@ -16,6 +16,7 @@ export class UsersController {
       first_name: body.first_name,
       last_name: body.last_name,
       phone: body.phone,
+      profile_image: body.profile_image,
     });
   }
 
@@ -23,6 +24,12 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
+  }
+
+  // ✅ GET USERS BY ROLE
+  @Get('role/:role')
+  findByRole(@Param('role') role: string) {
+    return this.service.findByRole(role);
   }
   
   @Patch(':id')

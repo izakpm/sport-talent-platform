@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { theme } from '../../styles/theme';
 
@@ -162,7 +162,7 @@ export default function AthleteOnboarding() {
   );
 }
 
-const styles = {
+const styles: Record<string, CSSProperties> = {
   container: {
     height: '100vh',
     backgroundImage: "url('/register-bg.jpg')",
