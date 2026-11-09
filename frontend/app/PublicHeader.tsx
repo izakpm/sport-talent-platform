@@ -1,14 +1,8 @@
 import Link from "next/link";
 import styles from "./home.module.css";
-export default function PublicHeader({
-  overlay = false,
-}: {
-  overlay?: boolean;
-}) {
+export default function PublicHeader() {
   return (
-    <header
-      className={`${styles.header} ${overlay ? styles.overlayHeader : ""}`}
-    >
+    <header className={styles.header}>
       <div className={styles.navInner}>
         <Link href="/" aria-label="PlayVerified home">
           <img

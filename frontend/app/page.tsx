@@ -36,6 +36,7 @@ export default function Home() {
       <a className={styles.skip} href="#main-content">
         Skip to content
       </a>
+      <PublicHeader />
       <main id="main-content">
         <div className={styles.opening}>
           <Image
@@ -47,7 +48,6 @@ export default function Home() {
             preload
           />
           <div className={styles.shade} />
-          <PublicHeader overlay />
           <section className={styles.hero} aria-labelledby="home-title">
             <div className={styles.heroCopy}>
               <h1 id="home-title">
@@ -73,17 +73,7 @@ export default function Home() {
                 <Link className={styles.primary} href="/register">
                   Join PlayVerified
                 </Link>
-                <a className={styles.quietLink} href="#how-it-works">
-                  Explore the platform <span aria-hidden="true">↓</span>
-                </a>
               </div>
-            </div>
-            <div className={styles.heroBottom}>
-              <span>Rugby is where we start.</span>
-              <a href="#how-it-works">
-                Team management & monthly planning{" "}
-                <span aria-hidden="true">↓</span>
-              </a>
             </div>
           </section>
         </div>
