@@ -111,11 +111,18 @@
   font-size: 14px;
   font-weight: 600;
 }
+.loginLink,
 .registerLink {
   background: white;
   color: #0b1f2e;
   border-radius: 5px;
   padding: 11px 24px;
+}
+.loginLink {
+  background: #ffca05;
+}
+.loginLink:hover {
+  background: #ffdb55;
 }
 .hero {
   max-width: 1500px;
@@ -500,6 +507,7 @@
   .navActions {
     font-size: 12px;
   }
+  .loginLink,
   .registerLink {
     padding-inline: 16px;
   }
@@ -544,6 +552,7 @@
     gap: 16px;
     font-size: 12px;
   }
+  .loginLink,
   .registerLink {
     padding: 10px 15px;
   }
@@ -640,6 +649,10 @@
   }
 }
 @media (max-width: 380px) {
+  .loginLink,
+  .registerLink {
+    padding-inline: 10px;
+  }
   .logo {
     width: 125px;
   }
