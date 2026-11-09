@@ -153,42 +153,47 @@ export default function Home() {
             <div className={styles.coachCopy}>
               <p className={styles.sectionLabel}>COACHES</p>
               <h2 id="coaching-title">
-                More time
+                Turn potential
                 <br />
-                for the game.
+                into progress.
               </h2>
               <p className={styles.intro}>
-                Your squad list, your training week, your next match. Keep them
-                together in one place.
+                You see what your players can become. Every session is a chance
+                to help them get there. Bring your squads, player rosters and
+                training plans into one workspace, so you can spend more time
+                coaching and less time keeping track.
               </p>
               <div className={styles.features}>
                 <div>
                   <span>01</span>
                   <div>
-                    <h3>Create your teams</h3>
+                    <h3>Know your squad. Be ready to coach.</h3>
                     <p>
-                      First XV or U16s. Give each squad its own roster, age
-                      group and home ground.
+                      Keep every team organised, from your First XV to the U16s.
+                      Find player names, positions, shirt numbers and captains
+                      without piecing together another squad list.
                     </p>
                   </div>
                 </div>
                 <div>
                   <span>02</span>
                   <div>
-                    <h3>Know your players</h3>
+                    <h3>Give every session a purpose</h3>
                     <p>
-                      Add names, positions and shirt numbers. Choose captains
-                      and keep your squad up to date.
+                      Turn your coaching ideas into a clear monthly plan.
+                      Schedule practice, gym, video reviews and matches with a
+                      time, venue and focus for each session.
                     </p>
                   </div>
                 </div>
                 <div>
                   <span>03</span>
                   <div>
-                    <h3>Plan the month</h3>
+                    <h3>Build a routine you can keep</h3>
                     <p>
-                      Practice on Monday. Gym on Wednesday. Match on Saturday.
-                      Repeat your routine and adjust as you go.
+                      Repeat weekly sessions, adjust individual dates and switch
+                      between teams. Keep the plan moving when the season
+                      changes, without starting from scratch.
                     </p>
                   </div>
                 </div>
