@@ -13,8 +13,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://playverified.app'),
   title: "PlayVerified | Where performance meets proof",
   description: "Build your athlete profile, track sporting performance, and connect with coaches, schools, and scouts.",
+  openGraph: {
+    type: 'website',
+    siteName: 'PlayVerified',
+    title: 'PlayVerified | Where performance meets proof',
+    description: 'Build your athlete profile, track sporting performance, and connect with coaches, schools, and scouts.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PlayVerified | Where performance meets proof',
+    description: 'Build your athlete profile, track sporting performance, and connect with coaches, schools, and scouts.',
+    images: ['/opengraph-image'],
+  },
+  icons: {
+    icon: [{ url: '/brand-icon.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
 };
 
 export default function RootLayout({
