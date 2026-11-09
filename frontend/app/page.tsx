@@ -14,7 +14,7 @@ export default function Home() {
 
       <div style={styles.left}>
         <div>
-          <h1 style={styles.brandName}>VeriPlay</h1>
+          <h1 style={styles.brandName}>PlayVerified</h1>
           <p style={styles.tagline}>Where performance meets proof.</p>
           <p style={styles.brandText}>
             Build your verified athlete profile, track performance, and connect with coaches, scouts, and organisations.

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { API_URL } from '../lib/api';
 
 export default function TrustPage() {
   const [athletes, setAthletes] = useState<any[]>([]);
@@ -9,7 +10,7 @@ export default function TrustPage() {
 
   // ✅ Load athletes (quick hack via activities for now)
   useEffect(() => {
-    fetch('http://localhost:3000/activities')
+    fetch(`${API_URL}/activities`)
       .then(res => res.json())
       .then(data => {
         const uniqueAthletes = [
@@ -21,7 +22,7 @@ export default function TrustPage() {
 
   const fetchScore = async () => {
     const res = await fetch(
-      `http://localhost:3000/trust/${selectedAthlete}`
+      `${API_URL}/trust/${selectedAthlete}`
     );
     const data = await res.json();
     setResult(data);

@@ -57,4 +57,18 @@ export class ActivitiesService {
     const activity = this.repo.create(data);
     return this.repo.save(activity);
   }
+
+  // Update existing activity
+  async update(id: string, data: Partial<Activity>) {
+    const existing = await this.repo.findOne({ where: { id } });
+    if (!existing) return null;
+    const merged = this.repo.merge(existing, data);
+    return this.repo.save(merged);
+  }
+
+  // Remove activity
+  async remove(id: string) {
+    await this.repo.delete(id);
+    return { ok: true };
+  }
 }

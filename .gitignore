@@ -1,5 +1,5 @@
 # Logs
-logs
+/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -69,6 +69,12 @@ web_modules/
 .env
 .env.*
 !.env.example
+
+# Local Vercel project metadata
+.vercel/
+
+# Local authentication diagnostic output
+/login-test-result.txt
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

@@ -4,157 +4,149 @@ description: "Task list for VeriPlay Platform MVP implementation"
 
 # Tasks: VeriPlay Platform MVP
 
-**Input**: `docs/specs/veriplay-platform.md`, `.specify/memory/constitution.md`
+**Input**: `spec.md`, `plan.md`, `docs/specs/veriplay-platform.md`, `.specify/memory/constitution.md`
 
-**Prerequisites**: `plan.md` (not yet created), `spec.md` (not yet created), existing backend/frontend modules
+**Prerequisites**: `spec.md` and `plan.md` are active and synchronized with the current sprint goal.
 
-**Tests**: Backend and frontend tests for user journeys should be added alongside implementation tasks.
+**Tests**: Follow test-first delivery. For each user story, create or update failing checks first, then implement, then pass checks.
 
-**Organization**: Tasks are grouped by user story so each story can be implemented and tested independently.
+**Organization**: Tasks are grouped by user story and delivery phase. Existing pages must be verified before new pages are introduced.
 
-## Phase 1: Setup (Shared Infrastructure)
+## Phase 1: Current-State UI Verification (Shared Baseline)
 
-**Purpose**: Verify the repo structure and establish the implementation baseline.
+**Purpose**: Verify current frontend routes and identify what can be reused versus corrected.
 
-- [ ] T001 Verify backend and frontend dependency installation and scripts in `backend/package.json` and `frontend/package.json`
-- [ ] T002 Confirm existing `backend/src/` modules and `frontend/app/` pages can support athlete, coach, guardian, verification, and discovery features
-- [ ] T003 Create or update shared frontend types and API helpers in `frontend/app/lib/` for backend contract consistency
-- [ ] T004 Add repo-level task artifact `tasks.md` and link it to the platform vision documents
+- [x] T001 Audit existing visual baseline route in `frontend/app/dev/theme-preview/page.tsx` against current frontend usage
+- [x] T002 Audit existing athlete shell pages in `frontend/app/dashboard/page.tsx` and `frontend/app/dashboard/profile/page.tsx`
+- [x] T003 Audit existing coach shell page in `frontend/app/dashboard/coaches/page.tsx`
+- [x] T004 Audit existing school shell page in `frontend/app/dashboard/schools/page.tsx`
+- [x] T005 Produce a pass/fix-needed matrix for menus, lists, buttons, input fields, cards, and color usage
+- [x] T006 Define acceptance checklist for visual approval gate and include mobile viewport checks
 
----
-
-## Phase 2: Foundational (Blocking Prerequisites)
-
-**Purpose**: Build the core backend and security foundations that all user stories depend on.
-
-- [ ] T005 Review and document the core data model for athlete, coach, guardian, organisation, sport, position, activity, achievement, and verification in `backend/src/`
-- [ ] T006 Implement or extend role-based authentication and authorization in `backend/src/auth/`, including JWT guards and role checks for athlete, coach, guardian, and organisation
-- [ ] T007 Implement child safety and guardian-mediated permission checks in backend guards or services, ensuring minors require guardian approval for verification and contact workflows
-- [ ] T008 Add backend audit trail support for verification requests, approvals, and status changes in `backend/src/verification/`
-- [ ] T009 Ensure backend modules are wired together with clear APIs for athletes, users, verification, activities, sports, positions, and trust relationships
-- [ ] T010 Add frontend global auth/session support and secure client-side role handling in `frontend/app/` and `frontend/app/lib/`
-- [ ] T011 Add or update API documentation in `docs/api/api-spec-v1.md` to include the core onboarding, profile, verification, and discovery endpoints
-
-**Checkpoint**: Foundation complete; user stories can begin.
+**Checkpoint**: Reuse and correction targets are known before new UI work starts.
 
 ---
 
-## Phase 3: User Story 1 - Athlete & Guardian Onboarding (Priority: P1) 🎯 MVP
+## Phase 2: User Story 0 - Visual Approval Baseline (Priority: P0) MVP
 
-**Goal**: Enable athlete users to create a structured profile and connect to guardians safely.
+**Goal**: Ensure all shared UI primitives are approved in one route before being used in product pages.
 
-**Independent Test**: Athlete signup with role selection, profile creation, and guardian connection works end to end.
+**Independent Test**: A reviewer can inspect one page that contains all approved UI primitives and their major states.
+
+### Tests First
+
+- [ ] T007 Add frontend tests for visual baseline route render and required sections in `frontend/`
+- [ ] T008 Add responsive checks for the visual baseline route at mobile and desktop breakpoints
 
 ### Implementation
 
-- [ ] T012 Extend or create athlete profile backend APIs in `backend/src/athletes/` to support personal details, sports, positions, and privacy settings
-- [ ] T013 Extend user onboarding in `backend/src/users/` and `backend/src/auth/` to support athlete, guardian, coach, and organisation role selection
-- [ ] T014 Implement guardian connection backend endpoints in `backend/src/users/` or `backend/src/athletes/` with approval workflow
-- [ ] T015 Build athlete onboarding pages and forms in `frontend/app/register/`, `frontend/app/onboarding/`, and `frontend/app/login/`
-- [ ] T016 Build guardian connection UI in `frontend/app/onboarding/` and `frontend/app/dashboard/` to request and accept athlete/guardian links
-- [ ] T017 Add frontend validation and role-specific navigation to keep minors from being contacted directly without guardian approval
+- [x] T009 Extend `frontend/app/dev/theme-preview/page.tsx` to include approved menus, lists, buttons, inputs, cards, badges, and state variants
+- [x] T010 Add usage notes and state labels directly in the visual approval page for reviewer clarity
+- [x] T011 Add a lightweight approval log section in the visual page for newly introduced primitives
+- [x] T012 Add governance note to frontend docs: new primitives must be added to visual baseline first
 
-### Tests
-
-- [ ] T018 Add backend integration tests for athlete signup, profile creation, and guardian approval flows in `backend/test/`
-- [ ] T019 Add frontend smoke or integration tests for onboarding flows in `frontend/` using the existing test framework or manually verified scenarios
-
-**Checkpoint**: Athlete and guardian onboarding should function independently.
+**Checkpoint**: Visual approval route is complete and review-ready.
 
 ---
 
-## Phase 4: User Story 2 - Coach Profiles & Discoverability (Priority: P2)
+## Phase 3: Theme Alignment After Approval (Priority: P1)
 
-**Goal**: Enable coaches to create discoverable profiles and for organisations to search coaches by sport, position, and credentials.
+**Goal**: Update global theme tokens only after visual baseline approval.
 
-**Independent Test**: Coach profile creation and coach discovery work independently of activity logging.
+**Independent Test**: Approved tokens/styles propagate consistently across baseline components.
+
+### Tests First
+
+- [ ] T013 Add token consistency tests or assertions for theme keys used by baseline components
+- [ ] T014 Add regression checks to confirm updated theme does not break approved baseline visuals
 
 ### Implementation
 
-- [ ] T020 Extend the backend coach/profile model in `backend/src/users/` or `backend/src/trust/` to capture experience, teams, certifications, and sports specialities
-- [ ] T021 Implement coach discovery and search endpoints in `backend/src/users/` or `backend/src/sports/` with filters for sport, position, and verification status
-- [ ] T022 Build frontend coach profile pages and discovery UI in `frontend/app/dashboard/`, `frontend/app/trust/`, or a new `frontend/app/coaches/` area
-- [ ] T023 Add backend privacy controls so coach profile details are visible only to appropriate roles and connected organisations
-- [ ] T024 Add a coach profile summary component and search results UI in `frontend/app/dashboard/`
+- [x] T015 Update theme tokens in `frontend/app/styles/theme.ts` using approved visual baseline outcomes
+- [x] T016 Update global style surfaces in `frontend/app/globals.css` and related shared styles
+- [x] T017 Re-validate baseline route after theme updates and capture approval sign-off
 
-### Tests
-
-- [ ] T025 Add backend tests for coach profile creation, visibility rules, and discovery filters in `backend/test/`
-- [ ] T026 Add frontend test cases for coach search and profile display in `frontend/`
-
-**Checkpoint**: Coaches are discoverable and their profiles respect role-based visibility.
+**Checkpoint**: Theme updates are approved and stable.
 
 ---
 
-## Phase 5: User Story 3 - Activity Logging & Verification (Priority: P2)
+## Phase 4: User Story 2A - Frontend Profile Layout Foundations (Priority: P1)
 
-**Goal**: Support athlete activity and achievement logging, plus a verification approval workflow with guardian consent for minors.
+**Goal**: Build or correct basic layouts for Athlete, Coach, and School profiles without backend functionality.
 
-**Independent Test**: Activities and achievements can be logged, verified, and displayed with correct permission checks.
+**Independent Test**: All three role layouts render correctly with placeholder/mock content and match approved visual primitives.
+
+### Tests First
+
+- [x] T018 Add route smoke tests for athlete, coach, and school shell pages in `frontend/`
+- [x] T019 Add responsive tests for role layouts at mobile and desktop breakpoints
 
 ### Implementation
 
-- [ ] T027 Implement activity and achievement entities/controllers in `backend/src/activities/` and `backend/src/verification/`
-- [ ] T028 Add support for external evidence links (TikTok, Instagram, YouTube, etc.) in backend activity/achievement payloads
-- [ ] T029 Implement verification request, approval, and audit trail flows in `backend/src/verification/`
-- [ ] T030 Build frontend activity logging and achievement submission flows in `frontend/app/activities/`
-- [ ] T031 Add UI for verification status, pending requests, and guardian approval in `frontend/app/verification/`
-- [ ] T032 Ensure minor athlete verification requests are routed through guardian review before a verification badge is granted
+- [x] T020 Correct and stabilize athlete shell layout in `frontend/app/dashboard/athlete/page.tsx` and `frontend/app/dashboard/profile/page.tsx`
+- [x] T021 Correct and stabilize coach shell layout in `frontend/app/dashboard/coaches/page.tsx`
+- [x] T022 Correct and stabilize school shell layout in `frontend/app/dashboard/schools/page.tsx`
+- [x] T023 Remove hard backend dependency from shell pages by using safe placeholder/mock states where needed
+- [x] T024 Ensure role menus, lists, cards, actions, and input blocks only use approved baseline primitives
+- [x] T025 Add a UI verification note per role page documenting pass/fix updates applied
+- [x] T036 Implement shared role-driven dashboard shell and guard routing in `frontend/app/dashboard/layout.tsx` and `frontend/app/dashboard/core/roles.ts`
+- [x] T037 Consolidate athlete routes under `frontend/app/dashboard/athlete/` and update menu links
+- [x] T038 Align coach page set and menu to required routes (Teams, Calander, Activities, Matches, Approvals, Achievements)
+- [x] T039 Align school page set and menu to required routes (Coaches, Teams, Fixtures, Logs, Achievements)
+- [x] T040 Add legacy compatibility redirects for `/dashboard/athletes/*`, `/activities`, and `/sports`
+- [x] T041 Improve profile photo save reliability (`backend/src/main.ts` payload limits + frontend save feedback)
 
-### Tests
-
-- [ ] T033 Add backend tests for activity creation, verification request lifecycle, and audit trails in `backend/test/`
-- [ ] T034 Add frontend tests for submitting activities, evidence links, and viewing verification states in `frontend/`
-
-**Checkpoint**: Activity logging and verification workflows are independently functional.
-
----
-
-## Phase 6: User Story 4 - Talent Discovery Ecosystem (Priority: P3)
-
-**Goal**: Provide discovery tools so scouts, organisations, and coaches can find athletes and coaches using data-driven filters.
-
-**Independent Test**: Search and discovery flows return relevant athletes or coaches based on sport, position, and verification.
-
-### Implementation
-
-- [ ] T035 Implement athlete discovery endpoints in `backend/src/athletes/` with filters for sport, position, verified achievements, and location if available
-- [ ] T036 Implement organisation search or connection endpoints in `backend/src/users/` or `backend/src/trust/`
-- [ ] T037 Build frontend discovery dashboard and filtered results UI in `frontend/app/dashboard/`
-- [ ] T038 Add connection request flows from discovery results to athlete, coach, or organisation profiles
-- [ ] T039 Ensure backend discovery responses respect privacy rules and guardian-mediated visibility for minors
-
-### Tests
-
-- [ ] T040 Add backend tests for athlete and coach discovery filters and permission enforcement
-- [ ] T041 Add frontend tests for search/filter UI and connection request flow
-
-**Checkpoint**: Discovery ecosystem can operate independently after foundational features.
+**Checkpoint**: Athlete, coach, and school shells are visually approved and frontend-only stable.
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 5: Backend and Integration Foundations (Deferred After Shell Approval)
 
-**Purpose**: Finalize quality, documentation, security, and cross-cutting platform requirements.
+**Purpose**: Continue with data-backed MVP capabilities after UI baseline and shells are approved.
 
-- [ ] T042 Update `docs/api/api-spec-v1.md` with the final onboarding, profile, verification, and discovery contract definitions
-- [ ] T043 Add or extend backend unit tests for existing models and guards in `backend/test/`
-- [ ] T044 Add or extend frontend test coverage around onboarding, verification, and discovery in `frontend/`
-- [ ] T045 Add privacy and consent documentation to `docs/` or the README, referencing guardian-first safety and role-based access
-- [ ] T046 Conduct a security review of backend role checks and JWT authorization in `backend/src/auth/`
-- [ ] T047 Review `frontend/app/` flows for mobile-responsiveness and network resilience
-- [ ] T048 Document any required amendment to `.specify/memory/constitution.md` with rationale and version info
+- [ ] T026 Implement or extend role-based auth and guard behavior in `backend/src/auth/`
+- [ ] T027 Implement guardian-mediated workflow rules and verification audit trail in `backend/src/verification/`
+- [ ] T028 Implement security event logging for authentication, authorization, and guardian workflow decisions
+- [ ] T029 Wire profile and discovery modules for athlete and coach data-backed experiences
+- [ ] T030 Integrate frontend shell pages with backend APIs once contracts are finalized
+- [ ] T042 Perform Google OAuth end-to-end registration/login validation (ATHLETE, COACH, SCHOOL) after Google Cloud redirect URI and credential configuration is finalized
+
+**Checkpoint**: Data-backed behaviors can be layered onto approved UI foundations.
+
+---
+
+## Phase 6: Polish and Governance
+
+**Purpose**: Lock quality and maintain the visual approval process as an ongoing rule.
+
+- [ ] T031 Update `docs/api/api-spec-v1.md` to match implemented contracts
+- [ ] T032 Add privacy, consent, and role-visibility documentation updates in `docs/` and project READMEs
+- [ ] T033 Add CI checks (or equivalent) to ensure visual baseline route remains present and tested
+- [ ] T034 Confirm that every newly introduced UI primitive appears in the visual approval route before release
+- [ ] T035 Review and update `.specify/memory/constitution.md` amendment log if governance rules changed
 
 ---
 
 ## Dependencies & Execution Order
 
-- **Phase 1**: Start immediately
-- **Phase 2**: Blocks all user stories until complete
-- **Phase 3+**: Begin once foundational backend/auth and frontend auth support are in place
-- **Phase 7**: Final polish after core user stories are implemented
+1. **Phase 1** must complete before Phase 2.
+2. **Phase 2** must be approved before Phase 3 and Phase 4.
+3. **Phase 3** (theme alignment) depends on visual baseline approval.
+4. **Phase 4** (frontend role shells) can proceed in parallel with approved theme updates.
+5. **Phase 5** starts only after role shell approval.
+6. **Phase 6** finalizes docs, tests, and governance.
 
 ## Notes
 
-- This backlog is based on the current platform vision in `docs/specs/veriplay-platform.md` and project principles in `.specify/memory/constitution.md`
-- If a more detailed `spec.md` and `plan.md` are created, this task list should be refined to match the final feature boundaries and acceptance criteria
+- This backlog reflects the immediate priority: visual consistency and frontend profile foundations first.
+- If an existing page already satisfies the baseline, keep it and only apply targeted corrections.
+- School pages represent the organisation-facing profile experience for the current frontend milestone.
+
+## Next Focus (Updated)
+
+1. Complete Phase 4 tests: T018 and T019.
+2. Remove remaining hard backend dependency in role shell flows to complete T023.
+3. Close primitive-usage parity sweep for all role pages and profile pages to complete T024.
+4. Validate new route structure with browser smoke checks for athlete/coach/school role menus and redirects.
+5. Start Phase 5 only after Phase 4 checkpoint is confirmed.
+6. Re-run deferred Google OAuth E2E validation (T042) once OAuth console setup is confirmed stable.

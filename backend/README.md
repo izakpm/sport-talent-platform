@@ -31,6 +31,19 @@
 $ npm install
 ```
 
+## Standard Workspace Startup (Recommended)
+
+From the workspace root, use VS Code tasks to avoid port mismatches:
+
+1. Run task: `Dev: Start Full Stack`
+2. Optional verify: run task `Dev: Health Check`
+3. Stop both services with task `Dev: Stop Full Stack`
+
+Expected ports:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:3001`
+
 ## Environment variables
 
 Create a `.env` file in the `backend` folder with your database and Google OAuth credentials.

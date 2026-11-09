@@ -1,7 +1,7 @@
 'use client';
 
 import { type CSSProperties } from 'react';
-import { theme } from '../../styles/theme';
+import { theme } from '../../../styles/theme';
 
 const achievements = [
   { id: 1, title: 'Top Scorer', subtitle: 'Goal count increased 40% in last season' },

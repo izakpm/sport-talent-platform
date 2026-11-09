@@ -78,11 +78,12 @@ export class AuthService {
   }
 
   private signUser(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { email: user.email, sub: user.id, role: user.role };
+    const { password_hash, ...publicUser } = user;
 
     return {
       access_token: this.jwtService.sign(payload),
-      user,
+      user: publicUser,
     };
   }
 }

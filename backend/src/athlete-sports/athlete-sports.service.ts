@@ -20,4 +20,12 @@ export class AthleteSportsService {
       where: { athlete_id },
     });
   }
+
+  update(id: string, data: Partial<AthleteSport>) {
+    return this.repo.update({ id }, data);
+  }
+
+  delete(id: string) {
+    return this.repo.delete({ id });
+  }
 }

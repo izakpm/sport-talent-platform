@@ -1,0 +1,66 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: Start Full Stack",
+      "dependsOn": [
+        "Dev: Backend (3001)",
+        "Dev: Frontend (3000)"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Backend (3001)",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "start:dev"],
+      "options": {
+        "cwd": "${workspaceFolder}/backend",
+        "env": {
+          "PORT": "3001"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Frontend (3000)",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend",
+        "env": {
+          "PORT": "3000",
+          "NEXT_PUBLIC_API_URL": "http://localhost:3001"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Health Check",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "try { $front = (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:3000/login').StatusCode } catch { $front = 'DOWN' }; try { $back = (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:3001/auth/login' -Method POST -ContentType 'application/json' -Body '{\"email\":\"athlete@test.com\",\"password\":\"123456\"}').StatusCode } catch { if ($_.Exception.Response) { $back = $_.Exception.Response.StatusCode.value__ } else { $back = 'DOWN' } }; Write-Output \"frontend=$front backend_login=$back\""
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Stop Full Stack",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$ports = @(3000, 3001); foreach ($port in $ports) { $connections = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue; if ($connections) { $owningPids = $connections | Select-Object -ExpandProperty OwningProcess -Unique; foreach ($procId in $owningPids) { Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue }; Write-Output \"stopped port=$port pids=$($owningPids -join ',')\" } else { Write-Output \"no listener on port=$port\" } }"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": []
+}

@@ -3,6 +3,8 @@
 import { ChangeEvent, useEffect, useState, type CSSProperties } from 'react';
 import { theme } from '../../styles/theme';
 import { fetchWithAuth } from '../../lib/api';
+import { getDashboardRoleConfig, normalizeDashboardRole } from '../core/roles';
+import { ActionButton, DetailList, MetricCard, StatusPill, SurfaceCard } from '../components/primitives';
 
 type UserProfile = {
   id: string;
@@ -28,6 +30,8 @@ export default function DashboardProfilePage() {
   const [athlete, setAthlete] = useState<AthleteProfile | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -66,6 +70,17 @@ export default function DashboardProfilePage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    setSaveMessage(null);
+    setSaveError(null);
+
+    // Base64 adds roughly one third to the upload size; leave room for JSON.
+    if (file.size > 3 * 1024 * 1024) {
+      setSelectedImage(null);
+      setSaveError('Please choose a profile image smaller than 3 MB.');
+      event.target.value = '';
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
@@ -79,26 +94,44 @@ export default function DashboardProfilePage() {
     if (!user || !selectedImage) return;
 
     setIsSaving(true);
+    setSaveMessage(null);
+    setSaveError(null);
     try {
       const res = await fetchWithAuth(`/users/${user.id}`, {
         method: 'PATCH',
         body: JSON.stringify({ profile_image: selectedImage }),
       });
 
-      if (!res?.ok) return;
+      if (!res) {
+        setSaveError('Unable to reach the server. Please try again.');
+        return;
+      }
+
+      if (!res.ok) {
+        const errorText = await res.text().catch(() => '');
+        if (res.status === 413) {
+          setSaveError('Image is too large. Please choose a smaller image.');
+        } else {
+          setSaveError(`Failed to save photo (status ${res.status}). ${errorText}`.trim());
+        }
+        return;
+      }
 
       const updated = await res.json();
       setUser(updated);
       localStorage.setItem('user', JSON.stringify(updated));
       setSelectedImage(null);
+      setSaveMessage('Photo saved successfully.');
     } catch {
-      // ignore
+      setSaveError('Unexpected error while saving photo. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const fullName = user ? `${user.first_name || 'Athlete'} ${user.last_name || ''}`.trim() : 'Athlete';
+  const normalizedRole = normalizeDashboardRole(user?.role);
+  const roleLabel = getDashboardRoleConfig(normalizedRole).roleLabel;
   const initials = fullName
     .split(' ')
     .map((part) => part.charAt(0))
@@ -112,10 +145,10 @@ export default function DashboardProfilePage() {
     <div style={styles.page}>
       <div style={styles.header}>
         <div>
-          <p style={styles.kicker}>Athlete Profile</p>
+          <p style={styles.kicker}>{roleLabel} Profile</p>
           <h1 style={styles.heading}>My Profile</h1>
           <p style={styles.description}>
-            Manage your athlete identity, performance details, and verification status from one place.
+            Manage your {roleLabel.toLowerCase()} identity, details, and verification status from one place.
           </p>
         </div>
       </div>
@@ -136,12 +169,13 @@ export default function DashboardProfilePage() {
           <div style={styles.heroInfo}>
             <div style={styles.heroLabel}>Profile Overview</div>
             <h2 style={styles.heroName}>{fullName}</h2>
-            <p style={styles.heroMeta}>{user?.role || 'Athlete'}</p>
+            <p style={styles.heroMeta}>{user?.role || roleLabel}</p>
             <div style={styles.badgeRow}>
-              <span style={{ ...styles.statusBadge, background: isVerified ? theme.colors.success : theme.colors.error }}>
-                {isVerified ? 'Verified Athlete' : 'Pending Verification'}
-              </span>
-              <span style={styles.smallBadge}>{athlete?.profile_visibility || 'Private Profile'}</span>
+              <StatusPill
+                label={isVerified ? `Verified ${roleLabel}` : 'Pending Verification'}
+                tone={isVerified ? 'success' : 'error'}
+              />
+              <StatusPill label={athlete?.profile_visibility || 'Private Profile'} tone="warning" />
             </div>
           </div>
           <div style={styles.heroActions}>
@@ -150,77 +184,57 @@ export default function DashboardProfilePage() {
               Change Photo
             </label>
             {selectedImage ? (
-              <button style={styles.saveButton} onClick={savePhoto} disabled={isSaving}>
-                {isSaving ? 'Saving…' : 'Save Photo'}
-              </button>
+              <ActionButton
+                label={isSaving ? 'Saving…' : 'Save Photo'}
+                onClick={savePhoto}
+                disabled={isSaving}
+                tone="success"
+              />
             ) : null}
+            {saveMessage ? <div style={styles.saveMessage}>{saveMessage}</div> : null}
+            {saveError ? <div style={styles.saveError}>{saveError}</div> : null}
           </div>
         </div>
 
         <div style={styles.heroStats}>
-          <div style={styles.statCard}>
-            <div style={styles.statValue}>12</div>
-            <div style={styles.statLabel}>Training Sessions</div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statValue}>5</div>
-            <div style={styles.statLabel}>Verified Achievements</div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statValue}>3</div>
-            <div style={styles.statLabel}>Preferred Positions</div>
-          </div>
+          <MetricCard label="Training Sessions" value="12" style={styles.statCard} />
+          <MetricCard label="Verified Achievements" value="5" style={styles.statCard} />
+          <MetricCard label="Preferred Positions" value="3" style={styles.statCard} />
         </div>
       </section>
 
       <div style={styles.grid}>
-        <section style={styles.card}>
+        <SurfaceCard style={styles.card}>
           <h3 style={styles.cardTitle}>Personal Information</h3>
-          <div style={styles.row}>
-            <span style={styles.label}>Full Name</span>
-            <span style={styles.value}>{fullName}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Email</span>
-            <span style={styles.value}>{user?.email || 'Not available'}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Member Since</span>
-            <span style={styles.value}>{createdDate}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Guardian</span>
-            <span style={styles.value}>{athlete?.guardian_id || 'Not added'}</span>
-          </div>
-        </section>
+          <DetailList
+            items={[
+              { label: 'Full Name', value: fullName },
+              { label: 'Email', value: user?.email || 'Not available' },
+              { label: 'Member Since', value: createdDate },
+              { label: 'Guardian', value: athlete?.guardian_id || 'Not added' },
+            ]}
+          />
+        </SurfaceCard>
 
-        <section style={styles.card}>
-          <h3 style={styles.cardTitle}>Athlete Details</h3>
-          <div style={styles.row}>
-            <span style={styles.label}>Nationality</span>
-            <span style={styles.value}>{athlete?.nationality || 'TBD'}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Province</span>
-            <span style={styles.value}>{athlete?.province || 'TBD'}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>School</span>
-            <span style={styles.value}>{athlete?.school_id || 'Not set'}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Profile Visibility</span>
-            <span style={styles.value}>{athlete?.profile_visibility || 'Private'}</span>
-          </div>
-        </section>
+        <SurfaceCard style={styles.card}>
+          <h3 style={styles.cardTitle}>{roleLabel} Details</h3>
+          <DetailList
+            items={[
+              { label: 'Nationality', value: athlete?.nationality || 'TBD' },
+              { label: 'Province', value: athlete?.province || 'TBD' },
+              { label: 'School', value: athlete?.school_id || 'Not set' },
+              { label: 'Profile Visibility', value: athlete?.profile_visibility || 'Private' },
+            ]}
+          />
+        </SurfaceCard>
       </div>
 
-      <section style={styles.cardFull}>
+      <SurfaceCard style={styles.cardFull}>
         <h3 style={styles.cardTitle}>About Me</h3>
         <p style={styles.value}>
-          Keep your profile up to date with your latest training highlights, performance goals, and sports achievements. A strong profile makes it easier for coaches and scouts to find your best self.
+          Keep your profile up to date with your latest highlights, goals, and achievements. A strong profile improves trust, collaboration, and discoverability on PlayVerified.
         </p>
-      </section>
+      </SurfaceCard>
     </div>
   );
 }
@@ -363,6 +377,18 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 700,
     padding: '10px 18px',
     cursor: 'pointer',
+  },
+  saveMessage: {
+    width: '100%',
+    color: '#d1fae5',
+    fontSize: 13,
+    fontWeight: 600,
+  },
+  saveError: {
+    width: '100%',
+    color: '#fecaca',
+    fontSize: 13,
+    fontWeight: 600,
   },
   editButton: {
     borderRadius: 14,

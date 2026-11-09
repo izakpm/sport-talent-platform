@@ -4,36 +4,23 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, type CSSProperties } from 'react';
 import { theme } from '../styles/theme';
-
-const navGroups = [
-  {
-    label: 'Athlete',
-    items: [
-      { name: 'My Profile', href: '/dashboard/profile' },
-    ],
-  },
-  {
-    label: 'Dashboards',
-    items: [
-      { name: 'My Dashboard', href: '/dashboard' },
-    ],
-  },
-  {
-    label: 'Pages',
-    items: [
-      { name: 'Activities', href: '/dashboard/activities' },
-      { name: 'Connections', href: '/dashboard/connections' },
-      { name: 'Achievements', href: '/dashboard/achievements' },
-      { name: 'Sports', href: '/dashboard/sports' },
-    ],
-  },
-];
+import { fetchWithAuth } from '../lib/api';
+import {
+  getDashboardRoleConfig,
+  isDashboardPathAllowedForRole,
+  normalizeDashboardRole,
+  type DashboardRoleConfig,
+} from './core/roles';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [userName, setUserName] = useState('Athlete');
-  const [userRole, setUserRole] = useState('Athlete');
+  const [userName, setUserName] = useState('User');
+  const [userRole, setUserRole] = useState('ATHLETE');
+  const [roleConfig, setRoleConfig] = useState<DashboardRoleConfig>(
+    getDashboardRoleConfig('ATHLETE'),
+  );
+  const [userPhoto, setUserPhoto] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -47,28 +34,71 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     try {
       const data = JSON.parse(stored);
+      const normalizedRole = normalizeDashboardRole(data.role);
+      const nextRoleConfig = getDashboardRoleConfig(normalizedRole);
       const fullName = [data.first_name, data.last_name].filter(Boolean).join(' ');
-      setUserName(fullName || 'Athlete');
-      setUserRole(data.role || 'Athlete');
+      setUserName(fullName || nextRoleConfig.roleLabel);
+      setUserRole(nextRoleConfig.role);
+      setRoleConfig(nextRoleConfig);
+
+      if (!isDashboardPathAllowedForRole(pathname, normalizedRole)) {
+        router.replace(nextRoleConfig.dashboardPath);
+        return;
+      }
+
+      if (data.profile_image) {
+        setUserPhoto(data.profile_image);
+      }
+
+      // Fetch latest user data from API to get updated profile_image
+      const loadLatestUser = async () => {
+        try {
+          const res = await fetchWithAuth(`/users/${data.id}`);
+          if (!res?.ok) return;
+          const updated = await res.json();
+          if (updated.profile_image) {
+            setUserPhoto(updated.profile_image);
+          }
+          const latestRole = normalizeDashboardRole(updated.role);
+          const latestRoleConfig = getDashboardRoleConfig(latestRole);
+          setUserRole(latestRoleConfig.role);
+          setRoleConfig(latestRoleConfig);
+
+          if (!isDashboardPathAllowedForRole(pathname, latestRole)) {
+            router.replace(latestRoleConfig.dashboardPath);
+            return;
+          }
+
+          localStorage.setItem('user', JSON.stringify(updated));
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      };
+      loadLatestUser();
     } catch {
-      setUserName('Athlete');
-      setUserRole('Athlete');
+      const fallbackRoleConfig = getDashboardRoleConfig('ATHLETE');
+      setUserName(fallbackRoleConfig.roleLabel);
+      setUserRole(fallbackRoleConfig.role);
+      setRoleConfig(fallbackRoleConfig);
     }
-  }, [router]);
+  }, [pathname, router]);
 
   return (
     <div style={styles.page}>
       <aside style={styles.sidebar}>
         <div style={styles.brandRow}>
-          <img src="/creative-tim/logo-ct-dark.png" alt="VeriPlay" style={styles.brandLogo} />
-          <div>
-            <div style={styles.brandTitle}>VeriPlay Athlete</div>
-            <div style={styles.brandText}>Training dashboard</div>
-          </div>
+          <img src="/PlayVerified Logo.png" alt="PlayVerified" style={styles.brandLogo} />
         </div>
 
         <div style={styles.profileCard}>
-          <div style={styles.profileAvatar}>{userName?.charAt(0) || 'A'}</div>
+          <div
+            style={{
+              ...styles.profileAvatar,
+              ...(userPhoto ? { backgroundImage: `url(${userPhoto})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', color: 'transparent' } : {}),
+            }}
+          >
+            {!userPhoto && (userName?.charAt(0) || 'A')}
+          </div>
           <div>
             <div style={styles.profileName}>{userName}</div>
             <div style={styles.profileRole}>{userRole}</div>
@@ -76,13 +106,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         <div style={styles.navSection}>
-          {navGroups.map((group) => (
+          {roleConfig.navGroups.map((group) => (
             <div key={group.label} style={styles.navGroup}>
               <div style={styles.sectionLabel}>{group.label}</div>
               {group.items.map((item) => {
                 const active =
                   pathname === item.href ||
-                  (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+                  pathname?.startsWith(`${item.href}/`);
 
                 return (
                   <Link
@@ -117,27 +147,32 @@ const styles: Record<string, CSSProperties> = {
     width: 280,
     background: '#0b1f2e',
     color: theme.colors.white,
-    padding: 28,
+    padding: 12,
     display: 'flex',
     flexDirection: 'column',
-    gap: 24,
+    gap: 16,
   },
   brandRow: {
     display: 'flex',
+    flexDirection: 'column' as const,
     alignItems: 'center',
-    gap: 14,
-    marginBottom: 10,
+    justifyContent: 'center',
+    gap: 16,
+    marginBottom: 0,
+    padding: '0',
   },
   brandLogo: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    objectFit: 'cover',
+    width: 200,
+    height: 200,
+    borderRadius: 5,
+    objectFit: 'contain',
   },
   brandTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 700,
     color: theme.colors.white,
+    textAlign: 'center' as const,
+    letterSpacing: 0.5,
   },
   brandText: {
     fontSize: 13,
@@ -148,6 +183,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     gap: 14,
     padding: 18,
+    marginBottom: 16,
     borderRadius: 20,
     background: '#12233a',
   },

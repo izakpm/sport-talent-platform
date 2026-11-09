@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { theme } from '../styles/theme';
+import { API_URL } from '../lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,13 +17,17 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
 
+    // Log the API URL so we can debug failed fetches from the browser
+    // (helps confirm the client is calling the expected backend)
+    console.log('API_URL (client):', API_URL);
+
     if (!token) return;
 
     const processGoogleLogin = async () => {
       localStorage.setItem('token', token);
 
       try {
-        const res = await fetch('http://localhost:3000/auth/me', {
+        const res = await fetch(`${API_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -33,7 +38,7 @@ export default function LoginPage() {
         }
 
         const user = await res.json();
-        localStorage.setItem('user', JSON.stringify({ id: user.userId, email: user.email }));
+        localStorage.setItem('user', JSON.stringify({ id: user.userId, email: user.email, role: user.role }));
         router.push('/dashboard');
       } catch (err) {
         console.error('Google login failed', err);
@@ -47,20 +52,36 @@ export default function LoginPage() {
   }, [router]);
 
   const handleGoogleAuth = () => {
-    window.location.href = 'http://localhost:3000/auth/google';
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   const handleLogin = async () => {
     if (!isFormValid) return;
+    const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      const res = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      // First try direct backend URL (from env). If that fails (network/CORS),
+      // fall back to a relative path which Next dev can proxy via rewrites.
+      let res: Response | null = null;
+      try {
+        res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: normalizedEmail, password }),
+        });
+      } catch (e) {
+        console.warn('Direct API fetch failed, trying proxy /auth/login', e);
+        res = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: normalizedEmail, password }),
+        });
+      }
 
       if (!res.ok) {
+        // Surface API status for easier debugging
+        const text = await res.text().catch(() => null);
+        console.error('Login failed', { status: res.status, text });
         alert('Invalid credentials');
         return;
       }
@@ -71,12 +92,13 @@ export default function LoginPage() {
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // ✅ Go to dashboard
-      router.push('/dashboard');
+      // ✅ Go to dashboard (send SCHOOL users to the schools dashboard)
+      const destination = data.user?.role === 'SCHOOL' ? '/dashboard/schools' : '/dashboard';
+      router.push(destination);
 
-    } catch (err) {
-      console.error(err);
-      alert('Error logging in');
+    } catch (err: any) {
+      console.error('Login request error', err);
+      alert(`Network error contacting backend: ${err?.message ?? err}. Check console for details. API_URL=${API_URL}`);
     }
   };
 
@@ -95,7 +117,7 @@ export default function LoginPage() {
 
       {/* ✅ LEFT (Branding SAME AS REGISTER) */}
       <div style={styles.left}>
-        <h1 style={styles.brandName}>VeriPlay</h1>
+        <img src="/PlayVerified Logo.png" alt="PlayVerified" style={{ display: 'block', height: 200, marginBottom: 40, objectFit: 'contain', width: '100%', maxWidth: 300 }} />
 
         <h2 style={styles.tagline}>
           Where performance meets proof.
@@ -121,6 +143,11 @@ export default function LoginPage() {
             style={styles.googleButton}
             onClick={handleGoogleAuth}
           >
+            <img
+              src="/Google.png"
+              alt="Google logo"
+              style={styles.googleLogo}
+            />
             Sign in with Google
           </button>
 
@@ -296,6 +323,15 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 'bold',
     marginBottom: 16,
     cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+
+  googleLogo: {
+    width: 18,
+    height: 18,
   },
 
   linkText: {

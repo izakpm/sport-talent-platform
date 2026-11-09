@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { theme } from '../../styles/theme';
+import { API_URL } from '../../lib/api';
 
 export default function AthleteOnboarding() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function AthleteOnboarding() {
 
   // ✅ Load sports
   useEffect(() => {
-    fetch('http://localhost:3000/sports')
+    fetch(`${API_URL}/sports`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setSports(data);
@@ -29,7 +30,7 @@ export default function AthleteOnboarding() {
   useEffect(() => {
     if (!selectedSport) return;
 
-    fetch(`http://localhost:3000/positions/${selectedSport}`)
+    fetch(`${API_URL}/positions/${selectedSport}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setPositions(data);

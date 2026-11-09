@@ -5,6 +5,7 @@ import { useState, type CSSProperties } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { theme } from '../styles/theme';
+import { API_URL } from '../lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -26,13 +27,13 @@ export default function RegisterPage() {
     }
 
     const query = `?state=${encodeURIComponent(role)}`;
-    window.location.href = `http://localhost:3000/auth/google${query}`;
+    window.location.href = `${API_URL}/auth/google${query}`;
   };
 
   const register = async () => {
     if (!isFormValid) return;
 
-    const res = await fetch('http://localhost:3000/auth/register', {
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -79,7 +80,7 @@ export default function RegisterPage() {
 
       {/* ✅ LEFT (Brand) */}
       <div style={styles.left}>
-        <h1 style={styles.brandName}>VeriPlay</h1>
+        <img src="/PlayVerified Logo.png" alt="PlayVerified" style={{ display: 'block', height: 200, marginBottom: 40, objectFit: 'contain', width: '100%', maxWidth: 300 }} />
 
         <h2 style={styles.tagline}>
           Where performance meets proof.
@@ -110,6 +111,11 @@ export default function RegisterPage() {
             onClick={handleGoogleAuth}
             disabled={!isGoogleReady}
           >
+            <img
+              src="/Google.png"
+              alt="Google logo"
+              style={styles.googleLogo}
+            />
             Continue with Google
           </button>
 
@@ -344,6 +350,15 @@ const styles: Record<string, CSSProperties> = {
     color: '#111827',
     fontWeight: 'bold',
     marginBottom: 12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+
+  googleLogo: {
+    width: 18,
+    height: 18,
   },
 
   googleHint: {

@@ -8,11 +8,31 @@ title: "VeriPlay Platform MVP Specification"
 
 **Created**: 2026-05-20
 
-**Status**: Active
+**Last Updated**: 2026-07-13
+
+**Status**: Active (Phase 1-3 complete, Phase 4 near completion, Phase 5 pending)
 
 **Input**: Platform vision (`docs/specs/veriplay-platform.md`), project constitution (`.specify/memory/constitution.md`)
 
 ## User Scenarios & Testing
+
+### User Story 0 - Visual Approval Baseline (Priority: P0)
+
+Establish a single frontend visual approval page that contains all design primitives used across the app (menus, lists, buttons, inputs, cards, states, and color palette). New UI patterns must be added here first and approved before being reused in product pages.
+
+**Why this priority**: Prevents design drift and protects UX consistency while features are built quickly.
+
+**Independent Test**: A reviewer can open the visual approval page, inspect all currently used UI primitives and states, and approve or reject new primitives before they appear in production pages.
+
+**Acceptance Scenarios**:
+
+1. **Given** a developer introduces a new UI pattern, **When** the pattern is proposed, **Then** it is first added to the visual approval page with states and usage notes
+2. **Given** the visual approval page is reviewed, **When** the pattern is approved, **Then** the pattern can be consumed in feature pages
+3. **Given** a pattern is not approved, **When** review feedback is captured, **Then** feature pages keep using approved patterns only
+4. **Given** the current frontend uses menus, lists, buttons, inputs, and cards, **When** the visual approval page is rendered, **Then** those elements are represented in one navigable page
+5. **Given** the app targets mobile-first usage, **When** the visual approval page is tested at 375px width, **Then** all core primitives remain usable and readable
+
+---
 
 ### User Story 1 - Athlete & Guardian Onboarding (Priority: P1)
 
@@ -47,6 +67,24 @@ Enable coaches to create discoverable profiles showcasing their experience, team
 3. **Given** an organisation searches for "rugby coaches," **When** filters are applied (sport=rugby, position=scrum-half), **Then** matching coaches are returned ranked by verification status
 4. **Given** a coach's profile is viewed by an organisation, **When** the organisation clicks "connect," **Then** a connection request is sent to the coach
 5. **Given** a coach receives a connection request, **When** they approve it, **Then** the organisation can view their full team history and credentials
+
+---
+
+### User Story 2A - Frontend Profile Layout Foundations (Priority: P1)
+
+Create baseline frontend layouts for athlete, coach, and school profiles without backend dependencies. If pages already exist, verify visual correctness and update structure to match approved UX patterns.
+
+**Why this priority**: Gives immediate product visibility and stabilizes UI direction before backend integration.
+
+**Independent Test**: A reviewer can open athlete, coach, and school profile/dashboard shells and confirm that layout, spacing, component usage, and navigation follow the approved visual baseline.
+
+**Acceptance Scenarios**:
+
+1. **Given** existing athlete, coach, or school pages are present, **When** a UI audit is run, **Then** each page is marked as pass/fix-needed against the visual approval baseline
+2. **Given** profile shell pages are rendered, **When** backend APIs are unavailable, **Then** pages still load with placeholder or mock content and no runtime failure
+3. **Given** role-specific shell pages are complete, **When** a reviewer compares them to the approved visual primitives, **Then** only approved components and styles are used
+4. **Given** a profile shell is viewed on mobile and desktop, **When** responsive checks are run, **Then** nav, cards, lists, and forms remain usable and readable
+5. **Given** a new profile section is introduced, **When** it requires a new UI primitive, **Then** that primitive is first added to the visual approval page before rollout
 
 ---
 
@@ -99,6 +137,9 @@ Enable scouts, coaches, and organisations to discover athletes and coaches based
 
 ### Functional Requirements
 
+- **FR-000**: System MUST first provide a single UX test and visual approval route that showcases all frontend UI primitives and states currently used or planned for use
+- **FR-000A**: System MUST require that any new UI primitive be added and approved on the visual approval route before use in feature pages
+- **FR-000B**: System MUST support a post-approval update process for global theme tokens/styles only after visual baseline approval is complete
 - **FR-001**: System MUST support role-based user registration (athlete, coach, guardian, organisation, scout) with role-specific onboarding flows
 - **FR-002**: System MUST allow athletes to create and manage structured digital profiles including personal details, sports, positions, and privacy settings
 - **FR-003**: System MUST enforce guardian-mediated workflows for minors: athletes under 18 MUST link to a guardian before any external visibility or verification
@@ -111,6 +152,8 @@ Enable scouts, coaches, and organisations to discover athletes and coaches based
 - **FR-010**: System MUST maintain an audit trail for all verification requests, approvals, rejections, and verifier identity
 - **FR-011**: System MUST support explicit connections between athletes and coaches, athletes and guardians, athletes and organisations, and coaches and organisations
 - **FR-012**: System MUST log all security events related to authentication, authorisation, and guardian workflows for compliance
+- **FR-013**: System MUST provide frontend-only baseline layouts for athlete, coach, and school profile experiences before backend integration
+- **FR-014**: System MUST verify and document correctness of existing profile pages before creating replacement pages
 
 ### Key Entities
 
@@ -132,6 +175,9 @@ Enable scouts, coaches, and organisations to discover athletes and coaches based
 
 ### Measurable Outcomes
 
+- **SC-000**: The visual approval page includes 100% of currently used UI primitives (menus, lists, buttons, inputs, cards, badges, color palette, and key states)
+- **SC-000A**: 100% of newly introduced UI primitives are reviewed on the visual approval page before appearing in role pages
+- **SC-000B**: Global theme updates are applied only after explicit visual approval sign-off is recorded
 - **SC-001**: An athlete can complete onboarding (role selection, personal details, sport/position, guardian link) in under 3 minutes
 - **SC-002**: A minor athlete's profile is not discoverable by any external user until a guardian has approved the link; verified activities are logged in the audit trail
 - **SC-003**: A coach can create a profile and be discoverable by sport and position within their first session; discovery returns results within 1 second
@@ -141,6 +187,7 @@ Enable scouts, coaches, and organisations to discover athletes and coaches based
 - **SC-007**: All authentication and role-based access control decisions are logged; no athlete or minor data is exposed outside role and guardian consent boundaries
 - **SC-008**: Platform is mobile-responsive and functions on 4G and slower networks with graceful degradation for slow uploads/downloads
 - **SC-009**: 95% of user journeys in P1 and P2 stories complete without errors (smoke test pass rate)
+- **SC-010**: Athlete, coach, and school profile shell pages render without backend dependency errors and pass responsive checks at mobile and desktop breakpoints
 
 ---
 
@@ -155,3 +202,28 @@ Enable scouts, coaches, and organisations to discover athletes and coaches based
 - Email notifications for guardian approval and verification requests are assumed; SMS is out of scope for MVP
 - No payment or subscription logic is included in MVP
 - User authentication (signup/login) via email and password is in place; OAuth/SSO is out of scope for MVP
+- Existing frontend route `frontend/app/dev/theme-preview/page.tsx` can be extended as the required visual approval page instead of creating a duplicate route
+- School profile experience is treated as the organisation-facing MVP surface for frontend layout purposes
+
+---
+
+## Implementation Snapshot (2026-07-13)
+
+The following implementation outcomes were completed and verified in the current sprint window:
+
+- Dashboard shell is now role-aware and config-driven (athlete, coach, school) with role-route guarding in `frontend/app/dashboard/layout.tsx` and `frontend/app/dashboard/core/roles.ts`
+- Persona dashboard homes are aligned to role namespaces:
+	- Athlete: `/dashboard/athlete`
+	- Coach: `/dashboard/coaches`
+	- School: `/dashboard/schools`
+- Athlete pages were consolidated under `frontend/app/dashboard/athlete/` (sports, activities, matches, achievements, calendar, connections)
+- Coach menu and shell content were standardized to approved pages: Teams, Calander, Activities, Matches, Approvals, Achievements
+- School menu and shell content were standardized to approved pages: Coaches, Teams, Fixtures, Logs, Achievements
+- Profile page headings and detail labels are role-aware (not hardcoded to athlete), driven by role value from stored user data
+- Profile photo upload reliability was improved:
+	- Backend request body size increased for base64 profile image payloads in `backend/src/main.ts`
+	- Frontend save flow now shows explicit success/error feedback in `frontend/app/dashboard/profile/page.tsx`
+- Legacy route compatibility was added:
+	- `/dashboard/athletes` and nested legacy athlete paths redirect to `/dashboard/athlete`
+	- `/activities` and `/sports` redirect to athlete dashboard equivalents
+- Development startup reliability was standardized via `.vscode/tasks.json` with fixed ports and health-check workflow (`Dev: Start Full Stack`, `Dev: Health Check`, `Dev: Stop Full Stack`)

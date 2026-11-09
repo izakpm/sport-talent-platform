@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param, Delete, Put } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 
 @Controller('activities')
@@ -20,5 +20,19 @@ export class ActivitiesController {
       payload.activity_type = body.activity_type;
     }
     return this.service.create(payload);
+  }
+
+  @Put(':id')
+  updateActivity(@Param('id') id: string, @Body() body: any) {
+    const payload = { ...body };
+    if (body.start_date && !body.start_time) {
+      payload.start_time = new Date(body.start_date);
+    }
+    return this.service.update(id, payload);
+  }
+
+  @Delete(':id')
+  deleteActivity(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

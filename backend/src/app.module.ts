@@ -15,6 +15,7 @@ import { SportsModule } from './sports/sports.module';
 import { PositionsModule } from './positions/positions.module';
 import { AuthModule } from './auth/auth.module';
 import { DiscoveryModule } from './discovery/discovery.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -34,8 +35,10 @@ import { DiscoveryModule } from './discovery/discovery.module';
       synchronize: false,
 
       ssl: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
+        ...(process.env.DB_SSL_CA ? { ca: process.env.DB_SSL_CA.replace(/\\n/g, '\n') } : {}),
       },
+      extra: { max: 5, idleTimeoutMillis: 10000, connectionTimeoutMillis: 10000 },
     }),
 
     // ✅ Register your modules here
@@ -59,7 +62,7 @@ import { DiscoveryModule } from './discovery/discovery.module';
 
     AuthModule,
   ],
-  controllers: [TrustController],
+  controllers: [TrustController, HealthController],
   providers: [TrustService],
 })
 export class AppModule {}

@@ -1,6 +1,30 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## UX Visual Governance
+
+All frontend visual primitives must first be implemented and reviewed in `app/dev/theme-preview/page.tsx` before they are added to feature routes.
+
+Required flow:
+
+1. Add or update visual primitive in `app/dev/theme-preview/page.tsx`
+2. Review consistency, accessibility, and responsive behavior
+3. Mark approval in the visual approval log section
+4. Only then reuse the primitive in feature pages
+
 ## Getting Started
+
+## Standard Workspace Startup (Recommended)
+
+From the workspace root, use VS Code tasks to avoid port mismatches:
+
+1. Run task: `Dev: Start Full Stack`
+2. Optional verify: run task `Dev: Health Check`
+3. Stop both services with task `Dev: Stop Full Stack`
+
+Expected ports:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:3001`
 
 First, run the development server:
 
