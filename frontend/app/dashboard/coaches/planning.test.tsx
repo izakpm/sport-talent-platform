@@ -6,7 +6,12 @@ import {
   within,
 } from "@testing-library/react";
 import CoachWorkspace from "./CoachWorkspace";
-import { calendarDays, recurrenceCount, shiftMonth } from "./planning";
+import {
+  calendarDays,
+  recurrenceCount,
+  shiftMonth,
+  todayDate,
+} from "./planning";
 import { fetchWithAuth } from "../../lib/api";
 jest.mock("../../lib/api", () => ({ fetchWithAuth: jest.fn() }));
 const request = jest.mocked(fetchWithAuth);
@@ -42,6 +47,55 @@ it("lays out leap February Monday-first and crosses year boundaries", () => {
   expect(days.length % 7).toBe(0);
   expect(shiftMonth("2026-12", 1)).toBe("2027-01");
   expect(recurrenceCount("2026-11-01", "2026-11-30", [1, 3])).toBe(9);
+});
+it("filters both schedule views and defaults new sessions to the selected team", async () => {
+  const secondTeam = {
+    ...team,
+    id: "team-2",
+    name: "Second XV",
+    age_group: "U16",
+  };
+  const sessions = [team, secondTeam].map((t, i) => ({
+    id: `session-${i}`,
+    team_id: t.id,
+    team_name: t.name,
+    title: `${t.name} practice`,
+    kind: "practice",
+    date: todayDate(),
+    start_time: "16:00",
+    end_time: "17:30",
+    venue: "Main field",
+    notes: "",
+  }));
+  request.mockImplementation(
+    async (path) =>
+      ({
+        ok: true,
+        json: async () =>
+          path.endsWith("/teams") ? [team, secondTeam] : sessions,
+      }) as Response,
+  );
+  render(<CoachWorkspace mode="schedule" />);
+  const filter = await screen.findByRole("combobox", {
+    name: "Show schedule for",
+  });
+  expect(screen.getAllByText("First XV practice").length).toBeGreaterThan(0);
+  fireEvent.change(filter, { target: { value: secondTeam.id } });
+  expect(screen.queryByText("First XV practice")).not.toBeInTheDocument();
+  expect(screen.getAllByText("Second XV practice").length).toBeGreaterThan(0);
+  fireEvent.click(screen.getByRole("button", { name: "Agenda" }));
+  expect(screen.queryByText("First XV practice")).not.toBeInTheDocument();
+  expect(screen.getByText("Second XV practice")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Add session" }));
+  expect(within(screen.getByRole("dialog")).getByLabelText("Team")).toHaveValue(
+    secondTeam.id,
+  );
+  fireEvent.click(
+    within(screen.getByRole("dialog")).getByRole("button", { name: "Cancel" }),
+  );
+  fireEvent.change(filter, { target: { value: "all" } });
+  expect(screen.getByText("First XV practice")).toBeInTheDocument();
+  expect(screen.getByText("Second XV practice")).toBeInTheDocument();
 });
 it("creates a team and refreshes the persisted team list", async () => {
   let saved = false;

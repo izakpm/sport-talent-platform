@@ -527,6 +527,29 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                   </div>
                 ) : (
                   <>
+                    <section
+                      className={styles.teamFilterBar}
+                      aria-label="Team schedule filter"
+                    >
+                      <label htmlFor="schedule-team">Show schedule for</label>
+                      <select
+                        id="schedule-team"
+                        value={teamFilter}
+                        onChange={(e) => setTeamFilter(e.target.value)}
+                      >
+                        <option value="all">All teams</option>
+                        {teams.map((team) => (
+                          <option key={team.id} value={team.id}>
+                            {team.name} · {team.age_group}
+                          </option>
+                        ))}
+                      </select>
+                      <p role="status">
+                        {teamFilter === "all"
+                          ? "Showing sessions for all your teams."
+                          : `Showing only ${teams.find((t) => t.id === teamFilter)?.name || "this team"}’s sessions.`}
+                      </p>
+                    </section>
                     <div className={styles.toolbar}>
                       <div className={styles.monthControls}>
                         <button
@@ -555,18 +578,6 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                         </button>
                       </div>
                       <div className={styles.viewControls}>
-                        <select
-                          aria-label="Filter by team"
-                          value={teamFilter}
-                          onChange={(e) => setTeamFilter(e.target.value)}
-                        >
-                          <option value="all">All teams</option>
-                          {teams.map((t) => (
-                            <option key={t.id} value={t.id}>
-                              {t.name}
-                            </option>
-                          ))}
-                        </select>
                         <div className={styles.viewSwitch}>
                           <button
                             aria-pressed={view === "month"}

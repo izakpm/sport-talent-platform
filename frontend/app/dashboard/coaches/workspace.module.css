@@ -481,15 +481,6 @@
   padding: 0 12px;
   margin-left: 8px;
 }
-.viewControls select {
-  max-width: 220px;
-  padding: 9px 12px;
-  border: 1px solid #dce3d9;
-  background: white;
-  border-radius: 7px;
-  font: inherit;
-  font-size: 12px;
-}
 .viewSwitch {
   display: flex;
   border: 1px solid #dce3d9;
@@ -1093,9 +1084,7 @@
     width: 100%;
     justify-content: space-between;
   }
-  .viewControls select {
-    max-width: 200px;
-  }
+
   .viewSwitch {
     display: none;
   }
@@ -1177,5 +1166,53 @@
     text-align: left;
     padding: 6px 0;
     margin-bottom: 5px;
+  }
+}
+
+.teamFilterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid #d5dfd1;
+  border-radius: 10px;
+  background: #edf3e9;
+}
+.teamFilterBar label {
+  font-size: 13px;
+  font-weight: 650;
+  color: #34543c;
+}
+.teamFilterBar select {
+  min-height: 44px;
+  width: min(340px, 100%);
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #a8bba0;
+  border-radius: 7px;
+  background: white;
+  color: #23432b;
+  font: inherit;
+}
+.teamFilterBar select:focus-visible {
+  outline: 3px solid #b9922b;
+  outline-offset: 2px;
+}
+.teamFilterBar p {
+  margin: 0;
+  color: #536c4b;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .teamFilterBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    padding: 16px;
+  }
+  .teamFilterBar select {
+    width: 100%;
   }
 }
