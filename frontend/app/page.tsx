@@ -223,35 +223,39 @@ export default function Home() {
             <div className={audience.copy}>
               <p className={audience.label}>SCHOOLS &amp; SPORTING CLUBS</p>
               <h2 id="organisations-title">
-                Your whole sporting
+                Give every team
                 <br />
-                programme, together.
+                the support to thrive.
               </h2>
               <p className={audience.intro}>
-                From the first team to the youngest age group, give your sports
-                staff a shared view of who is playing, who is coaching and what
-                comes next.
+                Your school or club is where sporting journeys take shape. We’re
+                building PlayVerified to bring fixtures, coaches and competition
+                records together, so your staff can spend less time chasing
+                updates and more time supporting every team.
               </p>
               <ul className={audience.benefits}>
                 <li>
-                  <h3>Coordinate fixtures</h3>
+                  <h3>Get everyone working from the same plan</h3>
                   <p>
-                    Bring teams, opponents, venues and match times into one
-                    programme.
+                    Bring opponents, venues and match times into one fixture
+                    programme. Give your staff a clear view of what’s coming up
+                    across teams and age groups.
                   </p>
                 </li>
                 <li>
-                  <h3>Organise your coaches</h3>
+                  <h3>Give your coaches clarity</h3>
                   <p>
-                    Make team responsibilities clear across your coaching staff
-                    and age groups.
+                    Make it clear who is responsible for each team. Keep
+                    coaching assignments together, so your sporting programme is
+                    easier to coordinate as staff and squads change.
                   </p>
                 </li>
                 <li>
-                  <h3>Keep track of the season</h3>
+                  <h3>See the whole season</h3>
                   <p>
-                    Follow results and competition logs alongside the fixtures
-                    that shape them.
+                    Bring results and competition logs alongside your fixtures.
+                    Follow each team’s season and give your sports staff the
+                    context to plan what comes next.
                   </p>
                 </li>
               </ul>
