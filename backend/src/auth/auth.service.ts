@@ -41,13 +41,15 @@ export class AuthService {
   async register(data: any) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    return this.usersService.create({
+    const user = await this.usersService.create({
       email: data.email,
       password_hash: hashedPassword,
       role: data.role,
       first_name: data.first_name,
       last_name: data.last_name,
     });
+    const { password_hash, ...publicUser } = user;
+    return publicUser;
   }
 
   async findOrCreateGoogleUser(

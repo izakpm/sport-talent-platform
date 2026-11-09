@@ -1,39 +1,86 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Patch } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+type AccountRequest = { user: { userId: string } };
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly service: UsersService) {}
-
-  // ✅ CREATE USER
-  @Post()
-  createUser(@Body() body: any) {
-    return this.service.create({
-      email: body.email,
-      password_hash: body.password, // temporary (we’ll fix later)
-      role: body.role,
-      first_name: body.first_name,
-      last_name: body.last_name,
-      phone: body.phone,
-      profile_image: body.profile_image,
-    });
+  private ownAccount(req: AccountRequest, id: string) {
+    if (req.user.userId !== id)
+      throw new ForbiddenException(
+        'You can only access your own account details.',
+      );
   }
-
-  // ✅ GET USER BY ID
+  private account(user: any) {
+    if (!user) throw new NotFoundException('Account not found.');
+    const { password_hash, ...safe } = user;
+    return safe;
+  }
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  async findOne(
+    @Req() req: AccountRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    this.ownAccount(req, id);
+    return this.account(await this.service.findOne(id));
   }
-
-  // ✅ GET USERS BY ROLE
   @Get('role/:role')
-  findByRole(@Param('role') role: string) {
-    return this.service.findByRole(role);
+  async findByRole(@Param('role') role: string) {
+    const users = await this.service.findByRole(role);
+    return users.map(({ id, first_name, last_name, role, profile_image }) => ({
+      id,
+      first_name,
+      last_name,
+      role,
+      profile_image,
+    }));
   }
-  
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body: any) {
-    return this.service.update(id, body);
+  async update(
+    @Req() req: AccountRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
+  ) {
+    this.ownAccount(req, id);
+    const allowed = new Set([
+      'first_name',
+      'last_name',
+      'phone',
+      'profile_image',
+    ]);
+    if (
+      !body ||
+      typeof body !== 'object' ||
+      Array.isArray(body) ||
+      !Object.keys(body).length ||
+      Object.keys(body).some((key) => !allowed.has(key))
+    ) {
+      throw new BadRequestException(
+        'Only profile details can be changed here.',
+      );
+    }
+    for (const [key, value] of Object.entries(body)) {
+      if (
+        value !== null &&
+        (typeof value !== 'string' ||
+          value.length > (key === 'profile_image' ? 4500000 : 160))
+      )
+        throw new BadRequestException('Invalid profile details.');
+    }
+    return this.account(await this.service.update(id, body));
   }
 }

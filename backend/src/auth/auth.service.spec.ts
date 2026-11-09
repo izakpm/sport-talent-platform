@@ -14,6 +14,15 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
+  it('hashes registered passwords without returning the hash', async () => {
+    users.create.mockImplementation(async data => ({ id: 'new-user', ...data }));
+    const user = await service.register({ email: 'test@example.com', password: 'test-password', role: 'COACH' });
+    expect(users.create.mock.calls[0][0].password_hash).toMatch(/^\$2/);
+    expect(user).not.toHaveProperty('password_hash');
+    expect(user).not.toHaveProperty('password');
+    expect(user.email).toBe('test@example.com');
+  });
+
   it.each(['ATHLETE', 'COACH', 'GUARDIAN', 'ORG', 'SCHOOL'])('creates a new %s account', async role => {
     users.findByEmail.mockResolvedValue(null);
     users.create.mockImplementation(async data => ({ id: 'new-user', ...data }));

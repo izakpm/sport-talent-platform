@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
+import Link from 'next/link';
 
 import { useRouter } from 'next/navigation';
 import { theme } from '../styles/theme';
@@ -15,6 +16,10 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  useEffect(() => {
+    const selected = new URLSearchParams(window.location.search).get('role');
+    if (selected && ['ATHLETE', 'COACH', 'GUARDIAN', 'SCHOOL'].includes(selected)) setRole(selected);
+  }, []);
 
   const isFormValid =
     role && email && password && firstName && lastName;
@@ -100,6 +105,7 @@ export default function RegisterPage() {
       <div style={styles.right}>
         <div style={styles.card}>
           <h2 style={styles.title}>Create your account</h2>
+          <p style={{ fontSize: 12, lineHeight: 1.7, color: '#cbd5e1', marginBottom: 18 }}>Read our <Link href="/privacy" style={{ color: '#fff', textDecoration: 'underline' }}>Privacy policy</Link> to understand how we handle your account and sporting information.</p>
 
           <button
             type="button"
