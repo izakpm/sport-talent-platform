@@ -20,6 +20,34 @@ type CoachRequest = { user: { userId: string } };
 @UseGuards(JwtAuthGuard)
 export class PlanningController {
   constructor(private readonly service: PlanningService) {}
+  @Get('teams/:teamId/players') roster(
+    @Req() req: CoachRequest,
+    @Param('teamId', ParseUUIDPipe) team: string,
+  ) {
+    return this.service.roster(req.user.userId, team);
+  }
+  @Post('teams/:teamId/players') addPlayer(
+    @Req() req: CoachRequest,
+    @Param('teamId', ParseUUIDPipe) team: string,
+    @Body() body: any,
+  ) {
+    return this.service.savePlayer(req.user.userId, team, body);
+  }
+  @Patch('teams/:teamId/players/:id') editPlayer(
+    @Req() req: CoachRequest,
+    @Param('teamId', ParseUUIDPipe) team: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
+  ) {
+    return this.service.savePlayer(req.user.userId, team, body, id);
+  }
+  @Delete('teams/:teamId/players/:id') removePlayer(
+    @Req() req: CoachRequest,
+    @Param('teamId', ParseUUIDPipe) team: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.service.removePlayer(req.user.userId, team, id);
+  }
   @Get('teams') teams(@Req() req: CoachRequest) {
     return this.service.teams(req.user.userId);
   }

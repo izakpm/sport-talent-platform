@@ -7,6 +7,7 @@ export type Team = {
   venue: string;
   sport: string;
   timezone: string;
+  player_count?: number;
 };
 export type Session = {
   id: string;

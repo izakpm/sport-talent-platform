@@ -407,6 +407,7 @@
 }
 .teamStats {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: baseline;
   margin: 28px 0 22px;
@@ -426,6 +427,9 @@
   font-weight: 600;
   color: #3d6547;
   font-size: 12px;
+}
+.teamCard > .primary {
+  margin-bottom: 16px;
 }
 .newTeamCard {
   min-height: 285px;

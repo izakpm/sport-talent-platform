@@ -90,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Link href="/dashboard/coaches" className={coach.brand}><span aria-hidden="true">✓</span>PlayVerified</Link>
       <p className={coach.label}>COACH WORKSPACE</p>
       <nav className={coach.nav} aria-label="Coach navigation">{roleConfig.navGroups[0].items.map((item, index) => <Link key={item.href} href={item.href}
-        aria-current={pathname === item.href ? 'page' : undefined}><span aria-hidden="true">{['▦', '◉', '▤'][index]}</span><span>{item.name}</span></Link>)}</nav>
+        aria-current={pathname === item.href || (index !== 0 && pathname.startsWith(`${item.href}/`)) ? 'page' : undefined}><span aria-hidden="true">{['▦', '◉', '▤'][index]}</span><span>{item.name}</span></Link>)}</nav>
       <div className={coach.helper}><strong>Small steps. Strong teams.</strong><p>Create your squad.<br />Plan your month.<br />Make every session count.</p></div>
       <div className={coach.account}><span className={coach.avatar}>{userName.charAt(0)}</span><Link href="/dashboard/profile"><strong>{userName}</strong><small>Coach · View profile ↗</small></Link></div>
       <button className={coach.logout} onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); router.push('/login'); }}>Sign out ↗</button>

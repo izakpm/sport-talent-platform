@@ -33,7 +33,7 @@ const sessionStyle = (kind: string) =>
     "--session-soft": typeOf(kind).soft,
   }) as CSSProperties;
 
-function Modal({
+export function Modal({
   title,
   description,
   close,
@@ -474,12 +474,20 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                               ⌖ {team.venue || "Add a home venue"}
                             </p>
                             <div className={styles.teamStats}>
+                              <strong>{team.player_count ?? 0}</strong>
+                              <span>active players ·</span>
                               <strong>{planned.length}</strong>
                               <span>
                                 sessions in{" "}
                                 {displayDate(`${month}-01`, { month: "long" })}
                               </span>
                             </div>
+                            <Link
+                              className={styles.primary}
+                              href={`/dashboard/coaches/teams/${team.id}`}
+                            >
+                              Manage players →
+                            </Link>
                             <Link
                               className={styles.teamLink}
                               href={`/dashboard/coaches/schedule?team=${team.id}`}

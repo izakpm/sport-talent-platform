@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { randomUUID } from 'node:crypto';
+import { playerInput } from './roster.validation';
 import {
   eventInput,
   occurrenceDates,
@@ -33,7 +34,7 @@ export class PlanningService {
   async teams(userId: string) {
     await this.authorize(userId);
     return this.db.query(
-      'SELECT * FROM coach_teams WHERE coach_id=$1 ORDER BY created_at, id',
+      `SELECT t.*, (SELECT count(*)::int FROM coach_team_players p WHERE p.team_id=t.id AND p.status='active') AS player_count FROM coach_teams t WHERE coach_id=$1 ORDER BY created_at, id`,
       [userId],
     );
   }
@@ -56,6 +57,71 @@ export class PlanningService {
         );
     if (!rows[0]) throw new NotFoundException('Team not found.');
     return rows[0];
+  }
+  async roster(userId: string, teamId: string) {
+    await this.authorize(userId);
+    const [team] = await this.db.query(
+      'SELECT * FROM coach_teams WHERE id=$1 AND coach_id=$2',
+      [teamId, userId],
+    );
+    if (!team) throw new NotFoundException('Team not found.');
+    const players = await this.db.query(
+      `SELECT * FROM coach_team_players WHERE team_id=$1 ORDER BY status,shirt_number NULLS LAST,lower(last_name),lower(first_name),id`,
+      [teamId],
+    );
+    return { team, players };
+  }
+  async savePlayer(
+    userId: string,
+    teamId: string,
+    body: any,
+    playerId?: string,
+  ) {
+    await this.authorize(userId);
+    const data = playerInput(body);
+    return this.db.transaction(async (tx) => {
+      await this.ownedTeam(tx, userId, teamId);
+      if (playerId) {
+        const [player] = await tx.query(
+          'SELECT id FROM coach_team_players WHERE id=$1 AND team_id=$2',
+          [playerId, teamId],
+        );
+        if (!player) throw new NotFoundException('Player not found.');
+      }
+      if (data[3] !== null && data[5] === 'active') {
+        const conflict = await tx.query(
+          `SELECT id FROM coach_team_players WHERE team_id=$1 AND shirt_number=$2 AND status='active' AND ($3::uuid IS NULL OR id<>$3::uuid)`,
+          [teamId, data[3], playerId || null],
+        );
+        if (conflict.length)
+          throw new ConflictException(
+            'That shirt number is already assigned to an active player in this team.',
+          );
+      }
+      const values = [teamId, ...data];
+      const [player] = playerId
+        ? await tx.query(
+            `WITH changed AS (UPDATE coach_team_players SET first_name=$2,last_name=$3,position=$4,shirt_number=$5,is_captain=$6,status=$7 WHERE team_id=$1 AND id=$8 RETURNING *) SELECT * FROM changed`,
+            [...values, playerId],
+          )
+        : await tx.query(
+            `INSERT INTO coach_team_players(team_id,first_name,last_name,position,shirt_number,is_captain,status) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+            values,
+          );
+      return player;
+    });
+  }
+  async removePlayer(userId: string, teamId: string, playerId: string) {
+    await this.authorize(userId);
+    return this.db.transaction(async (tx) => {
+      await this.ownedTeam(tx, userId, teamId);
+      const rows = await tx.query(
+        'WITH removed AS (DELETE FROM coach_team_players WHERE id=$1 AND team_id=$2 RETURNING id) SELECT * FROM removed',
+        [playerId, teamId],
+      );
+      if (!rows.length) throw new NotFoundException('Player not found.');
+      return { deleted: true };
+    });
   }
   async events(userId: string, from: string, to: string) {
     await this.authorize(userId);
