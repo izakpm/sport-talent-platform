@@ -25,6 +25,12 @@ describe('Vercel API routing', () => {
     process.env.VERCEL = '1';
     await expect(import('./next.config')).rejects.toThrow('BACKEND_URL');
   });
+  it('starts custom-domain Google sign-in on the registered callback origin without redirecting the callback itself', async () => {
+    const config = (await import('./next.config')).default;
+    const redirects = await config.redirects!();
+    expect(redirects).toContainEqual({ source: '/api/auth/google', has: [{ type: 'host', value: 'playverified.app' }], destination: 'https://playverified.vercel.app/api/auth/google', permanent: false });
+    expect(redirects).not.toContainEqual(expect.objectContaining({ source: '/api/auth/google/callback' }));
+  });
 
   it.each(['http://localhost:3001', 'https://api.example.com/path', 'https://user:pass@api.example.com'])('rejects invalid deployment origin %s', async (origin) => {
     process.env.VERCEL = '1';

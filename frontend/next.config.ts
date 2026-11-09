@@ -16,6 +16,10 @@ if (process.env.VERCEL && (backendOrigin.protocol !== 'https:' || ['localhost', 
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      // Start OAuth on the same origin as Google's registered callback so the
+      // session/state cookie survives the round trip. The API's FRONTEND_URL
+      // sends successful logins back to the custom domain.
+      { source: '/api/auth/google', has: [{ type: 'host', value: 'playverified.app' }], destination: 'https://playverified.vercel.app/api/auth/google', permanent: false },
       { source: '/activities', destination: '/dashboard/athlete/activities', permanent: false },
       { source: '/sports', destination: '/dashboard/athlete/sports', permanent: false },
       { source: '/dashboard/athletes', destination: '/dashboard/athlete', permanent: false },
