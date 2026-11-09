@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +59,7 @@ export class AuthService {
     let user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      const randomPassword = Math.random().toString(36).slice(2);
+      const randomPassword = randomBytes(32).toString('hex');
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
       user = await this.usersService.create({

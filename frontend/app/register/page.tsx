@@ -26,7 +26,7 @@ export default function RegisterPage() {
       return;
     }
 
-    const query = `?state=${encodeURIComponent(role)}`;
+    const query = `?role=${encodeURIComponent(role)}`;
     window.location.href = `${API_URL}/auth/google${query}`;
   };
 
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
           {!isGoogleReady && (
             <p style={styles.googleHint}>
-              Select a role above before signing up with Google.
+              Select your role below before signing up with Google.
             </p>
           )}
 

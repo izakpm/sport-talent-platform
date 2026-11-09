@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile } from 'passport-google-oauth20';
 import { AuthService } from './auth.service';
 import type { Request } from 'express';
 import { deploymentConfig } from '../deployment-config';
 
-const ALLOWED_ROLES = new Set(['ATHLETE', 'COACH', 'SCHOOL']);
+const ALLOWED_ROLES = new Set(['ATHLETE', 'COACH', 'SCHOOL', 'GUARDIAN', 'ORG']);
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -29,7 +29,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     refreshToken: string,
     profile: Profile,
   ) {
-    const email = profile.emails?.[0]?.value;
+    const googleEmail = profile.emails?.[0];
+    const email = googleEmail?.value?.trim().toLowerCase();
     const firstName = profile.name?.givenName || '';
     const lastName = profile.name?.familyName || '';
     const sessionRole =
@@ -47,8 +48,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       delete session.oauthRole;
     }
 
-    if (!email) {
-      throw new Error('Google account did not provide an email address.');
+    if (!email || googleEmail?.verified !== true) {
+      throw new UnauthorizedException('A verified Google email address is required.');
     }
 
     return this.authService.findOrCreateGoogleUser(

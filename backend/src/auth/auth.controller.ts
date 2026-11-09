@@ -40,7 +40,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const result = await this.service.loginWithUser(req.user as any);
-    const redirectUrl = `${deploymentConfig().frontendUrl}/login?token=${encodeURIComponent(
+    res.setHeader('Cache-Control', 'no-store');
+    const redirectUrl = `${deploymentConfig().frontendUrl}/login#token=${encodeURIComponent(
       result.access_token,
     )}`;
     return res.redirect(redirectUrl);

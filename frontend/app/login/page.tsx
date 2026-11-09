@@ -10,22 +10,20 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [googleError, setGoogleError] = useState('');
 
   const isFormValid = email && password;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-
-    // Log the API URL so we can debug failed fetches from the browser
-    // (helps confirm the client is calling the expected backend)
-    console.log('API_URL (client):', API_URL);
+    const token = new URLSearchParams(window.location.hash.slice(1)).get('token') || params.get('token');
 
     if (!token) return;
+    // Remove credentials before any further navigation or requests.
+    params.delete('token');
+    window.history.replaceState({}, '', `${window.location.pathname}${params.size ? `?${params}` : ''}`);
 
     const processGoogleLogin = async () => {
-      localStorage.setItem('token', token);
-
       try {
         const res = await fetch(`${API_URL}/auth/me`, {
           headers: {
@@ -38,13 +36,13 @@ export default function LoginPage() {
         }
 
         const user = await res.json();
+        localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify({ id: user.userId, email: user.email, role: user.role }));
-        router.push('/dashboard');
+        router.replace('/dashboard');
       } catch (err) {
-        console.error('Google login failed', err);
-      } finally {
-        params.delete('token');
-        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setGoogleError('Google sign-in could not be completed. Please try again.');
       }
     };
 
@@ -137,6 +135,7 @@ export default function LoginPage() {
       <div style={styles.right}>
         <div style={styles.card}>
           <h2 style={styles.title}>Welcome back</h2>
+          {googleError && <p role="alert">{googleError}</p>}
 
           <button
             type="button"

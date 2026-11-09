@@ -15,8 +15,8 @@ export class GoogleAuthGuard extends AuthGuard('google') {
       }
     >();
 
-    const requestedRole = req.query?.state;
-    if (typeof requestedRole === 'string' && ['ATHLETE', 'COACH', 'SCHOOL'].includes(requestedRole) && req.session) {
+    const requestedRole = req.query?.role;
+    if (typeof requestedRole === 'string' && ['ATHLETE', 'COACH', 'SCHOOL', 'GUARDIAN', 'ORG'].includes(requestedRole) && req.session) {
       req.session.oauthRole = requestedRole;
     }
 
