@@ -59,9 +59,11 @@ export default function Home() {
                 meets <span>proof.</span>
               </h1>
               <p className={styles.heroDescription}>
-                For the players putting in the work.
-                <br />
-                And the coaches who help them get there.
+                A home for athletes and coaches to build sporting profiles backed
+                by verified performance. Bring training and sporting activities
+                together, with team management and scheduling available now.
+                We’re developing profile verification and tools for schools and
+                sporting clubs to organise fixtures, coaches and competition logs.
               </p>
               <div className={styles.heroActions}>
                 <Link className={styles.primary} href="/register">
