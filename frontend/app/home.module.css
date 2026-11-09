@@ -209,6 +209,27 @@
 .heroBottom a span {
   margin-left: 25px;
 }
+.coachBand {
+  background: #0b1f2e;
+  color: #fff;
+}
+.coachBand .sectionLabel {
+  color: #ffca05;
+}
+.coachBand .intro {
+  color: #d3dfe6;
+}
+.coachBand .features p,
+.coachBand .demoCaption span {
+  color: #bbcdd8;
+}
+.coachBand .features > div {
+  border-bottom-color: #ffffff26;
+}
+.coachBand .features > div > span,
+.coachBand .demoNote {
+  color: #adc3d0;
+}
 .coaching {
   max-width: 1370px;
   margin: auto;

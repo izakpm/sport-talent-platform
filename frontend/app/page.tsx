@@ -138,69 +138,71 @@ export default function Home() {
             <AthletePreview />
           </div>
         </section>
-        <section
-          id="how-it-works"
-          className={styles.coaching}
-          aria-labelledby="coaching-title"
-        >
-          <div className={styles.coachCopy}>
-            <p className={styles.sectionLabel}>COACHES</p>
-            <h2 id="coaching-title">
-              More time
-              <br />
-              for the game.
-            </h2>
-            <p className={styles.intro}>
-              Your squad list, your training week, your next match. Keep them
-              together in one place.
-            </p>
-            <div className={styles.features}>
-              <div>
-                <span>01</span>
+        <div className={styles.coachBand}>
+          <section
+            id="how-it-works"
+            className={styles.coaching}
+            aria-labelledby="coaching-title"
+          >
+            <div className={styles.coachCopy}>
+              <p className={styles.sectionLabel}>COACHES</p>
+              <h2 id="coaching-title">
+                More time
+                <br />
+                for the game.
+              </h2>
+              <p className={styles.intro}>
+                Your squad list, your training week, your next match. Keep them
+                together in one place.
+              </p>
+              <div className={styles.features}>
                 <div>
-                  <h3>Create your teams</h3>
-                  <p>
-                    First XV or U16s. Give each squad its own roster, age group
-                    and home ground.
-                  </p>
+                  <span>01</span>
+                  <div>
+                    <h3>Create your teams</h3>
+                    <p>
+                      First XV or U16s. Give each squad its own roster, age
+                      group and home ground.
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <span>02</span>
+                  <div>
+                    <h3>Know your players</h3>
+                    <p>
+                      Add names, positions and shirt numbers. Choose captains
+                      and keep your squad up to date.
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <span>03</span>
+                  <div>
+                    <h3>Plan the month</h3>
+                    <p>
+                      Practice on Monday. Gym on Wednesday. Match on Saturday.
+                      Repeat your routine and adjust as you go.
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div>
-                <span>02</span>
-                <div>
-                  <h3>Know your players</h3>
-                  <p>
-                    Add names, positions and shirt numbers. Choose captains and
-                    keep your squad up to date.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <span>03</span>
-                <div>
-                  <h3>Plan the month</h3>
-                  <p>
-                    Practice on Monday. Gym on Wednesday. Match on Saturday.
-                    Repeat your routine and adjust as you go.
-                  </p>
-                </div>
-              </div>
+              <Link className={styles.primary} href="/register?role=COACH">
+                Create your coach account
+              </Link>
             </div>
-            <Link className={styles.primary} href="/register?role=COACH">
-              Create your coach account
-            </Link>
-          </div>
-          <div className={styles.demo}>
-            <p className={styles.demoCaption}>
-              Take a look inside{" "}
-              <span>Try switching teams or opening the roster.</span>
-            </p>
-            <HomePreview />
-            <p className={styles.demoNote}>
-              An example of your workspace. Your own teams start with you.
-            </p>
-          </div>
-        </section>
+            <div className={styles.demo}>
+              <p className={styles.demoCaption}>
+                Take a look inside{" "}
+                <span>Try switching teams or opening the roster.</span>
+              </p>
+              <HomePreview />
+              <p className={styles.demoNote}>
+                An example of your workspace. Your own teams start with you.
+              </p>
+            </div>
+          </section>
+        </div>
         <section
           id="schools-clubs"
           className={audience.section}

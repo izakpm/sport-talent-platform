@@ -1,20 +1,20 @@
 .section {
   position: relative;
-  background: #0b1f2e;
-  color: #fff;
+  background: #f4f6f7;
+  color: #102b3c;
   isolation: isolate;
 }
 .backdrop {
   object-fit: cover;
   object-position: center;
   z-index: -2;
-  opacity: 0.25;
+  opacity: 0.04;
 }
 .section::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #0b1f2efa, #0b1f2e55);
+  background: linear-gradient(90deg, #f4f6f7f5, #f4f6f799);
   z-index: -1;
 }
 .inner {
@@ -30,7 +30,7 @@
   font-size: 12px;
   letter-spacing: 0.16em;
   font-weight: 650;
-  color: #ffca05;
+  color: #386779;
   margin-bottom: 20px;
 }
 .copy h2 {
@@ -43,7 +43,7 @@
 .intro {
   font-size: 17px;
   line-height: 1.8;
-  color: #d3dfe6;
+  color: #546775;
 }
 .benefits {
   margin: 28px 0;
@@ -52,7 +52,7 @@
 }
 .benefits li {
   padding: 18px 0;
-  border-bottom: 1px solid #ffffff26;
+  border-bottom: 1px solid #d6dfe4;
 }
 .benefits h3 {
   font-weight: 650;
@@ -60,14 +60,14 @@
   margin-bottom: 6px;
 }
 .benefits p {
-  color: #bbcdd8;
+  color: #5b6d79;
   font-size: 14px;
   line-height: 1.75;
 }
 .availability {
   font-size: 12px;
   line-height: 1.7;
-  color: #adc3d0;
+  color: #526b7a;
   margin: 0 0 26px;
 }
 .preview {
