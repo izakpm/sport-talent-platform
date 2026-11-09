@@ -14,8 +14,9 @@ export default function PublicHeader() {
           />
         </Link>
         <nav aria-label="Main navigation">
-          <Link href="/#how-it-works">For coaches</Link>
-          <Link href="/#our-vision">Our story</Link>
+          <Link href="/#athletes">Athletes</Link>
+          <Link href="/#how-it-works">Coaches</Link>
+          <Link href="/#schools-clubs">Schools & Clubs</Link>
           <Link href="/#questions">FAQs</Link>
         </nav>
         <div className={styles.navActions}>

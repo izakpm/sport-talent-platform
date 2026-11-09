@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import PublicHeader from "./PublicHeader";
 import PublicFooter from "./PublicFooter";
 import HomePreview from "./HomePreview";
+import { AthletePreview, OrganisationPreview } from "./AudiencePreview";
+import audience from "./audience.module.css";
 import styles from "./home.module.css";
 
 export const metadata: Metadata = {
@@ -63,11 +65,12 @@ export default function Home() {
                 And the coaches who help them get there.
               </h2>
               <p className={styles.heroDescription}>
-                A home for athletes and coaches to build sporting profiles backed
-                by verified performance. Bring training and sporting activities
-                together, with team management and scheduling available now.
-                We’re developing profile verification and tools for schools and
-                sporting clubs to organise fixtures, coaches and competition logs.
+                A home for athletes and coaches to build sporting profiles
+                backed by verified performance. Bring training and sporting
+                activities together, with team management and scheduling
+                available now. We’re developing profile verification and tools
+                for schools and sporting clubs to organise fixtures, coaches and
+                competition logs.
               </p>
               <div className={styles.heroActions}>
                 <Link className={styles.primary} href="/register">
@@ -78,12 +81,70 @@ export default function Home() {
           </section>
         </div>
         <section
+          id="athletes"
+          className={audience.section}
+          aria-labelledby="athletes-title"
+        >
+          <Image
+            src="/register-bg3.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className={audience.backdrop}
+          />
+          <div className={audience.inner}>
+            <div className={audience.copy}>
+              <p className={audience.label}>ATHLETES</p>
+              <h2 id="athletes-title">
+                Your sporting profile.
+                <br />
+                Your progress.
+              </h2>
+              <p className={audience.intro}>
+                Give your sporting journey a home. Start with who you are, the
+                sports you play and the positions you make your own.
+              </p>
+              <ul className={audience.benefits}>
+                <li>
+                  <h3>Build your sporting identity</h3>
+                  <p>
+                    Create your athlete account and set up your sport and
+                    positions in one profile.
+                  </p>
+                </li>
+                <li>
+                  <h3>Show the work behind your performance</h3>
+                  <p>
+                    Our goal is a lasting record of your activities, results and
+                    achievements, backed by coach verification.
+                  </p>
+                </li>
+                <li>
+                  <h3>Be understood beyond a single match</h3>
+                  <p>
+                    We’re building towards profiles that give coaches, schools
+                    and clubs a fuller picture of your development.
+                  </p>
+                </li>
+              </ul>
+              <p className={audience.availability}>
+                Profile setup is available now. Performance records,
+                verification and profile sharing are in development.
+              </p>
+              <Link className={styles.primary} href="/register?role=ATHLETE">
+                Create your athlete profile
+              </Link>
+            </div>
+            <AthletePreview />
+          </div>
+        </section>
+        <section
           id="how-it-works"
           className={styles.coaching}
           aria-labelledby="coaching-title"
         >
           <div className={styles.coachCopy}>
-            <p className={styles.sectionLabel}>FOR COACHES · AVAILABLE NOW</p>
+            <p className={styles.sectionLabel}>COACHES</p>
             <h2 id="coaching-title">
               More time
               <br />
@@ -141,43 +202,58 @@ export default function Home() {
           </div>
         </section>
         <section
-          id="our-vision"
-          className={styles.vision}
-          aria-labelledby="vision-title"
+          id="schools-clubs"
+          className={audience.section}
+          aria-labelledby="organisations-title"
         >
-          <div className={styles.visionPhoto}>
-            <Image
-              src="/register-bg3.jpg"
-              alt="Rugby players carrying the ball into a tackle"
-              fill
-              sizes="(max-width: 760px) 100vw, 55vw"
-            />
-            <span className={styles.photoCaption}>
-              THE WORK. THE TEAM. THE POSSIBILITIES.
-            </span>
-          </div>
-          <div className={styles.visionCopy}>
-            <p className={styles.sectionLabel}>WHY PLAYVERIFIED</p>
-            <h2 id="vision-title">
-              A player’s story
-              <br />
-              should travel
-              <br />
-              beyond the field.
-            </h2>
-            <p>
-              There’s talent in every school and every club. We want to help
-              players build a record of their effort and progress, wherever they
-              come from.
-            </p>
-            <p>
-              That starts with coaches and teams. Next comes performance
-              tracking, verification and connections with schools and scouts.
-            </p>
-            <small>These wider capabilities are still in development.</small>
-            <Link className={styles.textLink} href="/register?role=ATHLETE">
-              Start your athlete profile <span aria-hidden="true">→</span>
-            </Link>
+          <div className={audience.inner}>
+            <div className={audience.copy}>
+              <p className={audience.label}>SCHOOLS &amp; SPORTING CLUBS</p>
+              <h2 id="organisations-title">
+                Your whole sporting
+                <br />
+                programme, together.
+              </h2>
+              <p className={audience.intro}>
+                From the first team to the youngest age group, give your sports
+                staff a shared view of who is playing, who is coaching and what
+                comes next.
+              </p>
+              <ul className={audience.benefits}>
+                <li>
+                  <h3>Coordinate fixtures</h3>
+                  <p>
+                    Bring teams, opponents, venues and match times into one
+                    programme.
+                  </p>
+                </li>
+                <li>
+                  <h3>Organise your coaches</h3>
+                  <p>
+                    Make team responsibilities clear across your coaching staff
+                    and age groups.
+                  </p>
+                </li>
+                <li>
+                  <h3>Keep track of the season</h3>
+                  <p>
+                    Follow results and competition logs alongside the fixtures
+                    that shape them.
+                  </p>
+                </li>
+              </ul>
+              <p className={audience.availability}>
+                These organisation tools are in development. Explore the example
+                and talk to us about what your school or club needs.
+              </p>
+              <a
+                className={styles.primary}
+                href="mailto:info@bulperd.com?subject=PlayVerified%20for%20our%20school%20or%20club"
+              >
+                Talk to us about your organisation
+              </a>
+            </div>
+            <OrganisationPreview />
           </div>
         </section>
         <section

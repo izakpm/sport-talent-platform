@@ -99,9 +99,11 @@
   font-size: 14px;
 }
 .navInner nav a {
+  white-space: nowrap;
   color: #dbe4e9;
 }
 .navActions {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 28px;
@@ -464,6 +466,22 @@
   }
 }
 @media (max-width: 1050px) {
+  .navInner {
+    gap: 20px;
+  }
+  .logo {
+    width: 150px;
+  }
+  .navInner nav {
+    font-size: 12px;
+    gap: 14px;
+  }
+  .navActions {
+    font-size: 12px;
+  }
+  .registerLink {
+    padding-inline: 16px;
+  }
   .coaching {
     gap: 45px;
     padding-block: 75px;

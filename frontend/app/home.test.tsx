@@ -18,7 +18,7 @@ it("introduces real coach tools, links to registration and distinguishes the roa
     "/privacy",
   );
   expect(
-    screen.getByText("These wider capabilities are still in development."),
+    screen.getByText(/These organisation tools are in development/),
   ).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Preview team"), {
     target: { value: "u16" },
@@ -30,6 +30,23 @@ it("introduces real coach tools, links to registration and distinguishes the roa
   fireEvent.click(screen.getByRole("button", { name: "Team roster" }));
   expect(screen.getByText("Taylor N.")).toBeInTheDocument();
   expect(screen.queryByText("Passing under pressure")).not.toBeInTheDocument();
+});
+it("lets visitors explore athlete and organisation examples without creating records", () => {
+  render(<Home />);
+  fireEvent.click(screen.getByRole("button", { name: "Performance record" }));
+  expect(screen.getByText("Awaiting review")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Sporting profile" }));
+  expect(screen.getByText("Primary position")).toBeInTheDocument();
+  expect(screen.queryByText("Awaiting review")).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Organisation example team"), {
+    target: { value: "u16" },
+  });
+  expect(screen.getByText("Riverside vs Northside")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Coaches", exact: true }));
+  expect(screen.getByText("Lebo N.")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Competition log" }));
+  expect(screen.getByRole("table")).toBeInTheDocument();
+  expect(screen.queryByText("Lebo N.")).not.toBeInTheDocument();
 });
 it("publishes operator details and accessible privacy contact methods", () => {
   render(<Privacy />);
