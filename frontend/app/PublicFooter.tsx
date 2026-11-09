@@ -1,25 +1,31 @@
 import Link from "next/link";
-import styles from "./landing.module.css";
+import styles from "./home.module.css";
 export default function PublicFooter() {
   return (
     <footer className={styles.footer}>
-      <div>
-        <Link href="/" className={styles.brand}>
-          <img src="/brand-icon.svg" alt="" width="30" height="30" />
-          PlayVerified
-        </Link>
-        <p>Where performance meets proof.</p>
-        <small>Operated by Bulperd (Pty) Ltd · South Africa</small>
+      <div className={styles.footerTop}>
+        <div>
+          <Link href="/" aria-label="PlayVerified home">
+            <img
+              src="/PlayVerified Logo.png"
+              alt="PlayVerified"
+              className={styles.logo}
+              width="165"
+              height="55"
+            />
+          </Link>
+          <p>Where performance meets proof.</p>
+        </div>
+        <nav aria-label="Footer navigation">
+          <Link href="/register">Create an account</Link>
+          <Link href="/login">Log in</Link>
+          <Link href="/privacy">Privacy policy</Link>
+          <a href="mailto:info@bulperd.com">Contact us</a>
+        </nav>
       </div>
-      <nav aria-label="Footer navigation">
-        <Link href="/register">Create an account</Link>
-        <Link href="/login">Log in</Link>
-        <Link href="/privacy">Privacy policy</Link>
-        <a href="mailto:info@bulperd.com">Contact us</a>
-      </nav>
       <div className={styles.footerBottom}>
         <span>© {new Date().getFullYear()} PlayVerified</span>
-        <span>Start with the team. Build towards the future.</span>
+        <span>Operated by Bulperd (Pty) Ltd · South Africa</span>
       </div>
     </footer>
   );

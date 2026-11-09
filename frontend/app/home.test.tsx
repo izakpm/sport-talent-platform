@@ -8,7 +8,7 @@ jest.mock("next/navigation", () => ({
 it("introduces real coach tools, links to registration and distinguishes the roadmap", () => {
   render(<Home />);
   expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-    "Build your team.",
+    "performance",
   );
   expect(
     screen.getByRole("link", { name: /Create your coach account/ }),

@@ -135,7 +135,7 @@ export default function LoginPage() {
       <div style={styles.right}>
         <div style={styles.card}>
           <h2 style={styles.title}>Welcome back</h2>
-          <p style={{ fontSize: 12, color: '#cbd5e1', marginBottom: 16 }}><a href="/privacy" style={{color:'#fff',textDecoration:'underline'}}>Privacy policy</a> · <a href="/" style={{color:'#fff',textDecoration:'underline'}}>About PlayVerified</a></p>
+          <p style={{ fontSize: 12, color: '#4b5563', marginBottom: 16 }}><a href="/privacy" style={{color:'#1f6f8b',textDecoration:'underline'}}>Privacy policy</a> · <a href="/" style={{color:'#1f6f8b',textDecoration:'underline'}}>About PlayVerified</a></p>
           {googleError && <p role="alert">{googleError}</p>}
 
           <button

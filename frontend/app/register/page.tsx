@@ -105,7 +105,7 @@ export default function RegisterPage() {
       <div style={styles.right}>
         <div style={styles.card}>
           <h2 style={styles.title}>Create your account</h2>
-          <p style={{ fontSize: 12, lineHeight: 1.7, color: '#cbd5e1', marginBottom: 18 }}>Read our <Link href="/privacy" style={{ color: '#fff', textDecoration: 'underline' }}>Privacy policy</Link> to understand how we handle your account and sporting information.</p>
+          <p style={{ fontSize: 12, lineHeight: 1.7, color: '#4b5563', marginBottom: 18 }}>Read our <Link href="/privacy" style={{ color: '#1f6f8b', textDecoration: 'underline' }}>Privacy policy</Link> to understand how we handle your account and sporting information.</p>
 
           <button
             type="button"
