@@ -65,7 +65,7 @@ export class AuthService {
       user = await this.usersService.create({
         email,
         password_hash: hashedPassword,
-        role: role || 'ATHLETE',
+        role: role === 'ORG' ? 'SCHOOL' : role || 'ATHLETE',
         first_name: firstName,
         last_name: lastName,
       });

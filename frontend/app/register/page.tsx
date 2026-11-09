@@ -127,7 +127,7 @@ export default function RegisterPage() {
 
           {/* ✅ Role */}
           <div style={styles.roleContainer}>
-            {['ATHLETE', 'COACH', 'GUARDIAN', 'ORG'].map((r) => (
+            {['ATHLETE', 'COACH', 'GUARDIAN', 'SCHOOL'].map((r) => (
               <button
                 key={r}
                 onClick={() => setRole(r)}
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                       : theme.colors.textPrimary,
                 }}
               >
-                {r}
+                {r === 'SCHOOL' ? 'SCHOOL / ORG' : r}
               </button>
             ))}
           </div>

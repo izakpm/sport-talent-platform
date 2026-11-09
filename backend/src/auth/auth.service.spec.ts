@@ -18,7 +18,7 @@ describe('AuthService', () => {
     users.findByEmail.mockResolvedValue(null);
     users.create.mockImplementation(async data => ({ id: 'new-user', ...data }));
     const user = await service.findOrCreateGoogleUser('test@example.com', 'Test', 'User', role);
-    expect(user.role).toBe(role);
+    expect(user.role).toBe(role === 'ORG' ? 'SCHOOL' : role);
     expect(user.password_hash).toMatch(/^\$2/);
   });
 
