@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import CoachTeamsPage from '../coaches/teams/page';
-import CoachCalanderPage from '../coaches/calander/page';
+import CoachSchedulePage from '../coaches/schedule/page';
 import CoachActivitiesPage from '../coaches/activities/page';
 import CoachMatchesPage from '../coaches/matches/page';
 import CoachApprovalsPage from '../coaches/approvals/page';
@@ -15,18 +15,16 @@ jest.mock('next/navigation', () => ({
   useRouter: () => routerMock,
 }));
 
-describe('coach pages smoke tests', () => {
-  it('renders Teams page core sections', () => {
-    render(<CoachTeamsPage />);
-    expect(screen.getByRole('heading', { name: 'Teams' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Team List' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Team Details' })).toBeInTheDocument();
-  });
+jest.mock('../../lib/api', () => ({ fetchWithAuth: jest.fn(async () => ({ ok: true, json: async () => [] })) }));
 
-  it('renders Calander page core sections', () => {
-    render(<CoachCalanderPage />);
-    expect(screen.getByRole('heading', { name: 'Calendar' })).toBeInTheDocument();
-    expect(screen.getByText('Loading your calendar...')).toBeInTheDocument();
+describe('coach pages smoke tests', () => {
+  it('renders Teams and its real empty state', async () => {
+    render(<CoachTeamsPage />);
+    expect(await screen.findByRole('heading', { name: 'Every great season starts with a team.' })).toBeInTheDocument();
+  });
+  it('asks for a team before scheduling', async () => {
+    render(<CoachSchedulePage />);
+    expect(await screen.findByRole('heading', { name: 'First, give your schedule a team.' })).toBeInTheDocument();
   });
 
   it('renders Activities page core sections', () => {

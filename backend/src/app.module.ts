@@ -16,6 +16,7 @@ import { PositionsModule } from './positions/positions.module';
 import { AuthModule } from './auth/auth.module';
 import { DiscoveryModule } from './discovery/discovery.module';
 import { HealthController } from './health.controller';
+import { PlanningModule } from './coach-planning/planning.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { HealthController } from './health.controller';
     DiscoveryModule,
 
     AuthModule,
+    PlanningModule,
   ],
   controllers: [TrustController, HealthController],
   providers: [TrustService],

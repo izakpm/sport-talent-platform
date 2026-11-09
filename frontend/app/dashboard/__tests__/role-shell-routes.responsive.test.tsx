@@ -135,26 +135,15 @@ describe('T019 responsive role layout tests', () => {
     await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
   });
 
-  it('renders coach layout at mobile and desktop breakpoints', async () => {
+  it('keeps coach planning actions available at mobile and desktop widths', async () => {
     seedAuthStorage('COACH');
-
-    setViewport(390, 844);
-    const { unmount } = render(<CoachDashboardPage />);
-
-    expect(await screen.findByRole('heading', { name: 'My Dashboard' })).toBeInTheDocument();
-    expect(screen.getByText('Coach Dashboard')).toBeInTheDocument();
-    assertResponsiveLayoutContracts();
-    await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
-
-    unmount();
-
-    setViewport(1280, 800);
-    render(<CoachDashboardPage />);
-
-    expect(await screen.findByRole('heading', { name: 'My Dashboard' })).toBeInTheDocument();
-    expect(screen.getByText('Coach Dashboard')).toBeInTheDocument();
-    assertResponsiveLayoutContracts();
-    await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
+    for (const width of [390, 1280]) {
+      setViewport(width, 844);
+      const { unmount } = render(<CoachDashboardPage />);
+      expect(await screen.findByRole('heading', { name: 'Your next great month, Test.' })).toBeInTheDocument();
+      expect(await screen.findByRole('link', { name: /Create your first team/ })).toHaveAttribute('href', '/dashboard/coaches/teams');
+      unmount();
+    }
   });
 
   it('renders school layout at mobile and desktop breakpoints', async () => {

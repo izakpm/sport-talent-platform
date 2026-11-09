@@ -87,9 +87,9 @@ describe('T018 role shell route smoke tests', () => {
     render(<CoachDashboardPage />);
 
     expect(
-      await screen.findByRole('heading', { name: 'My Dashboard' }),
+      await screen.findByRole('heading', { name: 'Your next great month, Test.' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Coach Dashboard')).toBeInTheDocument();
+    expect(await screen.findByText('The month at a glance')).toBeInTheDocument();
     await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
   });
 

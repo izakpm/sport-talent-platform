@@ -56,22 +56,11 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
     dashboardPath: '/dashboard/coaches',
     navGroups: [
       {
-        label: 'Coach',
-        items: [{ name: 'My Profile', href: '/dashboard/profile' }],
-      },
-      {
-        label: 'Dashboards',
-        items: [{ name: 'My Dashboard', href: '/dashboard/coaches' }],
-      },
-      {
-        label: 'Pages',
+        label: 'Coach workspace',
         items: [
+          { name: 'Overview', href: '/dashboard/coaches' },
           { name: 'Teams', href: '/dashboard/coaches/teams' },
-          { name: 'Calander', href: '/dashboard/coaches/calander' },
-          { name: 'Activities', href: '/dashboard/coaches/activities' },
-          { name: 'Matches', href: '/dashboard/coaches/matches' },
-          { name: 'Approvals', href: '/dashboard/coaches/approvals' },
-          { name: 'Achievements', href: '/dashboard/coaches/achievements' },
+          { name: 'Schedule', href: '/dashboard/coaches/schedule' },
         ],
       },
     ],
