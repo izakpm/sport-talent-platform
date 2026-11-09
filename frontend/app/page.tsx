@@ -94,36 +94,42 @@ export default function Home() {
           />
           <div className={audience.inner}>
             <div className={audience.copy}>
-              <p className={audience.label}>ATHLETES</p>
+              <p className={`${audience.label} ${audience.athleteLabel}`}>
+                ATHLETES
+              </p>
               <h2 id="athletes-title">
-                Your sporting profile.
+                Your dedication
                 <br />
-                Your progress.
+                deserves to be seen.
               </h2>
               <p className={audience.intro}>
-                Give your sporting journey a home. Start with who you are, the
-                sports you play and the positions you make your own.
+                Talent is a starting point. The early mornings, the extra reps
+                and the choice to go again are what you build on. Start a
+                sporting profile that tells your story beyond the scoreboard.
               </p>
               <ul className={audience.benefits}>
                 <li>
-                  <h3>Build your sporting identity</h3>
+                  <h3>More than a name on a team sheet</h3>
                   <p>
-                    Create your athlete account and set up your sport and
-                    positions in one profile.
+                    Your sport. Your positions. Your identity as an athlete.
+                    Create a profile that starts with you and grows with your
+                    sporting journey.
                   </p>
                 </li>
                 <li>
-                  <h3>Show the work behind your performance</h3>
+                  <h3>Build a record you can stand behind</h3>
                   <p>
-                    Our goal is a lasting record of your activities, results and
-                    achievements, backed by coach verification.
+                    We’re developing performance records and coach verification
+                    so your hard work can become evidence of how far you’ve
+                    come.
                   </p>
                 </li>
                 <li>
-                  <h3>Be understood beyond a single match</h3>
+                  <h3>One match doesn’t tell your whole story</h3>
                   <p>
-                    We’re building towards profiles that give coaches, schools
-                    and clubs a fuller picture of your development.
+                    Your progress deserves context. Our vision is to help
+                    coaches, schools and clubs see the athlete you’re becoming,
+                    beyond a single result.
                   </p>
                 </li>
               </ul>
