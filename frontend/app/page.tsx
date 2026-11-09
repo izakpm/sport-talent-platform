@@ -50,7 +50,6 @@ export default function Home() {
           <PublicHeader overlay />
           <section className={styles.hero} aria-labelledby="home-title">
             <div className={styles.heroCopy}>
-              <p className={styles.kicker}>PLAYVERIFIED / SOUTH AFRICA</p>
               <h1 id="home-title">
                 Where
                 <br />
@@ -58,6 +57,11 @@ export default function Home() {
                 <br />
                 meets <span>proof.</span>
               </h1>
+              <h2 className={styles.heroSubheading}>
+                For the players putting in the work.
+                <br />
+                And the coaches who help them get there.
+              </h2>
               <p className={styles.heroDescription}>
                 A home for athletes and coaches to build sporting profiles backed
                 by verified performance. Bring training and sporting activities
