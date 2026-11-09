@@ -247,6 +247,14 @@
   align-items: center;
   scroll-margin-top: 30px;
 }
+.coaching > .coachCopy {
+  grid-column: 2;
+  grid-row: 1;
+}
+.coaching > .demo {
+  grid-column: 1;
+  grid-row: 1;
+}
 .sectionLabel {
   color: #386779;
 }
@@ -530,6 +538,11 @@
   }
 }
 @media (max-width: 760px) {
+  .coaching > .coachCopy,
+  .coaching > .demo {
+    grid-column: auto;
+    grid-row: auto;
+  }
   .opening {
     margin-top: -80px;
     padding-top: 80px;
