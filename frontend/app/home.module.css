@@ -69,9 +69,8 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(11, 31, 46, 0.86);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #0b1f2e;
+  border-bottom: 1px solid #ffffff1a;
   color: #fff;
 }
 .page section[id] {
