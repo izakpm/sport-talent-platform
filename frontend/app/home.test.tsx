@@ -12,10 +12,21 @@ it("flips the athlete photo and keeps the reverse interactive", () => {
   expect(screen.getByRole("img")).toBeVisible();
   fireEvent.keyDown(card, { key: "Enter" });
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Performance record" }));
-  expect(screen.getByText("Awaiting review")).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Sporting profile" }));
+  fireEvent.click(screen.getByRole("button", { name: "Performance" }));
+  expect(screen.getByText("Bench press")).toBeVisible();
+  expect(screen.getByText("Squat")).toBeVisible();
+  expect(screen.getByText("40 m sprint")).toBeVisible();
+  expect(screen.getByText("Bronco test")).toBeVisible();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Achievements", exact: true }),
+  );
+  expect(screen.getByText("Blue Bull U13 Academy week")).toBeVisible();
+  expect(screen.getByText("Blue Bulls U15 Invitational Team")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Profile", exact: true }));
   expect(screen.getByText("Primary position")).toBeVisible();
+  expect(screen.getByText("Izak Meyer")).toBeVisible();
+  expect(screen.getByText("Eighth man", { exact: true })).toBeVisible();
+  expect(screen.getByText("Flanker")).toBeVisible();
   fireEvent.keyDown(card, { key: "Escape" });
   expect(screen.getByRole("img")).toBeVisible();
   fireEvent.click(screen.getByRole("img"));

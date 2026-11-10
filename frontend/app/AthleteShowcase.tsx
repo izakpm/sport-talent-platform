@@ -23,64 +23,42 @@ export default function AthleteShowcase() {
 }
 
 function AthleteExample() {
-  const [performance, setPerformance] = useState(false);
+  const [view, setView] = useState("profile");
   return (
     <div className={styles.preview}>
       <div className={styles.topline}>
-        <span>{performance ? "PERFORMANCE RECORD" : "ATHLETE PROFILE"}</span>
-        <span>Illustrative preview</span>
+        <span>ATHLETE PROFILE</span>
+        <span>Interactive example</span>
       </div>
       <div className={styles.identity}>
-        <div className={styles.avatar}>TM</div>
+        <div className={styles.avatar}>IM</div>
         <div>
-          <h3>Thabo M.</h3>
-          <p>Rugby · Scrum-half</p>
-          <span>Sample athlete</span>
+          <h3>Izak Meyer</h3>
+          <p>Rugby &middot; Eighth man</p>
         </div>
-        <b className={styles.shirt}>09</b>
+        <b className={styles.shirt}>08</b>
       </div>
-      <div className={styles.tabs}>
-        <button
-          type="button"
-          aria-pressed={!performance}
-          onClick={() => setPerformance(false)}
-        >
-          Sporting profile
-        </button>
-        <button
-          type="button"
-          aria-pressed={performance}
-          onClick={() => setPerformance(true)}
-        >
-          Performance record
-        </button>
+      <div className={styles.tabs} aria-label="Athlete example views">
+        {[
+          ["profile", "Profile"],
+          ["performance", "Performance"],
+          ["achievements", "Achievements"],
+        ].map(([key, label]) => (
+          <button
+            type="button"
+            key={key}
+            aria-pressed={view === key}
+            onClick={() => setView(key)}
+          >
+            {label}
+          </button>
+        ))}
       </div>
-      <div className={styles.content}>
-        {performance ? (
-          <>
-            <p className={styles.caption}>PLANNED PERFORMANCE & VERIFICATION</p>
-            <div className={styles.result}>
-              <div>
-                <span>40 m sprint</span>
-                <strong>
-                  5.4 <small>seconds</small>
-                </strong>
-              </div>
-              <span className={styles.pending}>Awaiting review</span>
-            </div>
-            <ol className={styles.workflow}>
-              <li>
-                <b>1</b>Record a performance
-              </li>
-              <li>
-                <b>2</b>Request coach verification
-              </li>
-              <li>
-                <b>3</b>Add it to your sporting record
-              </li>
-            </ol>
-          </>
-        ) : (
+      <div
+        className={`${styles.content} ${styles.athleteContent}`}
+        aria-live="polite"
+      >
+        {view === "profile" && (
           <>
             <p className={styles.caption}>THE PLAYER BEHIND THE NUMBER</p>
             <dl className={styles.details}>
@@ -90,24 +68,61 @@ function AthleteExample() {
               </div>
               <div>
                 <dt>Primary position</dt>
-                <dd>Scrum-half</dd>
+                <dd>Eighth man</dd>
               </div>
               <div>
-                <dt>Other position</dt>
-                <dd>Fly-half</dd>
+                <dt>Other positions</dt>
+                <dd>Flanker</dd>
               </div>
             </dl>
-            <p className={styles.note}>
-              Start with your sport and positions. Build your sporting story
-              from there.
-            </p>
+          </>
+        )}
+        {view === "performance" && (
+          <>
+            <p className={styles.caption}>STRENGTH, SPEED & FITNESS</p>
+            <dl className={styles.metrics}>
+              {[
+                ["Bench press", "kg"],
+                ["Squat", "kg"],
+                ["40 m sprint", "seconds"],
+                ["Bronco test", "min:sec"],
+              ].map(([name, unit]) => (
+                <div key={name}>
+                  <dt>{name}</dt>
+                  <dd>
+                    <strong aria-label="No result recorded">&mdash;</strong>
+                    <span>{unit}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className={styles.metricNote}>Results not yet added.</p>
+          </>
+        )}
+        {view === "achievements" && (
+          <>
+            <p className={styles.caption}>REPRESENTATIVE HONOURS</p>
+            <ul className={styles.achievements}>
+              <li>
+                <span>U13</span>
+                <div>
+                  <h4>Blue Bull U13 Academy week</h4>
+                  <p>Academy week</p>
+                </div>
+              </li>
+              <li>
+                <span>U15</span>
+                <div>
+                  <h4>Blue Bulls U15 Invitational Team</h4>
+                  <p>Invitational team</p>
+                </div>
+              </li>
+            </ul>
           </>
         )}
       </div>
       <div className={styles.footnote}>
-        {performance
-          ? "Sample data. Performance records and coach verification are in development."
-          : "Sample profile. Create your account to start setting up your own sport and positions."}
+        Profile preview. Explore the tabs to see the sporting record.
       </div>
     </div>
   );
