@@ -31,13 +31,8 @@ it("introduces real coach tools, links to registration and distinguishes the roa
   expect(screen.getByText("Taylor N.")).toBeInTheDocument();
   expect(screen.queryByText("Passing under pressure")).not.toBeInTheDocument();
 });
-it("lets visitors explore athlete and organisation examples without creating records", () => {
+it("lets visitors explore the organisation example without creating records", () => {
   render(<Home />);
-  fireEvent.click(screen.getByRole("button", { name: "Performance record" }));
-  expect(screen.getByText("Awaiting review")).toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Sporting profile" }));
-  expect(screen.getByText("Primary position")).toBeInTheDocument();
-  expect(screen.queryByText("Awaiting review")).not.toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Organisation example team"), {
     target: { value: "u16" },
   });

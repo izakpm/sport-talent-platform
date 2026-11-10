@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import PublicHeader from "./PublicHeader";
 import PublicFooter from "./PublicFooter";
 import HomePreview from "./HomePreview";
-import { AthletePreview, OrganisationPreview } from "./AudiencePreview";
+import { OrganisationPreview } from "./AudiencePreview";
+import athleteImage from "../public/Athlete 2.png";
 import audience from "./audience.module.css";
 import styles from "./home.module.css";
 
@@ -141,7 +142,12 @@ export default function Home() {
                 Create your athlete profile
               </Link>
             </div>
-            <AthletePreview />
+            <Image
+              src={athleteImage}
+              alt="Rugby athlete in a red scrum cap beside yellow ATHLETE lettering"
+              className={audience.athleteImage}
+              sizes="(max-width: 760px) 88vw, (max-width: 1370px) 43vw, 570px"
+            />
           </div>
         </section>
         <div className={styles.coachBand}>
