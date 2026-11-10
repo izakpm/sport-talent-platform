@@ -1,41 +1,29 @@
 "use client";
 import Image from "next/image";
 import athleteImage from "../public/Athlete 2.png";
-import ShowcaseCarousel from "./ShowcaseCarousel";
+import FlipShowcase from "./FlipShowcase";
+import { useState } from "react";
 import styles from "./audience.module.css";
 export default function AthleteShowcase() {
   return (
-    <ShowcaseCarousel
+    <FlipShowcase
       audience="Athlete"
-      slides={[
-        {
-          name: "Photo",
-          label: "Photo",
-          content: (
-            <Image
-              src={athleteImage}
-              alt="Rugby athlete in a red scrum cap beside yellow ATHLETE lettering"
-              className={styles.athleteImage}
-              sizes="(max-width: 760px) 88vw, (max-width: 1370px) 43vw, 570px"
-            />
-          ),
-        },
-        {
-          name: "Sporting profile",
-          label: "Profile",
-          content: <AthleteExample performance={false} />,
-        },
-        {
-          name: "Performance record",
-          label: "Performance",
-          content: <AthleteExample performance />,
-        },
-      ]}
-    />
+      photo={
+        <Image
+          src={athleteImage}
+          alt="Rugby athlete in a red scrum cap beside yellow ATHLETE lettering"
+          className={styles.athleteImage}
+          sizes="(max-width: 760px) 88vw, (max-width: 1370px) 43vw, 570px"
+        />
+      }
+    >
+      <AthleteExample />
+    </FlipShowcase>
   );
 }
 
-function AthleteExample({ performance }: { performance: boolean }) {
+function AthleteExample() {
+  const [performance, setPerformance] = useState(false);
   return (
     <div className={styles.preview}>
       <div className={styles.topline}>
@@ -50,6 +38,22 @@ function AthleteExample({ performance }: { performance: boolean }) {
           <span>Sample athlete</span>
         </div>
         <b className={styles.shirt}>09</b>
+      </div>
+      <div className={styles.tabs}>
+        <button
+          type="button"
+          aria-pressed={!performance}
+          onClick={() => setPerformance(false)}
+        >
+          Sporting profile
+        </button>
+        <button
+          type="button"
+          aria-pressed={performance}
+          onClick={() => setPerformance(true)}
+        >
+          Performance record
+        </button>
       </div>
       <div className={styles.content}>
         {performance ? (

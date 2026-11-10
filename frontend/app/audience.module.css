@@ -84,39 +84,46 @@
 }
 .showcase {
   min-width: 0;
+  perspective: 1600px;
 }
 .showcase:focus-visible {
   outline: 3px solid #b58a00;
   outline-offset: 8px;
 }
-.showcaseStage {
+.flipStage {
   display: grid;
   align-items: center;
-  touch-action: pan-y;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.showcasePanel {
+.flipStage[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+.flipFace {
   grid-area: 1 / 1;
   min-width: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
-.showcasePanel[aria-hidden="true"] {
+.flipFace[aria-hidden="true"] {
   pointer-events: none;
 }
-.showcasePanel[aria-hidden="false"] {
-  animation: revealPanel 220ms ease-out;
+.flipFront {
+  cursor: pointer;
+  transform: rotateY(0deg);
 }
-.showcaseControls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 24px;
+.flipBack {
+  position: relative;
+  transform: rotateY(180deg);
 }
-.showcaseArrow {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
+.flipClose {
+  position: absolute;
+  z-index: 2;
+  right: 8px;
+  top: -36px;
+  width: 32px;
+  height: 32px;
   border: 1px solid #cedbe2;
   border-radius: 50%;
   background: #fff;
@@ -124,71 +131,12 @@
   font-size: 22px;
   cursor: pointer;
 }
-.showcaseArrow:hover {
+.flipClose:hover {
   background: #ffca05;
-  border-color: #ffca05;
-}
-.showcaseChoices {
-  display: flex;
-  gap: 4px;
-}
-.showcaseChoices button {
-  padding: 10px 12px;
-  border: 0;
-  border-bottom: 3px solid transparent;
-  font: inherit;
-  font-size: 12px;
-  color: #526b7a;
-  background: transparent;
-  cursor: pointer;
-}
-.showcaseChoices button[aria-pressed="true"] {
-  color: #102b3c;
-  border-bottom-color: #e8b500;
-  font-weight: 650;
-}
-.darkShowcase .showcaseChoices button,
-.darkShowcase .showcaseHint {
-  color: #bbcdd8;
-}
-.darkShowcase .showcaseChoices button[aria-pressed="true"] {
-  color: #ffca05;
-}
-.showcaseHint {
-  margin-top: 12px;
-  text-align: center;
-  font-size: 11px;
-  color: #526b7a;
-}
-@keyframes revealPanel {
-  from {
-    opacity: 0.35;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@media (max-width: 420px) {
-  .showcaseControls {
-    gap: 5px;
-  }
-  .showcaseChoices {
-    gap: 0;
-  }
-  .showcaseChoices button {
-    font-size: 11px;
-    padding-inline: 6px;
-  }
-  .showcaseArrow {
-    width: 40px;
-    height: 40px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .showcasePanel[aria-hidden="false"] {
-    animation: none;
+  .flipStage {
+    transition: none;
   }
 }
 .preview {

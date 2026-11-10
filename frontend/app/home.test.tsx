@@ -6,26 +6,24 @@ import AthleteShowcase from "./AthleteShowcase";
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
-it("starts with the athlete photo and cycles through both examples with buttons and keys", () => {
+it("flips the athlete photo and keeps the reverse interactive", () => {
   render(<AthleteShowcase />);
+  const card = screen.getByRole("region", { name: "Athlete showcase" });
   expect(screen.getByRole("img")).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Next athlete slide" }));
-  expect(screen.getByText("Primary position")).toBeVisible();
+  fireEvent.keyDown(card, { key: "Enter" });
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
-  fireEvent.keyDown(screen.getByRole("region", { name: "Athlete showcase" }), {
-    key: "ArrowRight",
-  });
+  fireEvent.click(screen.getByRole("button", { name: "Performance record" }));
   expect(screen.getByText("Awaiting review")).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Next athlete slide" }));
-  expect(screen.getByRole("img")).toBeVisible();
-  fireEvent.click(
-    screen.getByRole("button", { name: "Previous athlete slide" }),
-  );
-  expect(screen.getByText("Awaiting review")).toBeVisible();
-  fireEvent.click(
-    screen.getByRole("button", { name: "Show sporting profile" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Sporting profile" }));
   expect(screen.getByText("Primary position")).toBeVisible();
+  fireEvent.keyDown(card, { key: "Escape" });
+  expect(screen.getByRole("img")).toBeVisible();
+  fireEvent.click(screen.getByRole("img"));
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Return to athlete photo" }),
+  );
+  expect(screen.getByRole("img")).toBeVisible();
 });
 it("introduces real coach tools, links to registration and distinguishes the roadmap", () => {
   render(<Home />);
@@ -47,25 +45,18 @@ it("introduces real coach tools, links to registration and distinguishes the roa
       name: "Rugby coach beside yellow COACH lettering",
     }),
   ).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Next coach slide" }));
-  fireEvent.keyDown(screen.getByLabelText("Schedule example team"), {
-    key: "ArrowRight",
-  });
-  expect(screen.getByText("Build the defensive line")).toBeVisible();
-  fireEvent.change(screen.getByLabelText("Schedule example team"), {
+  const card = screen.getByRole("region", { name: "Coach showcase" });
+  fireEvent.keyDown(card, { key: "Enter" });
+  fireEvent.change(screen.getByLabelText("Preview team"), {
     target: { value: "u16" },
   });
-  expect(screen.getByText("Passing under pressure")).toBeInTheDocument();
-  expect(
-    screen.queryByText("Build the defensive line"),
-  ).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Next coach slide" }));
-  fireEvent.change(screen.getByLabelText("Roster example team"), {
-    target: { value: "u16" },
-  });
+  expect(screen.getByText("Passing under pressure")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Team roster" }));
   expect(screen.getByText("Taylor N.")).toBeVisible();
-  expect(screen.getByText("Passing under pressure")).not.toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Next coach slide" }));
+  expect(screen.queryByText("Passing under pressure")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Monthly plan" }));
+  expect(screen.getByText("Passing under pressure")).toBeVisible();
+  fireEvent.keyDown(card, { key: "Escape" });
   expect(
     screen.getByRole("img", {
       name: "Rugby coach beside yellow COACH lettering",
