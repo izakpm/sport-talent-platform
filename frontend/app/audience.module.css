@@ -33,13 +33,6 @@
   color: #386779;
   margin-bottom: 20px;
 }
-.athleteLabel {
-  display: inline-block;
-  color: #ffca05;
-  background: #0b1f2e;
-  padding: 7px 12px;
-  border-radius: 2px;
-}
 .copy h2 {
   font-size: clamp(36px, 3.8vw, 56px);
   font-weight: 750;
@@ -70,12 +63,6 @@
   color: #5b6d79;
   font-size: 14px;
   line-height: 1.75;
-}
-.availability {
-  font-size: 12px;
-  line-height: 1.7;
-  color: #526b7a;
-  margin: 0 0 26px;
 }
 .athleteImage {
   display: block;
@@ -445,4 +432,14 @@
   .orgHeading select {
     max-width: 85px;
   }
+}
+
+.darkCopy .intro {
+  color: #d3dfe6;
+}
+.darkCopy .benefits p {
+  color: #bbcdd8;
+}
+.darkCopy .benefits li {
+  border-bottom-color: #ffffff26;
 }

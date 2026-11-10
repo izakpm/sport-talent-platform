@@ -92,9 +92,6 @@ export default function Home() {
           />
           <div className={audience.inner}>
             <div className={audience.copy}>
-              <p className={`${audience.label} ${audience.athleteLabel}`}>
-                ATHLETES
-              </p>
               <h2 id="athletes-title">
                 Your dedication
                 <br />
@@ -131,10 +128,6 @@ export default function Home() {
                   </p>
                 </li>
               </ul>
-              <p className={audience.availability}>
-                Profile setup is available now. Performance records,
-                verification and profile sharing are in development.
-              </p>
               <Link
                 scroll={false}
                 className={styles.primary}
@@ -152,54 +145,44 @@ export default function Home() {
             className={styles.coaching}
             aria-labelledby="coaching-title"
           >
-            <div className={styles.coachCopy}>
-              <p className={styles.sectionLabel}>COACHES</p>
+            <div className={`${styles.coachCopy} ${audience.darkCopy}`}>
               <h2 id="coaching-title">
                 Turn potential
                 <br />
                 into progress.
               </h2>
-              <p className={styles.intro}>
+              <p className={audience.intro}>
                 You see what your players can become. Every session is a chance
                 to help them get there. Bring your squads, player rosters and
                 training plans into one workspace, so you can spend more time
                 coaching and less time keeping track.
               </p>
-              <div className={styles.features}>
-                <div>
-                  <span>01</span>
-                  <div>
-                    <h3>Know your squad. Be ready to coach.</h3>
-                    <p>
-                      Keep every team organised, from your First XV to the U16s.
-                      Find player names, positions, shirt numbers and captains
-                      without piecing together another squad list.
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <span>02</span>
-                  <div>
-                    <h3>Give every session a purpose</h3>
-                    <p>
-                      Turn your coaching ideas into a clear monthly plan.
-                      Schedule practice, gym, video reviews and matches with a
-                      time, venue and focus for each session.
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <span>03</span>
-                  <div>
-                    <h3>Build a routine you can keep</h3>
-                    <p>
-                      Repeat weekly sessions, adjust individual dates and switch
-                      between teams. Keep the plan moving when the season
-                      changes, without starting from scratch.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <ul className={audience.benefits}>
+                <li>
+                  <h3>Know your squad. Be ready to coach.</h3>
+                  <p>
+                    Keep every team organised, from your First XV to the U16s.
+                    Find player names, positions, shirt numbers and captains
+                    without piecing together another squad list.
+                  </p>
+                </li>
+                <li>
+                  <h3>Give every session a purpose</h3>
+                  <p>
+                    Turn your coaching ideas into a clear monthly plan. Schedule
+                    practice, gym, video reviews and matches with a time, venue
+                    and focus for each session.
+                  </p>
+                </li>
+                <li>
+                  <h3>Build a routine you can keep</h3>
+                  <p>
+                    Repeat weekly sessions, adjust individual dates and switch
+                    between teams. Keep the plan moving when the season changes,
+                    without starting from scratch.
+                  </p>
+                </li>
+              </ul>
               <Link
                 scroll={false}
                 className={styles.primary}
@@ -220,7 +203,6 @@ export default function Home() {
         >
           <div className={audience.inner}>
             <div className={audience.copy}>
-              <p className={audience.label}>SCHOOLS &amp; SPORTING CLUBS</p>
               <h2 id="organisations-title">
                 Give every team
                 <br />
@@ -258,10 +240,6 @@ export default function Home() {
                   </p>
                 </li>
               </ul>
-              <p className={audience.availability}>
-                These organisation tools are in development. Explore the example
-                and talk to us about what your school or club needs.
-              </p>
               <a
                 className={styles.primary}
                 href="mailto:info@bulperd.com?subject=PlayVerified%20for%20our%20school%20or%20club"

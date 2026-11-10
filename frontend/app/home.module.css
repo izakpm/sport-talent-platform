@@ -240,7 +240,7 @@
 .coaching {
   max-width: 1370px;
   margin: auto;
-  padding: 110px 5.5%;
+  padding: 100px 5.5%;
   display: grid;
   grid-template-columns: 0.95fr 1fr;
   gap: 90px;
@@ -607,7 +607,7 @@
   }
   .coaching {
     grid-template-columns: 1fr;
-    gap: 55px;
+    gap: 40px;
     padding: 65px 6%;
   }
   .intro,
