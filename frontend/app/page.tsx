@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import PublicHeader from "./PublicHeader";
 import PublicFooter from "./PublicFooter";
 import CoachShowcase from "./CoachShowcase";
-import { OrganisationPreview } from "./AudiencePreview";
+import OrganisationShowcase from "./OrganisationShowcase";
 import AthleteShowcase from "./AthleteShowcase";
 import audience from "./audience.module.css";
 import styles from "./home.module.css";
@@ -264,7 +264,7 @@ export default function Home() {
                 Talk to us about your organisation
               </a>
             </div>
-            <OrganisationPreview />
+            <OrganisationShowcase />
           </div>
         </section>
         <section

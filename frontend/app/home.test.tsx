@@ -63,6 +63,9 @@ it("introduces real coach tools, links to registration and distinguishes the roa
 });
 it("lets visitors explore the organisation example without creating records", () => {
   render(<Home />);
+  const showcase = screen.getByRole("region", { name: "Schools and clubs showcase" });
+  expect(screen.getByRole("img", { name: /Rugby players in action/ })).toBeVisible();
+  fireEvent.keyDown(showcase, { key: "Enter" });
   fireEvent.change(screen.getByLabelText("Organisation example team"), {
     target: { value: "u16" },
   });
@@ -72,6 +75,8 @@ it("lets visitors explore the organisation example without creating records", ()
   fireEvent.click(screen.getByRole("button", { name: "Competition log" }));
   expect(screen.getByRole("table")).toBeInTheDocument();
   expect(screen.queryByText("Lebo N.")).not.toBeInTheDocument();
+  fireEvent.keyDown(showcase, { key: "Escape" });
+  expect(screen.getByRole("img", { name: /Rugby players in action/ })).toBeVisible();
 });
 it("publishes operator details and accessible privacy contact methods", () => {
   render(<Privacy />);
