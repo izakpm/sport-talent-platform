@@ -72,3 +72,18 @@ it("restores volume and pauses for authentication without restarting on return",
   rerender(<AudioPlayer />);
   expect(play).toHaveBeenCalledTimes(1);
 });
+
+it("retries blocked autoplay on the first page interaction only", async () => {
+  const play = jest
+    .spyOn(HTMLMediaElement.prototype, "play")
+    .mockRejectedValueOnce(new DOMException("Blocked", "NotAllowedError"))
+    .mockResolvedValue();
+  jest.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+  render(<AudioPlayer />);
+  await screen.findByText("Press play to listen");
+  fireEvent.click(document.body);
+  expect(play).toHaveBeenCalledTimes(2);
+  fireEvent.click(document.body);
+  fireEvent.keyDown(document.body, { key: "Enter" });
+  expect(play).toHaveBeenCalledTimes(2);
+});

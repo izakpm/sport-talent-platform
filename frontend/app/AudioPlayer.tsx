@@ -38,11 +38,39 @@ export default function AudioPlayer() {
     }
     if (attempted.current) return;
     attempted.current = true;
+    let disposed = false;
+    const stopListening = () => {
+      document.removeEventListener("click", startOnInteraction);
+      document.removeEventListener("keydown", startOnInteraction);
+    };
+    const startOnInteraction = (event: Event) => {
+      // The player's own controls handle their interaction directly.
+      if (
+        (event.target as Element)?.closest?.(
+          '[aria-label="Motivational audio player"]',
+        )
+      )
+        return;
+      stopListening();
+      void media.play().catch(() => {
+        if (!disposed) setMessage("Press play to listen");
+      });
+    };
+    media.addEventListener("play", stopListening);
     void media.play().catch((error: DOMException) => {
-      if (error.name === "NotAllowedError") setMessage("Press play to listen");
-      else if (error.name !== "AbortError")
+      if (disposed) return;
+      if (error.name === "NotAllowedError") {
+        setMessage("Press play to listen");
+        document.addEventListener("click", startOnInteraction);
+        document.addEventListener("keydown", startOnInteraction);
+      } else if (error.name !== "AbortError")
         setMessage("Audio unavailable. Try again.");
     });
+    return () => {
+      disposed = true;
+      stopListening();
+      media.removeEventListener("play", stopListening);
+    };
   }, [pathname]);
 
   async function toggle() {
