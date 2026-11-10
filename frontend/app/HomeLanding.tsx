@@ -59,12 +59,12 @@ export default function Home() {
                 And the coaches who help them get there.
               </h2>
               <p className={styles.heroDescription}>
-                A home for athletes and coaches to build sporting profiles
-                backed by verified performance. Bring training and sporting
-                activities together, with team management and scheduling
-                available now. We’re developing profile verification and tools
-                for schools and sporting clubs to organise fixtures, coaches and
-                competition logs.
+                Talent and dedication deserve to be seen. Our mission is to
+                help committed athletes build a sporting portfolio that tells
+                their story and brings them into view of universities and
+                sporting clubs, locally and abroad. Too much potential goes
+                unnoticed through a lack of visibility and opportunity.
+                We’re here to help change that.
               </p>
               <div className={styles.heroActions}>
                 <Link
