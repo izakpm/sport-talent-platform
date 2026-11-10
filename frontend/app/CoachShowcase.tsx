@@ -11,7 +11,7 @@ export default function CoachShowcase() {
       photo={
         <Image
           src={coachImage}
-          alt="Rugby coach beside yellow COACH lettering"
+          alt="Rugby coach holding a ball beside yellow COACHES lettering"
           className={styles.athleteImage}
           sizes="(max-width: 760px) 88vw, (max-width: 1370px) 43vw, 570px"
         />

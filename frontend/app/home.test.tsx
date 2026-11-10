@@ -40,7 +40,7 @@ it("introduces real coach tools, links to registration and distinguishes the roa
   ).toBeInTheDocument();
   expect(
     screen.getByRole("img", {
-      name: "Rugby coach beside yellow COACH lettering",
+      name: "Rugby coach holding a ball beside yellow COACHES lettering",
     }),
   ).toBeVisible();
   const card = screen.getByRole("region", { name: "Coach showcase" });
@@ -57,7 +57,7 @@ it("introduces real coach tools, links to registration and distinguishes the roa
   fireEvent.keyDown(card, { key: "Escape" });
   expect(
     screen.getByRole("img", {
-      name: "Rugby coach beside yellow COACH lettering",
+      name: "Rugby coach holding a ball beside yellow COACHES lettering",
     }),
   ).toBeVisible();
 });

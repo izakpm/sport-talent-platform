@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import athleteImage from "../public/Athlete 2.png";
+import athleteImage from "../public/Athlete.png";
 import FlipShowcase from "./FlipShowcase";
 import { useState } from "react";
 import styles from "./audience.module.css";
@@ -11,7 +11,7 @@ export default function AthleteShowcase() {
       photo={
         <Image
           src={athleteImage}
-          alt="Rugby athlete in a red scrum cap beside yellow ATHLETE lettering"
+          alt="Rugby athlete in a red scrum cap beside yellow ATHLETES lettering"
           className={styles.athleteImage}
           sizes="(max-width: 760px) 88vw, (max-width: 1370px) 43vw, 570px"
         />
