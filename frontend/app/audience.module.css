@@ -147,6 +147,13 @@
   border-bottom-color: #e8b500;
   font-weight: 650;
 }
+.darkShowcase .showcaseChoices button,
+.darkShowcase .showcaseHint {
+  color: #bbcdd8;
+}
+.darkShowcase .showcaseChoices button[aria-pressed="true"] {
+  color: #ffca05;
+}
 .showcaseHint {
   margin-top: 12px;
   text-align: center;

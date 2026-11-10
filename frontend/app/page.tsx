@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import PublicHeader from "./PublicHeader";
 import PublicFooter from "./PublicFooter";
-import HomePreview from "./HomePreview";
+import CoachShowcase from "./CoachShowcase";
 import { OrganisationPreview } from "./AudiencePreview";
 import AthleteShowcase from "./AthleteShowcase";
 import audience from "./audience.module.css";
@@ -204,14 +204,7 @@ export default function Home() {
               </Link>
             </div>
             <div className={styles.demo}>
-              <p className={styles.demoCaption}>
-                Take a look inside{" "}
-                <span>Try switching teams or opening the roster.</span>
-              </p>
-              <HomePreview />
-              <p className={styles.demoNote}>
-                An example of your workspace. Your own teams start with you.
-              </p>
+              <CoachShowcase />
             </div>
           </section>
         </div>

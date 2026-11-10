@@ -315,7 +315,7 @@
   margin-top: 4px;
   font-weight: 400;
 }
-.demo > div {
+.demo :global(.coach-preview) {
   transform: none;
   border-color: #d0dce3;
   border-radius: 10px;
@@ -323,7 +323,7 @@
   color: #102b3c;
   background: white;
 }
-.demo > div > div:first-child {
+.demo :global(.coach-preview) > div:first-child {
   background: #0b1f2e;
 }
 .demo button,

@@ -42,16 +42,35 @@ it("introduces real coach tools, links to registration and distinguishes the roa
   expect(
     screen.getByText(/These organisation tools are in development/),
   ).toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText("Preview team"), {
+  expect(
+    screen.getByRole("img", {
+      name: "Rugby coach beside yellow COACH lettering",
+    }),
+  ).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Next coach slide" }));
+  fireEvent.keyDown(screen.getByLabelText("Schedule example team"), {
+    key: "ArrowRight",
+  });
+  expect(screen.getByText("Build the defensive line")).toBeVisible();
+  fireEvent.change(screen.getByLabelText("Schedule example team"), {
     target: { value: "u16" },
   });
   expect(screen.getByText("Passing under pressure")).toBeInTheDocument();
   expect(
     screen.queryByText("Build the defensive line"),
   ).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Team roster" }));
-  expect(screen.getByText("Taylor N.")).toBeInTheDocument();
-  expect(screen.queryByText("Passing under pressure")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Next coach slide" }));
+  fireEvent.change(screen.getByLabelText("Roster example team"), {
+    target: { value: "u16" },
+  });
+  expect(screen.getByText("Taylor N.")).toBeVisible();
+  expect(screen.getByText("Passing under pressure")).not.toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Next coach slide" }));
+  expect(
+    screen.getByRole("img", {
+      name: "Rugby coach beside yellow COACH lettering",
+    }),
+  ).toBeVisible();
 });
 it("lets visitors explore the organisation example without creating records", () => {
   render(<Home />);
