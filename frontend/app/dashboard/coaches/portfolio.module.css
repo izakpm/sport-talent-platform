@@ -1,0 +1,112 @@
+.list {
+  display: grid;
+  gap: 18px;
+}
+.card {
+  display: flex;
+  gap: 22px;
+  padding: 28px;
+  background: white;
+  border: 1px solid #dce5eb;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px #0b1f2e06;
+}
+.mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  height: 48px;
+  background: #fff4cc;
+  color: #0b1f2e;
+  border-radius: 12px;
+  font-size: 24px;
+}
+.body {
+  flex: 1;
+  min-width: 0;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.title h2 {
+  overflow-wrap: anywhere;
+}
+.organization {
+  font-weight: 600;
+  margin-top: 8px !important;
+}
+.date {
+  color: #5c7180;
+  font-size: 13px;
+  margin-top: 8px !important;
+}
+.notes {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 18px !important;
+  line-height: 1.65;
+  color: #465e6e;
+}
+.actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.badge,
+.expired {
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: #edf2f5;
+  color: #355064;
+  font-size: 12px;
+}
+.expired {
+  background: #fff0ec;
+  color: #a13520;
+}
+.file {
+  display: block;
+  margin-top: 16px;
+  border: 0;
+  background: #edf2f5;
+  color: #0b1f2e;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.upload {
+  padding: 18px;
+  background: #f4f6f7;
+  border: 1px dashed #afbfca;
+  border-radius: 12px;
+}
+.upload input[type="file"] {
+  background: white;
+  max-width: 100%;
+}
+@media (max-width: 700px) {
+  .card {
+    padding: 20px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .mark {
+    display: none;
+  }
+  .body {
+    flex-basis: 100%;
+  }
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

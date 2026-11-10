@@ -103,3 +103,12 @@ The working tree contains substantial earlier uncommitted work, including pages 
 - [NestJS on Vercel](https://vercel.com/docs/frameworks/backend/nestjs)
 - [Vercel Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)
 - [Environment variables](https://vercel.com/docs/environment-variables)
+
+
+### Coach portfolio
+
+Apply `docs/sql/coach-portfolio.sql` before deploying the coach portfolio API. The migration is additive and enables RLS, with no direct anon/authenticated access. The NestJS API checks coach role, suspension status and ownership on every operation.
+
+Achievements, coaching history and qualifications are stored in `coach_portfolio`. Certificates are private bytea attachments (one per qualification), limited to 2 MB, with PDF/JPEG/PNG signature validation. List responses exclude certificate bytes; downloads require the owner's JWT and use attachment/no-store headers. Removing a qualification removes its attachment. Uploading a certificate does not mark a qualification verified.
+
+For a manual database integration check after building the backend, set `RUN_PORTFOLIO_DB_CHECK=1` and run `node backend/test/portfolio-db-check.cjs`. It requires a configured backend `.env` and an existing active coach, checks CRUD and certificate handling, and rolls the entire test transaction back. No test records are retained.

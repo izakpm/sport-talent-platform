@@ -45,9 +45,9 @@ describe('coach pages smoke tests', () => {
     expect(screen.getByRole('heading', { name: 'Pending Queue' })).toBeInTheDocument();
   });
 
-  it('renders Achievements page core sections', () => {
+  it('renders Achievements page real empty state', async () => {
     render(<CoachAchievementsPage />);
     expect(screen.getByRole('heading', { name: 'Achievements' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Achievement Board' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Celebrate your first milestone.' })).toBeInTheDocument();
   });
 });
