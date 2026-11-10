@@ -4,6 +4,7 @@ import { Strategy, Profile } from 'passport-google-oauth20';
 import { AuthService } from './auth.service';
 import type { Request } from 'express';
 import { deploymentConfig } from '../deployment-config';
+import { PersistedOAuthStateStore } from './persisted-oauth-state.store';
 
 const ALLOWED_ROLES = new Set(['ATHLETE', 'COACH', 'SCHOOL', 'GUARDIAN', 'ORG']);
 
@@ -19,6 +20,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         `${deploymentConfig().frontendUrl}/api/auth/google/callback`,
       scope: ['email', 'profile'],
       state: true,
+      store: new PersistedOAuthStateStore(),
       passReqToCallback: true,
     });
   }
