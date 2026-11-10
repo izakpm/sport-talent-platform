@@ -1,0 +1,82 @@
+.player {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 12px 12px;
+  border: 1px solid #ffffff30;
+  border-radius: 14px;
+  background: #0b1f2e;
+  color: #fff;
+  box-shadow: 0 10px 35px #0004;
+  max-width: calc(100vw - 24px);
+}
+.player[hidden] {
+  display: none;
+}
+.play {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #ffca05;
+  color: #0b1f2e;
+  cursor: pointer;
+}
+.play svg {
+  width: 23px;
+  height: 23px;
+  fill: currentColor;
+}
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.track strong {
+  font-size: 13px;
+  font-weight: 650;
+}
+.track span {
+  font-size: 10px;
+  color: #bbcdd8;
+  max-width: 150px;
+}
+.volume {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 65px;
+  flex-shrink: 0;
+}
+.volume span {
+  font-size: 10px;
+  color: #bbcdd8;
+}
+.volume input {
+  width: 100%;
+  accent-color: #ffca05;
+  cursor: pointer;
+  min-height: 22px;
+}
+.player :focus-visible {
+  outline: 2px solid #ffca05;
+  outline-offset: 4px;
+}
+@media (max-width: 420px) {
+  .player {
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+  .track span {
+    max-width: 125px;
+  }
+}

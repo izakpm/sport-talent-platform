@@ -1,4 +1,5 @@
 import HomeLanding from "../HomeLanding";
+import AudioPlayer from "../AudioPlayer";
 export default function PublicAuthLayout({
   children,
 }: {
@@ -7,6 +8,7 @@ export default function PublicAuthLayout({
   return (
     <>
       <HomeLanding />
+      <AudioPlayer />
       {children}
     </>
   );
