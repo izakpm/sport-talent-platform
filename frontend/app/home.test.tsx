@@ -2,9 +2,31 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import Home from "./page";
 import Privacy from "./privacy/page";
 import Register from "./register/page";
+import AthleteShowcase from "./AthleteShowcase";
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
+it("starts with the athlete photo and cycles through both examples with buttons and keys", () => {
+  render(<AthleteShowcase />);
+  expect(screen.getByRole("img")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Next athlete slide" }));
+  expect(screen.getByText("Primary position")).toBeVisible();
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole("region", { name: "Athlete showcase" }), {
+    key: "ArrowRight",
+  });
+  expect(screen.getByText("Awaiting review")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Next athlete slide" }));
+  expect(screen.getByRole("img")).toBeVisible();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Previous athlete slide" }),
+  );
+  expect(screen.getByText("Awaiting review")).toBeVisible();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Show sporting profile" }),
+  );
+  expect(screen.getByText("Primary position")).toBeVisible();
+});
 it("introduces real coach tools, links to registration and distinguishes the roadmap", () => {
   render(<Home />);
   expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
