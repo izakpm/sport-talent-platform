@@ -17,8 +17,12 @@ export default function PublicFooter() {
           <p>Where performance meets proof.</p>
         </div>
         <nav aria-label="Footer navigation">
-          <Link href="/register">Create an account</Link>
-          <Link href="/login">Log in</Link>
+          <Link scroll={false} href="/register">
+            Create an account
+          </Link>
+          <Link scroll={false} href="/login">
+            Log in
+          </Link>
           <Link href="/privacy">Privacy policy</Link>
           <a href="mailto:info@bulperd.com">Contact us</a>
         </nav>

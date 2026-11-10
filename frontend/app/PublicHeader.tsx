@@ -14,8 +14,10 @@ export default function PublicHeader() {
           />
         </Link>
         <div className={styles.navActions}>
-          <Link className={styles.loginLink} href="/login">Log in</Link>
-          <Link className={styles.registerLink} href="/register">
+          <Link scroll={false} className={styles.loginLink} href="/login">
+            Log in
+          </Link>
+          <Link scroll={false} className={styles.registerLink} href="/register">
             Register
           </Link>
         </div>

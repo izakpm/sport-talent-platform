@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import LoginPage from './page';
+import LoginPage from '../LoginForm';
 
 const replace = jest.fn();
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace, push: jest.fn() }) }));

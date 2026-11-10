@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Metadata } from "next";
 import PublicHeader from "./PublicHeader";
 import PublicFooter from "./PublicFooter";
 import CoachShowcase from "./CoachShowcase";
@@ -9,12 +8,6 @@ import AthleteShowcase from "./AthleteShowcase";
 import audience from "./audience.module.css";
 import styles from "./home.module.css";
 
-export const metadata: Metadata = {
-  title: "PlayVerified | Where performance meets proof",
-  description:
-    "Bring your rugby team together. Manage your players, plan training and build your monthly schedule with PlayVerified.",
-  alternates: { canonical: "/" },
-};
 const questions = [
   [
     "What can I use today?",
@@ -74,7 +67,11 @@ export default function Home() {
                 competition logs.
               </p>
               <div className={styles.heroActions}>
-                <Link className={styles.primary} href="/register">
+                <Link
+                  scroll={false}
+                  className={styles.primary}
+                  href="/register"
+                >
                   Join PlayVerified
                 </Link>
               </div>
@@ -138,7 +135,11 @@ export default function Home() {
                 Profile setup is available now. Performance records,
                 verification and profile sharing are in development.
               </p>
-              <Link className={styles.primary} href="/register?role=ATHLETE">
+              <Link
+                scroll={false}
+                className={styles.primary}
+                href="/register?role=ATHLETE"
+              >
                 Create your athlete profile
               </Link>
             </div>
@@ -199,7 +200,11 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <Link className={styles.primary} href="/register?role=COACH">
+              <Link
+                scroll={false}
+                className={styles.primary}
+                href="/register?role=COACH"
+              >
                 Create your coach account
               </Link>
             </div>
@@ -298,7 +303,7 @@ export default function Home() {
             <p className={styles.sectionLabel}>YOUR NEXT SEASON STARTS HERE</p>
             <h2>Bring your team.</h2>
           </div>
-          <Link className={styles.primary} href="/register">
+          <Link scroll={false} className={styles.primary} href="/register">
             Get started with PlayVerified
           </Link>
         </section>

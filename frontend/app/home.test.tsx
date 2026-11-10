@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import Home from "./page";
+import Home from "./HomeLanding";
 import Privacy from "./privacy/page";
-import Register from "./register/page";
+import Register from "./RegisterForm";
 import AthleteShowcase from "./AthleteShowcase";
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
