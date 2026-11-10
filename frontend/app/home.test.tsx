@@ -20,9 +20,7 @@ it("flips the athlete photo and keeps the reverse interactive", () => {
   expect(screen.getByRole("img")).toBeVisible();
   fireEvent.click(screen.getByRole("img"));
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
-  fireEvent.click(
-    screen.getByRole("button", { name: "Return to athlete photo" }),
-  );
+  fireEvent.keyDown(card, { key: "Escape" });
   expect(screen.getByRole("img")).toBeVisible();
 });
 it("introduces real coach tools, links to registration and distinguishes the roadmap", () => {

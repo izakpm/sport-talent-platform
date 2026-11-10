@@ -60,17 +60,6 @@ export default function FlipShowcase({
           aria-hidden={!flipped}
           inert={!flipped}
         >
-          <button
-            className={styles.flipClose}
-            type="button"
-            aria-label={`Return to ${audience.toLowerCase()} photo`}
-            onClick={() => {
-              root.current?.focus();
-              setFlipped(false);
-            }}
-          >
-            &times;
-          </button>
           {children}
         </div>
       </div>
