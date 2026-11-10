@@ -1,5 +1,5 @@
 .back {
-  color: #385d42;
+  color: #102b3c;
   letter-spacing: 0;
   font-size: 13px;
 }
@@ -12,8 +12,8 @@
   display: flex;
   gap: 45px;
   padding: 22px 26px;
-  background: #eaf0e4;
-  border: 1px solid #dce5d4;
+  background: #edf2f5;
+  border: 1px solid #d6dfe4;
   border-radius: 12px;
   margin-bottom: 26px;
 }
@@ -28,7 +28,7 @@
 }
 .summary span {
   font-size: 12px;
-  color: #52694c;
+  color: #386779;
 }
 .filters {
   display: flex;
@@ -53,22 +53,22 @@
   font: inherit;
   font-weight: 400;
   padding: 12px;
-  border: 1px solid #ccd8c5;
+  border: 1px solid #d6dfe4;
   border-radius: 7px;
   background: white;
   min-height: 44px;
-  color: #29452f;
+  color: #0b1f2e;
 }
 .filters > span {
   font-size: 12px;
-  color: #718068;
+  color: #617887;
   padding: 12px 0;
 }
 .list {
   list-style: none;
   padding: 0;
   margin: 0;
-  border: 1px solid #dfe6d9;
+  border: 1px solid #d6dfe4;
   border-radius: 12px;
   overflow: hidden;
   background: white;
@@ -78,19 +78,19 @@
   align-items: center;
   gap: 18px;
   padding: 18px 24px;
-  border-bottom: 1px solid #e9eee4;
+  border-bottom: 1px solid #edf2f5;
 }
 .player:last-child {
   border-bottom: 0;
 }
 .number {
-  background: #eef3e9;
+  background: #edf2f5;
   border-radius: 10px;
   min-width: 44px;
   height: 44px;
   display: grid;
   place-items: center;
-  color: #4f7043;
+  color: #386779;
   font-size: 18px;
   font-weight: 650;
 }
@@ -109,7 +109,7 @@
   gap: 10px;
   align-items: center;
   font-size: 12px;
-  color: #73856a;
+  color: #617887;
   margin-top: 4px;
   flex-wrap: wrap;
 }
@@ -132,8 +132,8 @@
   background: #edf5e8;
 }
 .inactive {
-  color: #7e8076;
-  background: #f1f1ed;
+  color: #617887;
+  background: #edf2f5;
 }
 .rowActions {
   display: flex;
@@ -142,7 +142,7 @@
 }
 .help {
   font-size: 12px !important;
-  color: #7d8975;
+  color: #617887;
   margin: 20px 0 !important;
 }
 @media (max-width: 700px) {

@@ -333,14 +333,6 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                         <span>↗</span>
                       </Link>
                     </div>
-                    <div className={styles.pitch} aria-hidden="true">
-                      <div className={styles.pitchLine} />
-                      <div className={styles.pitchCircle} />
-                      <span className={styles.playerOne}>10</span>
-                      <span className={styles.playerTwo}>9</span>
-                      <span className={styles.playerThree}>15</span>
-                      <div className={styles.pitchArrow}>↗</div>
-                    </div>
                   </section>
                   <section className={styles.monthSnapshot}>
                     <p className={styles.eyebrow}>
@@ -446,7 +438,7 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                               <span
                                 className={styles.teamBadge}
                                 style={{
-                                  background: ["#eaf3e9", "#edf1fa", "#fff3df"][
+                                  background: ["#e7eff3", "#edf2f5", "#fff4cc"][
                                     index % 3
                                   ],
                                 }}

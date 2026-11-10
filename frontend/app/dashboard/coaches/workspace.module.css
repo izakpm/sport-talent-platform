@@ -1,7 +1,7 @@
 .workspace {
   max-width: 1500px;
   margin: 0 auto;
-  color: #172b2a;
+  color: #0b1f2e;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -32,7 +32,7 @@
 }
 .workspace h1 {
   font-size: clamp(28px, 3vw, 42px);
-  font-weight: 650;
+  font-weight: 750;
 }
 .workspace h2 {
   font-size: 23px;
@@ -54,8 +54,8 @@
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 25px;
-  border-bottom: 1px solid #dfe5df;
-  color: #718078;
+  border-bottom: 1px solid #d6dfe4;
+  color: #617887;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -63,11 +63,11 @@
 .sportTag {
   letter-spacing: 0;
   font-size: 12px;
-  color: #40574b;
+  color: #102b3c;
 }
 .sportTag span {
   margin: 0 12px;
-  color: #bcc5bd;
+  color: #bbcdd8;
 }
 .header {
   display: flex;
@@ -80,11 +80,11 @@
   font-size: 10px !important;
   font-weight: 750;
   letter-spacing: 0.15em !important;
-  color: #65806c;
+  color: #617887;
   margin: 0 0 10px !important;
 }
 .subtitle {
-  color: #718078;
+  color: #617887;
   margin-top: 13px !important;
   font-size: 14px;
 }
@@ -104,20 +104,20 @@
   border: 1px solid transparent;
 }
 .primary {
-  background: #245641;
-  color: white;
+  background: #ffca05;
+  color: #0b1f2e;
 }
 .primary:hover {
-  background: #173e2e;
+  background: #e8b900;
 }
 .secondary {
   background: #fff;
-  color: #344b3e;
-  border-color: #dce3db;
+  color: #102b3c;
+  border-color: #d6dfe4;
 }
 .yellowButton {
-  background: #f4d55c;
-  color: #1e392f;
+  background: #ffca05;
+  color: #0b1f2e;
   margin-top: 20px;
 }
 .yellowButton span {
@@ -152,12 +152,12 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #738176;
+  color: #617887;
 }
 .loadingDot {
   width: 10px;
   height: 10px;
-  background: #406b51;
+  background: #386779;
   border-radius: 50%;
 }
 .overviewGrid {
@@ -171,7 +171,7 @@
   display: flex;
   min-height: 315px;
   padding: 34px;
-  background: #204e3c;
+  background: #0b1f2e;
   border-radius: 14px;
   color: white;
 }
@@ -183,103 +183,21 @@
 .lightEyebrow {
   font-size: 9px;
   letter-spacing: 0.12em;
-  color: #b6cfba;
+  color: #bbcdd8;
   font-weight: 700;
 }
 .playbook h2 {
   font-size: 36px;
   margin: 22px 0 13px;
-  font-weight: 550;
+  font-weight: 750;
 }
 .playbook p {
   max-width: 290px;
-  color: #c1d3c7;
+  color: #bbcdd8;
   font-size: 13px;
 }
-.pitch {
-  position: absolute;
-  right: -28px;
-  top: 34px;
-  width: 245px;
-  height: 300px;
-  border: 1px solid #75a58755;
-  transform: rotate(17deg);
-  border-radius: 3px;
-  background: repeating-linear-gradient(
-    0deg,
-    #ffffff03 0px,
-    #ffffff03 45px,
-    #ffffff00 45px,
-    #ffffff00 90px
-  );
-  opacity: 0.75;
-}
-.pitch:before,
-.pitch:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 35px;
-  border-bottom: 1px solid #75a58755;
-  top: 0;
-}
-.pitch:after {
-  top: auto;
-  bottom: 0;
-  border-top: 1px solid #75a58755;
-  border-bottom: 0;
-}
-.pitchLine {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  border-top: 1px solid #75a58755;
-}
-.pitchCircle {
-  position: absolute;
-  top: 40%;
-  left: 35%;
-  width: 70px;
-  height: 70px;
-  border: 1px solid #75a58755;
-  border-radius: 50%;
-}
-.pitch span {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  background: #f1d571;
-  color: #264b39;
-  border-radius: 50%;
-  font-size: 10px;
-  font-weight: 700;
-  box-shadow: 0 0 0 7px #f4d55c14;
-}
-.playerOne {
-  top: 95px;
-  left: 60px;
-}
-.playerTwo {
-  top: 190px;
-  left: 110px;
-}
-.playerThree {
-  top: 42px;
-  right: 25px;
-}
-.pitchArrow {
-  position: absolute;
-  left: 110px;
-  top: 70px;
-  font-size: 85px;
-  color: #96ba9c88;
-  font-weight: 200;
-}
 .monthSnapshot {
-  border: 1px solid #e0e5dc;
+  border: 1px solid #d6dfe4;
   background: #fff;
   border-radius: 14px;
   padding: 28px;
@@ -293,7 +211,7 @@
   align-items: center;
   gap: 18px;
   padding: 11px 0;
-  border-top: 1px solid #eef0eb;
+  border-top: 1px solid #edf2f5;
 }
 .monthSnapshot strong {
   font-size: 30px;
@@ -301,7 +219,7 @@
   min-width: 32px;
 }
 .monthSnapshot span {
-  color: #738176;
+  color: #617887;
   font-size: 12px;
 }
 .sectionHeading {
@@ -312,27 +230,27 @@
   margin: 34px 0 20px;
 }
 .sectionHeading a {
-  color: #37614a;
+  color: #102b3c;
   font-size: 12px;
   font-weight: 650;
 }
 .empty {
   text-align: center;
-  border: 1px dashed #ced9cd;
+  border: 1px dashed #d6dfe4;
   border-radius: 14px;
   background: #ffffff88;
   padding: 55px 22px;
 }
 .empty p {
-  color: #788379;
+  color: #617887;
   max-width: 430px;
   margin: 14px auto 22px;
 }
 .emptyIcon {
   display: grid;
   place-items: center;
-  background: #e9eee4;
-  color: #49684c;
+  background: #edf2f5;
+  color: #386779;
   border-radius: 14px;
   width: 58px;
   height: 58px;
@@ -340,7 +258,7 @@
   margin: 0 auto 22px;
 }
 .muted {
-  color: #748076;
+  color: #617887;
   font-size: 13px;
 }
 .count {
@@ -348,7 +266,7 @@
 }
 .search {
   padding: 10px 14px;
-  border: 1px solid #dce3da;
+  border: 1px solid #d6dfe4;
   border-radius: 8px;
   max-width: 240px;
   width: 100%;
@@ -362,7 +280,7 @@
 }
 .teamCard {
   background: white;
-  border: 1px solid #e0e5dc;
+  border: 1px solid #d6dfe4;
   border-radius: 12px;
   padding: 24px;
   min-width: 0;
@@ -379,14 +297,14 @@
   width: 54px;
   height: 54px;
   border-radius: 14px;
-  color: #36543b;
+  color: #102b3c;
   font-size: 20px;
   font-weight: 650;
 }
 .textButton {
   border: 0;
   background: none;
-  color: #49694e;
+  color: #386779;
   padding: 8px;
   font-size: 12px !important;
 }
@@ -394,7 +312,7 @@
   font-size: 9px;
   font-weight: 750;
   letter-spacing: 0.13em;
-  color: #71876e;
+  color: #617887;
 }
 .teamCard h2 {
   font-size: 24px;
@@ -403,7 +321,7 @@
 }
 .teamVenue {
   font-size: 12px;
-  color: #839080;
+  color: #617887;
 }
 .teamStats {
   display: flex;
@@ -411,21 +329,21 @@
   gap: 10px;
   align-items: baseline;
   margin: 28px 0 22px;
-  color: #768374;
+  color: #617887;
   font-size: 12px;
 }
 .teamStats strong {
   font-size: 24px;
-  color: #334a36;
+  color: #102b3c;
   font-weight: 500;
 }
 .teamLink {
-  border-top: 1px solid #eef0e9;
+  border-top: 1px solid #edf2f5;
   padding-top: 18px;
   display: flex;
   justify-content: space-between;
   font-weight: 600;
-  color: #3d6547;
+  color: #102b3c;
   font-size: 12px;
 }
 .teamCard > .primary {
@@ -433,7 +351,7 @@
 }
 .newTeamCard {
   min-height: 285px;
-  border: 1px dashed #cdd8c9;
+  border: 1px dashed #d6dfe4;
   background: transparent;
   border-radius: 12px;
   display: flex;
@@ -441,11 +359,11 @@
   gap: 16px;
   align-items: center;
   justify-content: center;
-  color: #72856d;
+  color: #617887;
 }
 .newTeamCard > span {
   font-size: 28px;
-  background: #e9eee5;
+  background: #edf2f5;
   border-radius: 50%;
   width: 48px;
   height: 48px;
@@ -473,12 +391,12 @@
 }
 .monthControls button {
   background: #fff;
-  border: 1px solid #dfe5dc;
+  border: 1px solid #d6dfe4;
   border-radius: 7px;
   min-width: 32px;
   height: 35px;
   font-size: 22px;
-  color: #54654e;
+  color: #386779;
 }
 .monthControls .today {
   font-size: 12px;
@@ -487,33 +405,33 @@
 }
 .viewSwitch {
   display: flex;
-  border: 1px solid #dce3d9;
+  border: 1px solid #d6dfe4;
   border-radius: 7px;
   padding: 3px;
-  background: #eef0e9;
+  background: #edf2f5;
 }
 .viewSwitch button {
   padding: 6px 12px;
   background: none;
   border: 0;
   border-radius: 4px;
-  color: #7c8777;
+  color: #617887;
   font-size: 12px;
 }
 .viewSwitch button[aria-pressed="true"] {
   background: white;
-  color: #35543b;
+  color: #102b3c;
   box-shadow: 0 1px 3px #0000000a;
 }
 .scheduleSummary {
   display: flex;
   justify-content: space-between;
-  color: #7b8776;
+  color: #617887;
   font-size: 12px;
   gap: 12px;
 }
 .scheduleSummary strong {
-  color: #41553a;
+  color: #102b3c;
   font-weight: 600;
 }
 .scheduleSummary b {
@@ -525,7 +443,7 @@
   flex-wrap: wrap;
   margin: 23px 0 18px;
   font-size: 11px;
-  color: #71816b;
+  color: #617887;
 }
 .legend span {
   display: flex;
@@ -543,38 +461,38 @@
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .weekdays {
-  background: #eef1e9;
-  border: 1px solid #dfe5d9;
+  background: #edf2f5;
+  border: 1px solid #d6dfe4;
   border-bottom: 0;
   border-radius: 10px 10px 0 0;
   padding: 12px 0;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #7b8674;
+  color: #617887;
 }
 .weekdays span {
   padding-left: 14px;
 }
 .calendar {
-  border-top: 1px solid #dfe5d9;
-  border-left: 1px solid #dfe5d9;
+  border-top: 1px solid #d6dfe4;
+  border-left: 1px solid #d6dfe4;
   background: white;
   border-radius: 0 0 8px 8px;
   overflow: hidden;
 }
 .day {
   min-height: 134px;
-  border-right: 1px solid #dfe5d9;
-  border-bottom: 1px solid #dfe5d9;
+  border-right: 1px solid #d6dfe4;
+  border-bottom: 1px solid #d6dfe4;
   padding: 8px;
   min-width: 0;
 }
 .blank {
-  background: #f6f7f2;
+  background: #edf2f5;
 }
 .todayCell {
-  background: #fcfcef;
+  background: #f4f6f7;
 }
 .dayNumber {
   display: flex;
@@ -583,14 +501,14 @@
   width: 100%;
   border: 0;
   background: none;
-  color: #7a8574;
+  color: #617887;
   font-size: 12px;
   padding: 0 2px 6px;
   min-height: 30px;
 }
 .todayCell .dayNumber > span:first-child {
   border-radius: 50%;
-  background: #385c3f;
+  background: #102b3c;
   color: white;
   width: 26px;
   height: 26px;
@@ -637,7 +555,7 @@
   margin-top: 3px;
 }
 .calendarHint {
-  color: #8a9583;
+  color: #617887;
   font-size: 11px;
   margin-top: 12px !important;
 }
@@ -660,11 +578,11 @@
   flex-direction: column;
   text-align: center;
   padding-top: 7px;
-  color: #778674;
+  color: #617887;
 }
 .agendaDate strong {
   font-size: 28px;
-  color: #304b34;
+  color: #102b3c;
   font-weight: 500;
   line-height: 1.25;
 }
@@ -684,15 +602,15 @@
   gap: 15px;
   width: 100%;
   text-align: left;
-  border: 1px solid #e1e6dd;
+  border: 1px solid #d6dfe4;
   border-radius: 10px;
   padding: 17px;
   background: white;
-  color: #354a37;
+  color: #102b3c;
 }
 .agendaEvent:hover {
-  border-color: #a8bca3;
-  background: #fdfefb;
+  border-color: #bbcdd8;
+  background: #f4f6f7;
 }
 .typeMark {
   display: grid;
@@ -720,7 +638,7 @@
 .eventBody small,
 .agendaTime small {
   font-size: 11px;
-  color: #8a9581;
+  color: #617887;
   margin-top: 3px;
 }
 .agendaTime {
@@ -737,17 +655,17 @@
   width: min(580px, calc(100% - 24px));
   max-height: 90dvh;
   overflow-y: auto;
-  border: 1px solid #e0e6dc;
+  border: 1px solid #d6dfe4;
   border-radius: 16px;
-  box-shadow: 0 24px 100px #09281c44;
+  box-shadow: 0 24px 100px #0b1f2e44;
   background: #fff;
-  color: #233c2b;
+  color: #0b1f2e;
   font:
-    14px/1.5 Arial,
+    14px/1.5 var(--font-geist-sans),
     sans-serif;
 }
 .modal::backdrop {
-  background: #071c19a6;
+  background: #0b1f2ea6;
   backdrop-filter: blur(3px);
 }
 .modalHeader {
@@ -763,13 +681,13 @@
   margin: 9px 0 0;
 }
 .close {
-  background: #f0f3ec;
+  background: #edf2f5;
   border: 0;
   border-radius: 50%;
   height: 30px;
   min-width: 30px;
   font-size: 22px !important;
-  color: #6a7c64;
+  color: #617887;
 }
 .form {
   display: flex;
@@ -787,27 +705,27 @@
 .form input,
 .form select,
 .form textarea {
-  border: 1px solid #d7e0d1;
+  border: 1px solid #d6dfe4;
   border-radius: 7px;
   padding: 11px 12px;
   width: 100%;
-  color: #334830;
+  color: #102b3c;
   background: #fff;
   font:
-    14px Arial,
+    14px var(--font-geist-sans),
     sans-serif;
   min-height: 42px;
 }
 .form input:focus,
 .form select:focus,
 .form textarea:focus {
-  outline: 2px solid #87a574;
+  outline: 2px solid #617887;
   outline-offset: 1px;
 }
 .form input[readonly],
 .form select:disabled {
-  background: #f3f5ef;
-  color: #84917c;
+  background: #edf2f5;
+  color: #617887;
 }
 .formRow {
   display: grid;
@@ -815,14 +733,14 @@
   gap: 16px;
 }
 .optional {
-  color: #9aa48f;
+  color: #617887;
   font-size: 10px;
   font-weight: 400;
   display: contents;
 }
 .formTip {
-  background: #f3f6ee;
-  color: #7a8b6e;
+  background: #edf2f5;
+  color: #617887;
   border-radius: 8px;
   padding: 13px;
   font-size: 12px;
@@ -840,7 +758,7 @@
   align-items: center;
   gap: 10px;
   padding-top: 18px;
-  border-top: 1px solid #edf0e6;
+  border-top: 1px solid #edf2f5;
   margin-top: 6px;
 }
 .formFooter button {
@@ -863,9 +781,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #e1e6dc;
+  border: 1px solid #d6dfe4;
   background: white;
-  color: #7f8a75;
+  color: #617887;
   border-radius: 7px;
   padding: 9px;
   font-size: 11px;
@@ -887,12 +805,12 @@
 }
 .timezone {
   margin: -10px 0 0;
-  color: #8a967e;
+  color: #617887;
   font-size: 10px;
 }
 .repeatBox {
-  border: 1px solid #e0e6d8;
-  background: #f8faf4;
+  border: 1px solid #d6dfe4;
+  background: #f4f6f7;
   border-radius: 9px;
   padding: 15px;
   display: flex;
@@ -908,7 +826,7 @@
   width: 17px;
   height: 17px;
   min-height: 17px;
-  accent-color: #365c3c;
+  accent-color: #102b3c;
 }
 .checkboxLabel span {
   display: flex;
@@ -917,7 +835,7 @@
 }
 .checkboxLabel small {
   font-weight: 400;
-  color: #8a967e;
+  color: #617887;
   font-size: 11px;
 }
 .repeatDays {
@@ -927,20 +845,20 @@
 }
 .repeatDays button {
   background: white;
-  border: 1px solid #dce5d4;
+  border: 1px solid #d6dfe4;
   padding: 8px 0;
   border-radius: 5px;
-  color: #859378;
+  color: #617887;
   font-size: 11px;
 }
 .repeatDays button[aria-pressed="true"] {
-  background: #345b3c;
+  background: #102b3c;
   color: white;
-  border-color: #345b3c;
+  border-color: #102b3c;
 }
 .repeatPreview {
   font-size: 11px;
-  color: #6d845d;
+  color: #617887;
   margin: 0;
 }
 .deleteConfirm {
@@ -965,10 +883,6 @@
   font-size: 11px !important;
 }
 @media (min-width: 1500px) {
-  .pitch {
-    right: 10px;
-    width: 300px;
-  }
   .playbook {
     padding: 40px;
   }
@@ -976,9 +890,6 @@
 @media (max-width: 1100px) {
   .overviewGrid {
     grid-template-columns: 1fr;
-  }
-  .pitch {
-    right: 20px;
   }
   .monthSnapshot {
     display: flex;
@@ -1035,10 +946,6 @@
   }
   .playbook h2 {
     font-size: 31px;
-  }
-  .pitch {
-    right: -100px;
-    opacity: 0.4;
   }
   .monthSnapshot {
     padding: 20px;
@@ -1179,24 +1086,24 @@
   align-items: center;
   gap: 14px;
   padding: 18px 20px;
-  border: 1px solid #d5dfd1;
+  border: 1px solid #d6dfe4;
   border-radius: 10px;
-  background: #edf3e9;
+  background: #edf2f5;
 }
 .teamFilterBar label {
   font-size: 13px;
   font-weight: 650;
-  color: #34543c;
+  color: #102b3c;
 }
 .teamFilterBar select {
   min-height: 44px;
   width: min(340px, 100%);
   max-width: 100%;
   padding: 10px 12px;
-  border: 1px solid #a8bba0;
+  border: 1px solid #bbcdd8;
   border-radius: 7px;
   background: white;
-  color: #23432b;
+  color: #0b1f2e;
   font: inherit;
 }
 .teamFilterBar select:focus-visible {
@@ -1205,7 +1112,7 @@
 }
 .teamFilterBar p {
   margin: 0;
-  color: #536c4b;
+  color: #386779;
   font-size: 12px;
   overflow-wrap: anywhere;
 }
@@ -1219,4 +1126,48 @@
   .teamFilterBar select {
     width: 100%;
   }
+}
+
+.playbook {
+  background:
+    linear-gradient(90deg, #0b1f2ef5 15%, #0b1f2e88),
+    url("/register-bg.jpg") center 42% / cover;
+  border: 1px solid #ffffff1a;
+  box-shadow: 0 12px 35px #0b1f2e14;
+}
+.lightEyebrow {
+  color: #ffca05;
+}
+.monthSnapshot,
+.teamCard,
+.agendaEvent {
+  box-shadow: 0 4px 18px #0b1f2e06;
+}
+.teamCard {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.teamCard:hover {
+  border-color: #9fb5c3;
+  box-shadow: 0 8px 24px #0b1f2e0d;
+}
+.secondary:hover {
+  background: #edf2f5;
+  border-color: #9fb5c3;
+}
+.yellowButton:hover {
+  background: #e8b900;
+}
+.todayCell {
+  background: #fff9de;
+}
+.todayCell .dayNumber > span:first-child {
+  background: #ffca05;
+  color: #0b1f2e;
+}
+.workspace input:focus-visible,
+.workspace select:focus-visible {
+  outline: 2px solid #b58a00;
+  outline-offset: 3px;
 }
