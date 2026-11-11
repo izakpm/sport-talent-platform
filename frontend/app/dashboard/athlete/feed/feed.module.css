@@ -306,3 +306,8 @@
     gap: 6px;
   }
 }
+
+.badge[data-kind="session_update"] {
+  background: #e5eff7;
+  color: #244f70;
+}

@@ -19,12 +19,13 @@ const types: Record<string, string> = {
   announcement: "Announcement",
   reminder: "Reminder",
   cancellation: "Cancellation",
+  session_update: "Session update",
 };
 function recentPriority(posts: FeedPost[], now: number) {
   return posts
     .filter(
       (p) =>
-        ["cancellation", "reminder"].includes(p.category) &&
+        ["cancellation", "reminder", "session_update"].includes(p.category) &&
         Date.parse(p.created_at) >= now - 7 * 86400000 &&
         Date.parse(p.created_at) <= now,
     )
@@ -221,6 +222,7 @@ export default function AthleteFeed() {
           ["", "All updates"],
           ["cancellation", "Cancellations"],
           ["reminder", "Reminders"],
+          ["session_update", "Session updates"],
           ["announcement", "Announcements"],
         ].map(([key, label]) => (
           <button

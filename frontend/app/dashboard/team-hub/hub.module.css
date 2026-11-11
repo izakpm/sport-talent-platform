@@ -201,3 +201,10 @@
     margin-top: 10px;
   }
 }
+
+.composeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}

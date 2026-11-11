@@ -181,13 +181,49 @@ export class HubService {
       throw new BadRequestException('Choose a team.');
     await this.ownedTeam(userId, body.team_id);
     const title = textField(body?.title, 'Subject', 120);
-    const message = textField(body?.body, 'Message', 3000);
-    if (!['announcement', 'reminder'].includes(body?.category))
-      throw new BadRequestException('Choose an announcement or reminder.');
-    const [row] = await this.db.query(
-      'INSERT INTO coach_team_posts(team_id,coach_id,title,body,category) VALUES($1,$2,$3,$4,$5) RETURNING *',
-      [body.team_id, userId, title, message, body.category],
-    );
+    let message = textField(body?.body, 'Message', 3000);
+    if (
+      !['announcement', 'reminder', 'session_update'].includes(body?.category)
+    )
+      throw new BadRequestException(
+        'Choose an announcement, reminder or session update.',
+      );
+    let eventId: string | null = null;
+    if (body.category === 'session_update') {
+      if (
+        typeof body.event_id !== 'string' ||
+        !/^[0-9a-f-]{36}$/i.test(body.event_id)
+      )
+        throw new BadRequestException('Choose a scheduled session.');
+      eventId = body.event_id;
+    } else if (body.event_id)
+      throw new BadRequestException(
+        'Choose Session update to attach a session.',
+      );
+    const row = await this.db.transaction(async (tx) => {
+      if (eventId) {
+        const event = await this.ownedEvent(userId, eventId, tx, true);
+        if (event.team_id !== body.team_id)
+          throw new BadRequestException(
+            'The session must belong to the selected team.',
+          );
+        if (event.cancelled)
+          throw new ConflictException(
+            'This session has been cancelled. Its cancellation is already in the team feed.',
+          );
+        const team = await this.ownedTeam(userId, body.team_id, tx);
+        message = textField(
+          `Session: ${event.title}\n${event.date} · ${event.start_time}–${event.end_time} (${team.timezone})${event.venue ? ' · ' + event.venue : ''}\n\n${message}`,
+          'Message including session details',
+          3000,
+        );
+      }
+      const [saved] = await tx.query(
+        'INSERT INTO coach_team_posts(team_id,coach_id,title,body,category,event_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
+        [body.team_id, userId, title, message, body.category, eventId],
+      );
+      return saved;
+    });
     return row;
   }
   async removePost(userId: string, id: string) {

@@ -196,3 +196,11 @@ The athlete page shows real counts, name/team/role filters, photo fallback, link
 ### Athlete Team Feed presentation
 
 The athlete feed uses the existing membership-scoped `/team-hub/feed` endpoint and coach publishing workflow. It adds team/type/search filters, newest-first posts, SAST timestamps, expandable long messages, calendar links for cancellations and up to three matching reminders/cancellations posted in the last seven days. Highlights describe recent posts, not unread status or future session validity. The existing latest-100 limit is stated on the page; changing teams queries that team's latest 100 posts. Polling remains once per minute, with manual refresh and clear empty/error states. No migration or backend changes are required.
+
+### Coach Team Feed and session updates
+
+Apply `docs/sql/coach-session-updates.sql` before deployment. This expands the existing post category constraint to include `session_update`; it preserves existing posts. The coach feed shares the athlete feed's visual styling, with quick compose actions, team/type/search filters, a recipient-aware preview, persistent drafts after failed submissions and removal confirmation. Posts are in-app only.
+
+Session updates select a team and month, then load that coach's scheduled sessions for the month. Cancelled sessions are excluded. The API checks coach ownership, selected-team/session consistency and cancellation under a row lock, then stores the event link and a snapshot of its title, date, time, timezone and venue in the message. Posting does not modify or cancel a session. Existing schedule and verification controls remain responsible for those actions; cancellation notices are still generated automatically and cannot be manually removed. Athletes see Session updates as a filterable category and in recent highlights.
+
+After building the API, `RUN_FEED_CHECK=1 node backend/test/coach-feed-db-check.cjs` verifies posting, linked athlete delivery, ownership, snapshot context and protected cancellations with rollback-only fixtures. `APPLY_FEED_MIGRATION=1` intentionally commits the category migration first.
