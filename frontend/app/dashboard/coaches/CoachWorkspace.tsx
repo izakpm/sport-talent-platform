@@ -65,7 +65,7 @@ export function Modal({
     >
       <div className={styles.modalHeader}>
         <div>
-          <p className={styles.eyebrow}>COACH WORKSPACE</p>
+          <p className={styles.eyebrow}>PLAYVERIFIED</p>
           <h2 id="planning-dialog-title">{title}</h2>
           <p id="planning-dialog-description" className={styles.muted}>
             {description}

@@ -1,3 +1,4 @@
+import { AthleteProfileModule } from './athlete-profile/profile.module';
 import { HubModule } from './team-hub/hub.module';
 import { CoachProfileModule } from './coach-profile/profile.module';
 import { PortfolioModule } from './coach-portfolio/portfolio.module';
@@ -69,6 +70,7 @@ import { PlanningModule } from './coach-planning/planning.module';
     PortfolioModule,
     CoachProfileModule,
     HubModule,
+    AthleteProfileModule,
   ],
   controllers: [TrustController, HealthController],
   providers: [TrustService],

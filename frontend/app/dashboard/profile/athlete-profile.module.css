@@ -1,0 +1,137 @@
+.hero {
+  background:
+    linear-gradient(90deg, #0b1f2ef5 20%, #0b1f2e80),
+    url("/Athlete.png") center 35% / cover;
+}
+.heading {
+  margin-bottom: 26px;
+}
+.heading p {
+  color: #617887;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 0 24px;
+  padding-bottom: 4px;
+}
+.tabs button {
+  border: 1px solid #dce5eb;
+  border-radius: 7px;
+  background: white;
+  padding: 12px 18px;
+  white-space: nowrap;
+  color: #0b1f2e;
+  font-weight: 650;
+}
+.tabs button[aria-pressed="true"] {
+  background: #ffca05;
+  border-color: #ffca05;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 24px;
+}
+.record {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 22px;
+  padding: 24px 0;
+  border-top: 1px solid #e4eaee;
+  overflow-wrap: anywhere;
+}
+.record > div:first-child {
+  min-width: 0;
+}
+.record h3 {
+  margin-top: 10px;
+}
+.record p {
+  color: #617887;
+}
+.badge {
+  display: inline-block;
+  background: #f0f4f6;
+  padding: 4px 9px;
+  border-radius: 4px;
+  color: #536b79;
+  font-size: 11px;
+  margin: 8px 0;
+}
+.result {
+  display: block;
+  font-size: 32px;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+.result small {
+  font-size: 15px;
+  color: #617887;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.notes {
+  white-space: pre-wrap;
+  max-width: 700px;
+}
+.notice {
+  background: #eef6ed;
+  padding: 14px 18px;
+  border-radius: 7px;
+}
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.choices {
+  border: 1px solid #dce5eb;
+  border-radius: 7px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.choices label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+}
+.choices input {
+  width: auto !important;
+}
+.preview {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+@media (max-width: 750px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .record {
+    flex-direction: column;
+  }
+  .choices {
+    grid-template-columns: 1fr;
+  }
+  .tabs button {
+    padding: 10px 12px;
+  }
+}

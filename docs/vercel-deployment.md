@@ -140,3 +140,11 @@ QR codes use 32 random bytes, SHA-256 hashes in storage, a 15-minute expiry and 
 Sessions with attendance cannot be edited or deleted; cancel and create a new session if necessary. Editing an untouched session revokes outstanding codes. Legacy /verification token/scan/approve endpoints now require authentication and return 410, because those codes were not bound to a team or user. The legacy UI points to the new attendance pages.
 
 After building the backend, set `RUN_TEAM_HUB_DB_CHECK=1` and run `node backend/test/team-hub-db-check.cjs`. This opt-in integration check creates synthetic users, team and sessions inside a rolled-back transaction; it independently decodes the QR PNG, checks member/non-member access, requests, approval, duplicates, expiry, rotation, revocation, cancellation and preservation of history.
+
+### Athlete sporting profiles
+
+Apply `docs/sql/athlete-profile.sql` before deploying `/athlete-profile`. It adds an optional biography and primary-position flag to existing athlete records, plus a private, RLS-enabled portfolio table. Existing sports and positions are retained. The authenticated endpoint derives ownership from the JWT and allows active athletes to update only their own details, sports, achievements and metric records. Metric units are assigned server-side; all manually entered portfolio records are self-reported. No public sharing or verification status is granted by editing a profile.
+
+Athletes use Profile → My details / Sports & positions / Achievements / Performance metrics. Sports and Achievements navigation opens the same editor. Each metric result has its own test date and notes; adding a result preserves previous measurements. Email remains read-only. Photos accept JPG, PNG or WebP up to 2 MB.
+
+Run the rollback-only database check after building the API: set `RUN_ATHLETE_PROFILE_DB_CHECK=1` and run `node backend/test/athlete-profile-db-check.cjs`. Set `APPLY_ATHLETE_PROFILE_MIGRATION=1` only when intentionally applying the migration; migration changes are committed separately from rolled-back synthetic fixtures.
