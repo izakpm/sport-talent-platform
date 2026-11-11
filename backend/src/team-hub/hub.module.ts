@@ -48,6 +48,12 @@ export class HubController {
   ) {
     return this.service.link(r.user.userId, t, p, b);
   }
+  @Get('calendar') @Header('Cache-Control', 'private, no-store') calendar(
+    @Req() r: Request,
+    @Query('month') month: string,
+  ) {
+    return this.service.calendar(r.user.userId, month);
+  }
   @Get('sessions') sessions(@Req() r: Request) {
     return this.service.sessions(r.user.userId);
   }

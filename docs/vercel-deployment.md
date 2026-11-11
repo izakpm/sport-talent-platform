@@ -158,3 +158,9 @@ The `/activities` endpoints now require JWT authentication and derive the athlet
 Pending logs cannot be edited or deleted until the athlete withdraws the request. Coach-verified and legacy-verified logs are locked. Only the selected active, linked coach can review; a decline requires feedback. Editing a declined log clears the review before resubmission. Requests, withdrawal and decisions serialize on the activity row. Scheduled-team attendance and QR check-ins retain their separate flow, linked from Activities.
 
 After building the API, set `RUN_ACTIVITY_DB_CHECK=1` and run `node backend/test/activity-db-check.cjs` for the rollback-only workflow test. `APPLY_ACTIVITY_MIGRATION=1` intentionally commits the additive migration before creating disposable test records.
+
+### Athlete team calendar
+
+The athlete Calendar now reads `GET /team-hub/calendar?month=YYYY-MM`, replacing the sample events. This authenticated endpoint accepts a validated calendar month (1900–2099), requires an active athlete account, and returns sessions only for current active roster/account links. Month navigation is not limited to the older attendance endpoint’s 31-day upcoming window. No database migration is required.
+
+Month and list views share team/type/upcoming/cancellation filters. Events use their team-local dates and times, with the timezone shown in details. Match highlighting, selected-day details, coach notes and cancellation notices are available on desktop and mobile. The “Next up” panel is scoped to the displayed month and active filters, excludes cancellations, and includes sessions still in progress. The calendar refreshes every minute while open. The team-hub database check now also covers future-month matches, month boundaries, cancellations and inactive/unlinked account isolation.

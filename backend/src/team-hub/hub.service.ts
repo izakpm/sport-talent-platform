@@ -211,6 +211,15 @@ export class HubService {
         : [teams.map((t: any) => t.id)],
     );
   }
+  async calendar(userId: string, month: string) {
+    await this.authorize(userId, 'ATHLETE');
+    if (typeof month !== 'string' || !/^(19|20)\d{2}-(0[1-9]|1[0-2])$/.test(month))
+      throw new BadRequestException('Choose a month between 1900 and 2099.');
+    return this.db.query(
+      `SELECT ${EVENT},e.kind,e.notes,t.timezone FROM coach_schedule_events e JOIN coach_teams t ON t.id=e.team_id WHERE e.date >= $2::date AND e.date < $2::date + interval '1 month' AND EXISTS(SELECT 1 FROM coach_player_accounts m JOIN coach_team_players p ON p.id=m.player_id WHERE m.user_id=$1 AND m.team_id=e.team_id AND p.status='active') ORDER BY e.date,e.start_time,t.name,e.id`,
+      [userId, month + '-01'],
+    );
+  }
   async register(userId: string, id: string) {
     await this.authorize(userId, 'COACH');
     const event = await this.ownedEvent(userId, id);
