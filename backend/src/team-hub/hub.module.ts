@@ -1,3 +1,4 @@
+import { ConnectionsService } from './connections.service';
 import { PersonalCalendarService } from './personal-calendar.service';
 import {
   Body,
@@ -23,7 +24,13 @@ export class HubController {
   constructor(
     private readonly service: HubService,
     private readonly personal: PersonalCalendarService,
+    private readonly connections: ConnectionsService,
   ) {}
+  @Get('connections') @Header('Cache-Control', 'private, no-store') network(
+    @Req() r: Request,
+  ) {
+    return this.connections.list(r.user.userId);
+  }
   @Get('teams') teams(@Req() r: Request) {
     return this.service.teams(r.user.userId);
   }
@@ -138,6 +145,6 @@ export class HubController {
 }
 @Module({
   controllers: [HubController],
-  providers: [HubService, PersonalCalendarService],
+  providers: [HubService, PersonalCalendarService, ConnectionsService],
 })
 export class HubModule {}

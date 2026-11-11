@@ -186,3 +186,9 @@ After building the API, `RUN_MATCH_CHECK=1 node backend/test/matches-db-check.cj
 ### Athlete navigation consolidation
 
 The athlete sidebar now has Dashboard, Profile, Activities, Matches, Calendar, Team Feed and Connections. Activities contains URL-backed Training log (`#training`) and Team attendance (`#attendance`) tabs, reusing the existing attendance and verification workflow. The old `/dashboard/athlete/attendance` route redirects to Activities' attendance tab. Sports and Achievements redirect to `/dashboard/profile#sports` and `#achievement`; Profile also supports `#details` and `#metric`. Overview, calendar and QR check-in shortcuts point directly to the new locations. No records, APIs or Connections behavior changed.
+
+### Athlete Connections
+
+`GET /team-hub/connections` is JWT-protected, athlete-only and private/no-store. It derives teams from the caller's active linked roster memberships, then returns those teams' active coach accounts and active linked athlete accounts, excluding the caller. Suspended accounts and unlinked/inactive roster entries are excluded. People shared across teams are deduplicated, with all shared teams retained. The payload contains only account ID, name, profile image, role and shared-team details; no email, phone, birth date or full profile is returned. No migration is required.
+
+The athlete page shows real counts, name/team/role filters, photo fallback, linked-team onboarding, recoverable errors and a Team Feed shortcut. Data refreshes every minute while open. After building the backend, run `RUN_CONNECTIONS_CHECK=1 node backend/test/connections-db-check.cjs` for a rollback-only shared-team privacy and linkage check.
