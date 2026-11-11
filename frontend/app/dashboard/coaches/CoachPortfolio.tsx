@@ -69,7 +69,13 @@ const dateLabel = (date: string) =>
     month: "short",
     year: "numeric",
   });
-export default function CoachPortfolio({ kind }: { kind: Kind }) {
+export default function CoachPortfolio({
+  kind,
+  embedded = false,
+}: {
+  kind: Kind;
+  embedded?: boolean;
+}) {
   const copy = labels[kind];
   const [entries, setEntries] = useState<Entry[]>([]),
     [loading, setLoading] = useState(true),
@@ -133,13 +139,15 @@ export default function CoachPortfolio({ kind }: { kind: Kind }) {
     }
   }
   return (
-    <div className={s.workspace}>
-      <div className={s.topline}>
-        <span className={s.eyebrow}>MY COACHING PORTFOLIO</span>
-      </div>
+    <div className={embedded ? undefined : s.workspace}>
+      {!embedded && (
+        <div className={s.topline}>
+          <span className={s.eyebrow}>MY COACHING PORTFOLIO</span>
+        </div>
+      )}
       <header className={s.header}>
         <div>
-          <h1>{copy.title}</h1>
+          {embedded ? <h2>{copy.title}</h2> : <h1>{copy.title}</h1>}
           <p className={s.subtitle}>{copy.intro}</p>
         </div>
         <button className={s.primary} onClick={() => setEditor("new")}>

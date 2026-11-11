@@ -46,14 +46,13 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
       {
         label: 'Coach workspace',
         items: [
-          { name: 'Overview', href: '/dashboard/coaches' },
+          { name: 'Dashboard', href: '/dashboard/coaches' },
+          { name: 'Profile', href: '/dashboard/profile' },
           { name: 'Teams', href: '/dashboard/coaches/teams' },
           { name: 'Schedule', href: '/dashboard/coaches/schedule' },
-          { name: 'Team feed', href: '/dashboard/coaches/feed' },
+          { name: 'Matches', href: '/dashboard/coaches/matches' },
+          { name: 'Team Feed', href: '/dashboard/coaches/feed' },
           { name: 'Verification', href: '/dashboard/coaches/verification' },
-          { name: 'Achievements', href: '/dashboard/coaches/achievements' },
-          { name: 'Coaching history', href: '/dashboard/coaches/history' },
-          { name: 'Qualifications', href: '/dashboard/coaches/qualifications' },
         ],
       },
     ],

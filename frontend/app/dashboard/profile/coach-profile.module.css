@@ -283,3 +283,28 @@
 .hero {
   border-top: var(--feature-card-border-top);
 }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.tabs button {
+  border: 1px solid #d4e0e8;
+  border-radius: 8px;
+  background: white;
+  color: #0b1f2e;
+  padding: 14px 18px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tabs button[aria-selected="true"] {
+  background: #ffca05;
+  border-color: #ffca05;
+}
+.tabs button:focus-visible {
+  outline: 3px solid #0b1f2e;
+  outline-offset: 3px;
+}

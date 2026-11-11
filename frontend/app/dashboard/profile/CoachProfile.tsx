@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import CoachPortfolio, { type Kind } from "../coaches/CoachPortfolio";
+import { useSectionHash } from "../core/useSectionHash";
 import {
   useEffect,
   useRef,
@@ -62,7 +63,17 @@ function remember(user: Profile["user"]) {
 }
 const shown = (value?: string | number | null) =>
   value === 0 ? "0" : value || "Not added";
+const profileTabs = [
+  ["details", "My details"],
+  ["history", "Coaching history"],
+  ["achievements", "Achievements"],
+  ["qualifications", "Qualifications"],
+] as const;
 export default function CoachProfile() {
+  const [tab, selectTab] = useSectionHash(
+    profileTabs.map(([key]) => key),
+    "details",
+  );
   const [profile, setProfile] = useState<Profile | null>(null),
     [error, setError] = useState(""),
     [retry, setRetry] = useState(0),
@@ -170,144 +181,198 @@ export default function CoachProfile() {
           Edit coaching details
         </button>
       </section>
-      <div className={p.grid}>
-        <section className={p.panel}>
-          <div className={p.panelHead}>
-            <h2>Personal details</h2>
-            <button
-              className={s.textButton}
-              onClick={() => setSection("personal")}
-              aria-label="Edit personal details"
-            >
-              Edit ↗
-            </button>
-          </div>
-          <dl className={p.details}>
-            <div>
-              <dt>First name</dt>
-              <dd>{shown(user.first_name)}</dd>
-            </div>
-            <div>
-              <dt>Last name</dt>
-              <dd>{shown(user.last_name)}</dd>
-            </div>
-            <div>
-              <dt>Phone</dt>
-              <dd>{shown(user.phone)}</dd>
-            </div>
-            <div>
-              <dt>Sign-in email</dt>
-              <dd>{user.email}</dd>
-            </div>
-          </dl>
-          <p className={p.hint}>
-            Your contact details are only available in your account.
-          </p>
-        </section>
-        <section className={p.panel}>
-          <div className={p.panelHead}>
-            <h2>Coaching details</h2>
-            <button
-              className={s.textButton}
-              onClick={() => setSection("coaching")}
-              aria-label="Edit coaching details section"
-            >
-              Edit ↗
-            </button>
-          </div>
-          <dl className={p.details}>
-            <div>
-              <dt>Coaching role</dt>
-              <dd>{shown(details.headline)}</dd>
-            </div>
-            <div>
-              <dt>Primary sport</dt>
-              <dd>{shown(details.primary_sport)}</dd>
-            </div>
-            <div>
-              <dt>Based in</dt>
-              <dd>{shown(details.location)}</dd>
-            </div>
-            <div>
-              <dt>Years coaching</dt>
-              <dd>{shown(details.years_experience)}</dd>
-            </div>
-            <div>
-              <dt>Specialisms</dt>
-              <dd>{shown(details.specialisms)}</dd>
-            </div>
-          </dl>
-        </section>
-      </div>
-      <section className={p.panel}>
-        <div className={p.panelHead}>
-          <h2>About my coaching</h2>
+      <div
+        className={p.tabs}
+        role="tablist"
+        aria-label="Coaching profile sections"
+      >
+        {profileTabs.map(([key, label], index) => (
           <button
-            className={s.textButton}
-            onClick={() => setSection("about")}
-            aria-label="Edit about my coaching"
+            key={key}
+            id={`coach-tab-${key}`}
+            role="tab"
+            aria-selected={tab === key}
+            aria-controls={`coach-panel-${key}`}
+            tabIndex={tab === key ? 0 : -1}
+            onClick={() => selectTab(key)}
+            onKeyDown={(event) => {
+              const next =
+                event.key === "ArrowRight"
+                  ? (index + 1) % profileTabs.length
+                  : event.key === "ArrowLeft"
+                    ? (index + profileTabs.length - 1) % profileTabs.length
+                    : event.key === "Home"
+                      ? 0
+                      : event.key === "End"
+                        ? profileTabs.length - 1
+                        : -1;
+              if (next < 0) return;
+              event.preventDefault();
+              selectTab(profileTabs[next][0]);
+              document
+                .getElementById(`coach-tab-${profileTabs[next][0]}`)
+                ?.focus();
+            }}
           >
-            {details.bio ? "Edit" : "Add"} ↗
+            {label}
           </button>
-        </div>
-        {details.bio ? (
-          <p className={p.bio}>{details.bio}</p>
+        ))}
+      </div>
+      <div
+        role="tabpanel"
+        id={`coach-panel-${tab}`}
+        aria-labelledby={`coach-tab-${tab}`}
+        tabIndex={0}
+      >
+        {tab === "details" ? (
+          <>
+            <div className={p.grid}>
+              <section className={p.panel}>
+                <div className={p.panelHead}>
+                  <h2>Personal details</h2>
+                  <button
+                    className={s.textButton}
+                    onClick={() => setSection("personal")}
+                    aria-label="Edit personal details"
+                  >
+                    Edit ↗
+                  </button>
+                </div>
+                <dl className={p.details}>
+                  <div>
+                    <dt>First name</dt>
+                    <dd>{shown(user.first_name)}</dd>
+                  </div>
+                  <div>
+                    <dt>Last name</dt>
+                    <dd>{shown(user.last_name)}</dd>
+                  </div>
+                  <div>
+                    <dt>Phone</dt>
+                    <dd>{shown(user.phone)}</dd>
+                  </div>
+                  <div>
+                    <dt>Sign-in email</dt>
+                    <dd>{user.email}</dd>
+                  </div>
+                </dl>
+                <p className={p.hint}>
+                  Your contact details are only available in your account.
+                </p>
+              </section>
+              <section className={p.panel}>
+                <div className={p.panelHead}>
+                  <h2>Coaching details</h2>
+                  <button
+                    className={s.textButton}
+                    onClick={() => setSection("coaching")}
+                    aria-label="Edit coaching details section"
+                  >
+                    Edit ↗
+                  </button>
+                </div>
+                <dl className={p.details}>
+                  <div>
+                    <dt>Coaching role</dt>
+                    <dd>{shown(details.headline)}</dd>
+                  </div>
+                  <div>
+                    <dt>Primary sport</dt>
+                    <dd>{shown(details.primary_sport)}</dd>
+                  </div>
+                  <div>
+                    <dt>Based in</dt>
+                    <dd>{shown(details.location)}</dd>
+                  </div>
+                  <div>
+                    <dt>Years coaching</dt>
+                    <dd>{shown(details.years_experience)}</dd>
+                  </div>
+                  <div>
+                    <dt>Specialisms</dt>
+                    <dd>{shown(details.specialisms)}</dd>
+                  </div>
+                </dl>
+              </section>
+            </div>
+            <section className={p.panel}>
+              <div className={p.panelHead}>
+                <h2>About my coaching</h2>
+                <button
+                  className={s.textButton}
+                  onClick={() => setSection("about")}
+                  aria-label="Edit about my coaching"
+                >
+                  {details.bio ? "Edit" : "Add"} ↗
+                </button>
+              </div>
+              {details.bio ? (
+                <p className={p.bio}>{details.bio}</p>
+              ) : (
+                <p className={p.empty}>
+                  What do you want your players to learn from you? Describe your
+                  approach, the athletes you work with and what matters to you
+                  as a coach.
+                </p>
+              )}
+            </section>
+            <section className={p.portfolio}>
+              <div className={p.panelHead}>
+                <h2>My coaching portfolio</h2>
+              </div>
+              <div className={p.portfolioGrid}>
+                {(
+                  [
+                    {
+                      key: "teams",
+                      title: "Teams",
+                      hint: "Manage your current squads",
+                      href: "teams",
+                    },
+                    {
+                      key: "history",
+                      title: "Coaching history",
+                      hint: "Teams and roles over the years",
+                      href: "history",
+                    },
+                    {
+                      key: "achievements",
+                      title: "Achievements",
+                      hint: "Results, awards and milestones",
+                      href: "achievements",
+                    },
+                    {
+                      key: "qualifications",
+                      title: "Qualifications",
+                      hint: "Credentials and certificates",
+                      href: "qualifications",
+                    },
+                  ] as const
+                ).map((item) => (
+                  <a
+                    className={p.portfolioCard}
+                    key={item.key}
+                    href={
+                      item.key === "teams"
+                        ? "/dashboard/coaches/teams"
+                        : `#${item.key}`
+                    }
+                  >
+                    <span className={p.number}>
+                      {counts[item.key]}
+                      <span aria-hidden="true">↗</span>
+                    </span>
+                    <h3>{item.title}</h3>
+                    <p>{item.hint}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          </>
         ) : (
-          <p className={p.empty}>
-            What do you want your players to learn from you? Describe your
-            approach, the athletes you work with and what matters to you as a
-            coach.
-          </p>
+          <CoachPortfolio key={tab} kind={tab as Kind} embedded />
         )}
-      </section>
-      <section className={p.portfolio}>
-        <div className={p.panelHead}>
-          <h2>My coaching portfolio</h2>
-        </div>
-        <div className={p.portfolioGrid}>
-          {(
-            [
-              {
-                key: "teams",
-                title: "Teams",
-                hint: "Manage your current squads",
-                href: "teams",
-              },
-              {
-                key: "history",
-                title: "Coaching history",
-                hint: "Teams and roles over the years",
-                href: "history",
-              },
-              {
-                key: "achievements",
-                title: "Achievements",
-                hint: "Results, awards and milestones",
-                href: "achievements",
-              },
-              {
-                key: "qualifications",
-                title: "Qualifications",
-                hint: "Credentials and certificates",
-                href: "qualifications",
-              },
-            ] as const
-          ).map((item) => (
-            <Link
-              className={p.portfolioCard}
-              key={item.key}
-              href={`/dashboard/coaches/${item.href}`}
-            >
-              <span className={p.number}>
-                {counts[item.key]}
-                <span aria-hidden="true">↗</span>
-              </span>
-              <h3>{item.title}</h3>
-              <p>{item.hint}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
+      </div>
       {section && (
         <ProfileEditor
           key={section}

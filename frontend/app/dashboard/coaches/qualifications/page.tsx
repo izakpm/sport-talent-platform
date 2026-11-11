@@ -1,2 +1,4 @@
-import CoachPortfolio from "../CoachPortfolio";
-export default function Page() { return <CoachPortfolio kind="qualifications" />; }
+import { redirect } from "next/navigation";
+export default function Page() {
+  redirect("/dashboard/profile#qualifications");
+}

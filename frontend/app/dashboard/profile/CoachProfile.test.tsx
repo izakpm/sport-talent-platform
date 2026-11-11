@@ -15,6 +15,7 @@ const profile = {
   counts: { teams: 2, history: 3, achievements: 1, qualifications: 4 },
 };
 beforeEach(() => {
+  window.history.replaceState(null, "", "/");
   api.mockReset();
   localStorage.clear();
   HTMLDialogElement.prototype.showModal = function () {
@@ -33,7 +34,7 @@ it("shows real coaching information and portfolio links without athlete placehol
   expect(screen.queryByText("Pending Verification")).not.toBeInTheDocument();
   expect(
     screen.getByRole("link", { name: /4.*Qualifications/ }),
-  ).toHaveAttribute("href", "/dashboard/coaches/qualifications");
+  ).toHaveAttribute("href", "#qualifications");
 });
 it("saves details and updates the remembered account and sidebar event", async () => {
   const listener = jest.fn();
@@ -89,6 +90,7 @@ it("preserves edits on server error and confirms discard", async () => {
   expect(api).toHaveBeenCalledTimes(2);
 });
 it("handles failed initial load with a retry", async () => {
+  window.history.replaceState(null, "", "/");
   api.mockReset();
   api.mockRejectedValueOnce(new Error("Unable to connect"));
   render(<CoachProfile />);
@@ -99,6 +101,7 @@ it("handles failed initial load with a retry", async () => {
 });
 
 it("removes a photo only after saving the draft", async () => {
+  window.history.replaceState(null, "", "/");
   api.mockReset();
   api.mockResolvedValueOnce({
     ok: true,
@@ -142,4 +145,33 @@ it("previews a selected photo before uploading it", async () => {
   expect(JSON.parse(api.mock.calls[1][1].body).profile_image).toMatch(
     /^data:image\/png;base64,/,
   );
+});
+
+it("opens portfolio deep links and switches tabs with keyboard and history", async () => {
+  window.history.replaceState(null, "", "/#qualifications");
+  api.mockResolvedValue({ ok: true, json: async () => [] });
+  render(<CoachProfile />);
+  await screen.findByRole("heading", {
+    name: "Build your coaching credentials.",
+  });
+  expect(screen.getByRole("tab", { name: "Qualifications" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  expect(screen.queryByText("Personal details")).not.toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole("tab", { name: "Qualifications" }), {
+    key: "ArrowLeft",
+  });
+  await screen.findByRole("heading", {
+    name: "Celebrate your first milestone.",
+  });
+  expect(api).toHaveBeenCalledWith("/coach-portfolio/achievements", undefined);
+  fireEvent.click(screen.getByRole("tab", { name: "Coaching history" }));
+  await screen.findByRole("heading", {
+    name: "Where has your coaching taken you?",
+  });
+  fireEvent.keyDown(screen.getByRole("tab", { name: "Coaching history" }), {
+    key: "Home",
+  });
+  expect(screen.getByText("Personal details")).toBeInTheDocument();
 });

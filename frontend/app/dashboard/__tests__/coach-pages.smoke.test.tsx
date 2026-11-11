@@ -4,7 +4,7 @@ import CoachSchedulePage from '../coaches/schedule/page';
 import CoachActivitiesPage from '../coaches/activities/page';
 import CoachMatchesPage from '../coaches/matches/page';
 import CoachApprovalsPage from '../coaches/approvals/page';
-import CoachAchievementsPage from '../coaches/achievements/page';
+import CoachPortfolio from '../coaches/CoachPortfolio';
 
 const pushMock = jest.fn();
 const routerMock = {
@@ -46,7 +46,7 @@ describe('coach pages smoke tests', () => {
   });
 
   it('renders Achievements page real empty state', async () => {
-    render(<CoachAchievementsPage />);
+    render(<CoachPortfolio kind="achievements" embedded />);
     expect(screen.getByRole('heading', { name: 'Achievements' })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Celebrate your first milestone.' })).toBeInTheDocument();
   });
