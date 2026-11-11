@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState, type CSSProperties } from 'react';
+import CoachProfile from './CoachProfile';
 import { theme } from '../../styles/theme';
 import { fetchWithAuth } from '../../lib/api';
 import { getDashboardRoleConfig, normalizeDashboardRole } from '../core/roles';
@@ -38,8 +39,7 @@ export default function DashboardProfilePage() {
     if (storedUser) {
       const parsed: UserProfile = JSON.parse(storedUser);
       setUser(parsed);
-      loadAthlete(parsed.id);
-      loadUser(parsed.id);
+      if (normalizeDashboardRole(parsed.role) !== 'COACH') { loadAthlete(parsed.id); loadUser(parsed.id); }
     }
   }, []);
 
@@ -140,6 +140,9 @@ export default function DashboardProfilePage() {
     .toUpperCase();
   const isVerified = user?.status === 'VERIFIED';
   const createdDate = user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—';
+
+  if (!user) return <p role="status">Loading your profile…</p>;
+  if (normalizedRole === 'COACH') return <CoachProfile />;
 
   return (
     <div style={styles.page}>

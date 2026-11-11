@@ -53,12 +53,12 @@ export class DiscoveryService {
   }
 
   async searchCoaches(filters: { query?: string }) {
-    const qb = this.userRepo.createQueryBuilder('user');
+    const qb = this.userRepo.createQueryBuilder('user').select(['user.id', 'user.first_name', 'user.last_name', 'user.role', 'user.profile_image']);
     qb.where('user.role = :role', { role: 'coach' });
 
     if (filters.query) {
       qb.andWhere(
-        '(user.first_name ILIKE :query OR user.last_name ILIKE :query OR user.email ILIKE :query)',
+        '(user.first_name ILIKE :query OR user.last_name ILIKE :query)',
         { query: `%${filters.query}%` },
       );
     }

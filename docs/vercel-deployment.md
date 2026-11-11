@@ -112,3 +112,14 @@ Apply `docs/sql/coach-portfolio.sql` before deploying the coach portfolio API. T
 Achievements, coaching history and qualifications are stored in `coach_portfolio`. Certificates are private bytea attachments (one per qualification), limited to 2 MB, with PDF/JPEG/PNG signature validation. List responses exclude certificate bytes; downloads require the owner's JWT and use attachment/no-store headers. Removing a qualification removes its attachment. Uploading a certificate does not mark a qualification verified.
 
 For a manual database integration check after building the backend, set `RUN_PORTFOLIO_DB_CHECK=1` and run `node backend/test/portfolio-db-check.cjs`. It requires a configured backend `.env` and an existing active coach, checks CRUD and certificate handling, and rolls the entire test transaction back. No test records are retained.
+
+
+### Coach profile editing
+
+Apply `docs/sql/coach-profile.sql` before deploying the coach profile editor. It extends the existing `coach_profiles` table with headline, specialisms and bio, enforces one profile per user and enables RLS with no direct anon/authenticated access. The authenticated `/coach-profile` endpoint restricts reads and writes to the requesting active coach, using an explicit field allowlist. Personal details and photo remain in `users`; the coaching summary uses `coach_profiles`; portfolio counts use existing teams and portfolio records.
+
+The sign-in email, account role, credentials and verification state cannot be edited through this endpoint. Photo updates support JPEG, PNG and WebP up to 2 MB, with server-side signature checks. The coach-directory query returns only identity/display fields, excluding contact details and credentials.
+
+After a backend build, set `RUN_COACH_PROFILE_DB_CHECK=1` and run `node backend/test/coach-profile-db-check.cjs` for an opt-in integration check against the configured database. All changes are rolled back.
+
+Profile design follows section-level edits, prefilled fields and clear save/cancel actions from https://design-system.service.gov.uk/patterns/check-answers/ and retained input on failed saves from https://design-system.service.gov.uk/components/error-message/. The coach profile replaces fixed statistics and irrelevant athlete fields with real portfolio counts and coaching-specific details.

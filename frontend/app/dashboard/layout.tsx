@@ -84,6 +84,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [pathname, router]);
 
+  useEffect(() => {
+    const updated = (event: Event) => {
+      const data = (event as CustomEvent).detail;
+      if (!data) return;
+      setUserName([data.first_name, data.last_name].filter(Boolean).join(' ') || 'Coach');
+      setUserPhoto(data.profile_image || '');
+    };
+    window.addEventListener('profile-updated', updated);
+    return () => window.removeEventListener('profile-updated', updated);
+  }, []);
+
   if (userRole === 'COACH') return <div className={coach.shell}>
     <a href="#coach-content" className={coach.skip}>Skip to content</a>
     <aside className={coach.sidebar}>

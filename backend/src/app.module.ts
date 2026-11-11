@@ -1,3 +1,4 @@
+import { CoachProfileModule } from './coach-profile/profile.module';
 import { PortfolioModule } from './coach-portfolio/portfolio.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -65,6 +66,7 @@ import { PlanningModule } from './coach-planning/planning.module';
     AuthModule,
     PlanningModule,
     PortfolioModule,
+    CoachProfileModule,
   ],
   controllers: [TrustController, HealthController],
   providers: [TrustService],
