@@ -123,3 +123,20 @@ The sign-in email, account role, credentials and verification state cannot be ed
 After a backend build, set `RUN_COACH_PROFILE_DB_CHECK=1` and run `node backend/test/coach-profile-db-check.cjs` for an opt-in integration check against the configured database. All changes are rolled back.
 
 Profile design follows section-level edits, prefilled fields and clear save/cancel actions from https://design-system.service.gov.uk/patterns/check-answers/ and retained input on failed saves from https://design-system.service.gov.uk/components/error-message/. The coach profile replaces fixed statistics and irrelevant athlete fields with real portfolio counts and coaching-specific details.
+
+
+### Team feed and session attendance
+
+Apply `docs/sql/team-hub.sql` before deploying. The private tables store roster-to-account links, team announcements, per-player session attendance and hashed, expiring QR tokens. RLS is enabled with no direct anon/authenticated access. Team-hub routes require JWT authentication and check active account role, team ownership or active roster membership.
+
+Coaches link a roster player to an existing ATHLETE account using their registered email under Teams > team > Athlete account. A user can be linked only once per team. Unlinking or marking a player inactive removes feed/check-in access; existing attendance is retained. Roster records with attendance cannot be deleted or reassigned to another athlete; mark them inactive instead.
+
+Team feed posts are in-app announcements/reminders, visible only to linked active members and the owning coach. No email, SMS or push service is configured. Cancelling a session posts a cancellation to its feed atomically, preserves the session and closes QR check-in. Cancellation posts cannot be deleted separately. The feed shows the latest 100 updates.
+
+Verification requests appear in the coach queue; the sidebar count polls every 60 seconds and refreshes after decisions. Athletes use their Attendance page to request confirmation. Coaches can approve/decline requests or mark players attended/absent manually. The attendance list covers 90 days back and 31 days ahead (up to 500 sessions); coaches can access older registers through the schedule.
+
+QR codes use 32 random bytes, SHA-256 hashes in storage, a 15-minute expiry and a window from 30 minutes before the session to one hour after it ends. Each code is bound to a coach-owned session; replacing or closing it revokes the previous code. A scan requires an authenticated, active linked athlete and an explicit confirmation. Repeat scans are idempotent; QR scans cannot override a coach’s declined/absent decision. QR check-ins and coach-confirmed attendance are labelled separately. A QR check-in records possession of the current code, not an independent location measurement. The link carries the code in its fragment, which the check-in page removes and retains temporarily in sessionStorage for the Google/password login return flow. Codes are generated server-side using node-qrcode; no third-party QR service receives the link.
+
+Sessions with attendance cannot be edited or deleted; cancel and create a new session if necessary. Editing an untouched session revokes outstanding codes. Legacy /verification token/scan/approve endpoints now require authentication and return 410, because those codes were not bound to a team or user. The legacy UI points to the new attendance pages.
+
+After building the backend, set `RUN_TEAM_HUB_DB_CHECK=1` and run `node backend/test/team-hub-db-check.cjs`. This opt-in integration check creates synthetic users, team and sessions inside a rolled-back transaction; it independently decodes the QR PNG, checks member/non-member access, requests, approval, duplicates, expiry, rotation, revocation, cancellation and preservation of history.

@@ -1,0 +1,203 @@
+.filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 24px 0;
+}
+.filters label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-weight: 600;
+}
+.filters select {
+  padding: 11px 14px;
+  border: 1px solid #cbd6de;
+  border-radius: 8px;
+  background: white;
+  color: #0b1f2e;
+  max-width: 100%;
+}
+.stack {
+  display: grid;
+  gap: 16px;
+}
+.card {
+  padding: 24px;
+  border: 1px solid #dce5eb;
+  border-radius: 16px;
+  background: white;
+  min-width: 0;
+}
+.card h2 {
+  font-size: 20px !important;
+}
+.meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #627786;
+  margin-bottom: 12px;
+}
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 5px 8px;
+  background: #edf2f5;
+  color: #355064;
+}
+.cancelled {
+  background: #fff0ec;
+  color: #a13520;
+}
+.message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  margin: 16px 0 !important;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rowActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.help {
+  font-size: 13px;
+  color: #627786;
+  line-height: 1.6;
+}
+.register {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+.player {
+  padding: 14px;
+  border: 1px solid #dce5eb;
+  border-radius: 10px;
+  background: #f4f6f7;
+}
+.player strong {
+  display: block;
+}
+.qr {
+  text-align: center;
+  padding: 16px;
+  background: #f4f6f7;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+.qr img {
+  width: 280px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.qr p {
+  font-size: 13px;
+}
+.qr a {
+  overflow-wrap: anywhere;
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #dce5eb;
+  padding-bottom: 12px;
+}
+.tabs button {
+  border: 0;
+  padding: 10px 16px;
+  background: #edf2f5;
+  border-radius: 8px;
+  color: #0b1f2e;
+}
+.tabs button[aria-pressed="true"] {
+  background: #ffca05;
+}
+.noticeBox {
+  background: #fff4cc;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 18px 0;
+}
+.publicPage {
+  min-height: 100vh;
+  background: #0b1f2e;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+.publicCard {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 520px;
+  width: 100%;
+  color: #0b1f2e;
+}
+.publicCard h1 {
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+.publicCard p {
+  line-height: 1.7;
+}
+.publicCard button,
+.publicCard a {
+  margin-top: 16px;
+}
+.publicLogo {
+  width: 176px;
+  display: block;
+  background: #0b1f2e;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 24px;
+}
+.linkStatus {
+  font-size: 12px;
+  color: #617887;
+}
+.formFields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .card {
+    padding: 20px;
+  }
+  .rowActions {
+    width: 100%;
+  }
+  .filters label {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .publicCard {
+    padding: 24px;
+  }
+  .player .rowActions {
+    margin-top: 10px;
+  }
+}

@@ -40,6 +40,8 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
       {
         label: 'Pages',
         items: [
+          { name: 'Team feed', href: '/dashboard/athlete/feed' },
+          { name: 'Attendance', href: '/dashboard/athlete/attendance' },
           { name: 'Activities', href: '/dashboard/athlete/activities' },
           { name: 'Matches', href: '/dashboard/athlete/matches' },
           { name: 'Achievements', href: '/dashboard/athlete/achievements' },
@@ -61,6 +63,8 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
           { name: 'Overview', href: '/dashboard/coaches' },
           { name: 'Teams', href: '/dashboard/coaches/teams' },
           { name: 'Schedule', href: '/dashboard/coaches/schedule' },
+          { name: 'Team feed', href: '/dashboard/coaches/feed' },
+          { name: 'Verification', href: '/dashboard/coaches/verification' },
           { name: 'Achievements', href: '/dashboard/coaches/achievements' },
           { name: 'Coaching history', href: '/dashboard/coaches/history' },
           { name: 'Qualifications', href: '/dashboard/coaches/qualifications' },

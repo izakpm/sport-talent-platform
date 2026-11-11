@@ -1,41 +1,8 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { VerificationService } from './verification.service';
-
-@Controller('verification')
+import {Controller,GoneException,Post,UseGuards} from '@nestjs/common';
+import {JwtAuthGuard} from '../auth/jwt-auth.guard';
+// Legacy tokens were not bound to a team, coach or authenticated athlete.
+// Session attendance is now handled by the owner-scoped team-hub routes.
+@Controller('verification') @UseGuards(JwtAuthGuard)
 export class VerificationController {
-  constructor(private readonly service: VerificationService) {}
-
-  @Post('verify')
-  verifyActivity(@Body() body: any) {
-    return this.service.verify({
-      activity_id: body.activity_id,
-      method: body.method || 'QR_SCAN',
-      verification_level: 'HIGH',
-      status: 'VERIFIED',
-    });
-  }
-
-  @Post('token')
-  createToken() {
-    return this.service.createToken();
-  }
-
-  @Post('scan')
-  scan(@Body() body: any) {
-    return this.service.verifyWithToken(body.activity_id, body.code);
-  }
-
-  @Post('request')
-  requestVerification(@Body() body: any) {
-    return this.service.createRequest(
-      body.activity_id,
-      body.athlete_id,
-      body.coach_id,
-    );
-  }
-
-  @Post('approve')
-  approve(@Body() body: any) {
-    return this.service.approveRequest(body.request_id);
-  }
+ @Post(['verify','token','scan','request','approve']) retired(){throw new GoneException('Use team session attendance to request or verify attendance.');}
 }

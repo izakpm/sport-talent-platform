@@ -16,7 +16,7 @@ import {
 
 const EVENT_COLUMNS = `e.id, e.team_id, e.title, e.kind, to_char(e.date,'YYYY-MM-DD') AS date,
   to_char(e.start_time,'HH24:MI') AS start_time, to_char(e.end_time,'HH24:MI') AS end_time,
-  e.venue, e.notes, e.series_id, t.name AS team_name`;
+  e.venue, e.notes, e.series_id, e.cancelled, t.name AS team_name`;
 
 @Injectable()
 export class PlanningService {
@@ -115,6 +115,18 @@ export class PlanningService {
     await this.authorize(userId);
     return this.db.transaction(async (tx) => {
       await this.ownedTeam(tx, userId, teamId);
+      await tx.query(
+        'SELECT id FROM coach_team_players WHERE id=$1 AND team_id=$2 FOR UPDATE',
+        [playerId, teamId],
+      );
+      const [attendance] = await tx.query(
+        'SELECT 1 FROM coach_session_attendance WHERE player_id=$1 LIMIT 1',
+        [playerId],
+      );
+      if (attendance)
+        throw new ConflictException(
+          'This player has attendance history. Mark the player inactive instead of removing them.',
+        );
       const rows = await tx.query(
         'WITH removed AS (DELETE FROM coach_team_players WHERE id=$1 AND team_id=$2 RETURNING id) SELECT * FROM removed',
         [playerId, teamId],
@@ -163,9 +175,30 @@ export class PlanningService {
         );
         if (!existing) throw new NotFoundException('Session not found.');
       }
+      if (eventId) {
+        const [event] = await tx.query(
+          'SELECT cancelled FROM coach_schedule_events WHERE id=$1 FOR UPDATE',
+          [eventId],
+        );
+        if (event.cancelled)
+          throw new ConflictException(
+            'Cancelled sessions cannot be edited. Create a new session instead.',
+          );
+        const [attendance] = await tx.query(
+          'SELECT 1 FROM coach_session_attendance WHERE event_id=$1 LIMIT 1',
+          [eventId],
+        );
+        if (attendance)
+          throw new ConflictException(
+            'This session already has attendance records. Keep its details intact or cancel it and create a new session.',
+          );
+        await tx.query('DELETE FROM coach_session_codes WHERE event_id=$1', [
+          eventId,
+        ]);
+      }
       const conflicts = await tx.query(
         `SELECT to_char(date,'YYYY-MM-DD') AS date FROM coach_schedule_events
-        WHERE team_id=$1 AND date=ANY($2::date[]) AND start_time < $4::time AND end_time > $3::time
+        WHERE team_id=$1 AND NOT cancelled AND date=ANY($2::date[]) AND start_time < $4::time AND end_time > $3::time
         AND ($5::uuid IS NULL OR id<>$5::uuid) ORDER BY date`,
         [teamId, dates, data.start_time, data.end_time, eventId || null],
       );
@@ -206,6 +239,18 @@ export class PlanningService {
     await this.authorize(userId);
     return this.db.transaction(async (tx) => {
       await this.ownedTeam(tx, userId, teamId);
+      await tx.query(
+        'SELECT id FROM coach_schedule_events WHERE id=$1 AND team_id=$2 FOR UPDATE',
+        [eventId, teamId],
+      );
+      const [attendance] = await tx.query(
+        'SELECT 1 FROM coach_session_attendance WHERE event_id=$1 LIMIT 1',
+        [eventId],
+      );
+      if (attendance)
+        throw new ConflictException(
+          'This session has attendance records. Cancel it instead of deleting its history.',
+        );
       const rows = await tx.query(
         'WITH removed AS (DELETE FROM coach_schedule_events WHERE id=$1 AND team_id=$2 RETURNING id) SELECT * FROM removed',
         [eventId, teamId],

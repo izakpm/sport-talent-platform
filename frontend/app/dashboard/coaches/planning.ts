@@ -10,6 +10,7 @@ export type Team = {
   player_count?: number;
 };
 export type Session = {
+  cancelled?: boolean;
   id: string;
   team_id: string;
   team_name: string;

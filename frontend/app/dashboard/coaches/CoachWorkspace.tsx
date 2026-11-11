@@ -23,6 +23,8 @@ import {
   type Team,
 } from "./planning";
 import styles from "./workspace.module.css";
+import SessionAttendance from "../team-hub/SessionAttendance";
+import hubStyles from "../team-hub/hub.module.css";
 
 type Mode = "overview" | "teams" | "schedule";
 const typeOf = (kind: string) =>
@@ -140,15 +142,20 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
   const visible = sessions.filter(
     (s) => teamFilter === "all" || s.team_id === teamFilter,
   );
-  const upcoming = sessions.filter((s) => s.date >= today).slice(0, 5);
+  const upcoming = sessions
+    .filter((s) => !s.cancelled && s.date >= today)
+    .slice(0, 5);
   const hours =
-    visible.reduce(
-      (total, s) =>
-        total +
-        (Number(s.end_time.slice(0, 2)) * 60 + Number(s.end_time.slice(3))) -
-        (Number(s.start_time.slice(0, 2)) * 60 + Number(s.start_time.slice(3))),
-      0,
-    ) / 60;
+    visible
+      .filter((s) => !s.cancelled)
+      .reduce(
+        (total, s) =>
+          total +
+          (Number(s.end_time.slice(0, 2)) * 60 + Number(s.end_time.slice(3))) -
+          (Number(s.start_time.slice(0, 2)) * 60 +
+            Number(s.start_time.slice(3))),
+        0,
+      ) / 60;
   const addSession = (
     date = month === today.slice(0, 7) ? today : `${month}-01`,
     teamId = teamFilter !== "all" ? teamFilter : teams[0]?.id,
@@ -191,14 +198,22 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
         {compact ? (
           <>
             <span className={styles.eventTime}>{session.start_time}</span>
-            <span>{session.title}</span>
+            <span>
+              {session.cancelled
+                ? `Cancelled · ${session.title}`
+                : session.title}
+            </span>
             {teamFilter === "all" && <small>{session.team_name}</small>}
           </>
         ) : (
           <>
             <span className={styles.typeMark}>{typeOf(session.kind).mark}</span>
             <span className={styles.eventBody}>
-              <strong>{session.title}</strong>
+              <strong>
+                {session.cancelled
+                  ? `Cancelled · ${session.title}`
+                  : session.title}
+              </strong>
               <small>
                 {session.team_name} · {session.venue || "Venue not set"}
               </small>
@@ -350,12 +365,18 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                       </span>
                     </div>
                     <div>
-                      <strong>{sessions.length}</strong>
+                      <strong>
+                        {sessions.filter((s) => !s.cancelled).length}
+                      </strong>
                       <span>sessions on the calendar</span>
                     </div>
                     <div>
                       <strong>
-                        {sessions.filter((s) => s.kind === "match").length}
+                        {
+                          sessions.filter(
+                            (s) => !s.cancelled && s.kind === "match",
+                          ).length
+                        }
                       </strong>
                       <span>match days planned</span>
                     </div>
@@ -430,7 +451,7 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                       )
                       .map((team, index) => {
                         const planned = sessions.filter(
-                          (s) => s.team_id === team.id,
+                          (s) => !s.cancelled && s.team_id === team.id,
                         );
                         return (
                           <article className={styles.teamCard} key={team.id}>
@@ -832,6 +853,9 @@ function SessionEditor({
   onSaved: (message: string) => void;
 }) {
   const event = initial.event;
+  const [panel, setPanel] = useState<"details" | "attendance">(
+    event ? "attendance" : "details",
+  );
   const [form, setForm] = useState({
     team_id: initial.teamId,
     title: event?.title || "Rugby practice",
@@ -928,224 +952,250 @@ function SessionEditor({
       }
       close={() => !busy && close()}
     >
-      <form className={styles.form} onSubmit={submit}>
-        <fieldset className={styles.typePicker}>
-          <legend>Session type</legend>
-          {SESSION_TYPES.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              aria-pressed={form.kind === t.id}
-              style={sessionStyle(t.id)}
-              onClick={() => chooseType(t.id)}
-            >
-              <span>{t.mark}</span>
-              {t.label}
-            </button>
-          ))}
-        </fieldset>
-        <label>
-          Session title
-          <input
-            autoFocus
-            required
-            maxLength={120}
-            value={form.title}
-            onChange={(e) => change("title", e.target.value)}
-          />
-        </label>
-        <div className={styles.formRow}>
-          <label>
-            Team
-            <select
-              required
-              value={form.team_id}
-              disabled={!!event}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  team_id: e.target.value,
-                  venue:
-                    teams.find((t) => t.id === e.target.value)?.venue || "",
-                }))
-              }
-            >
-              {teams.map((t) => (
-                <option value={t.id} key={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {repeat ? "Start date" : "Date"}
-            <input
-              type="date"
-              required
-              min="2000-01-01"
-              max="2100-12-31"
-              value={form.date}
-              onChange={(e) => change("date", e.target.value)}
-            />
-          </label>
-        </div>
-        <div className={styles.formRow}>
-          <label>
-            Start time
-            <input
-              type="time"
-              required
-              value={form.start_time}
-              onChange={(e) => change("start_time", e.target.value)}
-            />
-          </label>
-          <label>
-            End time
-            <input
-              type="time"
-              required
-              value={form.end_time}
-              onChange={(e) => change("end_time", e.target.value)}
-            />
-          </label>
-        </div>
-        <p className={styles.timezone}>SAST · South Africa (UTC+2)</p>
-        {!event && (
-          <div className={styles.repeatBox}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={repeat}
-                onChange={(e) => setRepeat(e.target.checked)}
-              />
-              <span>
-                <strong>Repeat weekly</strong>
-                <small>Build your training rhythm for the month.</small>
-              </span>
-            </label>
-            {repeat && (
-              <>
-                <div className={styles.repeatDays}>
-                  {WEEKDAYS.map((d) => (
-                    <button
-                      type="button"
-                      key={d.day}
-                      aria-pressed={weekdays.includes(d.day)}
-                      onClick={() =>
-                        setWeekdays((days) =>
-                          days.includes(d.day)
-                            ? days.filter((day) => day !== d.day)
-                            : [...days, d.day],
-                        )
-                      }
-                    >
-                      {d.label}
-                    </button>
-                  ))}
-                </div>
-                <label>
-                  Repeat until
-                  <input
-                    type="date"
-                    required
-                    min={form.date}
-                    max="2100-12-31"
-                    value={until}
-                    onChange={(e) => setUntil(e.target.value)}
-                  />
-                </label>
-                <p className={styles.repeatPreview}>
-                  {count} {count === 1 ? "session" : "sessions"} will be
-                  created. Each can be edited separately.
-                </p>
-              </>
-            )}
-          </div>
-        )}
-        <label>
-          {form.kind === "match" ? "Match venue" : "Venue"}{" "}
-          <span className={styles.optional}>optional</span>
-          <input
-            maxLength={160}
-            placeholder="Where is the team meeting?"
-            value={form.venue}
-            onChange={(e) => change("venue", e.target.value)}
-          />
-        </label>
-        <label>
-          {form.kind === "match"
-            ? "Opponent & match notes"
-            : "Session focus & notes"}{" "}
-          <span className={styles.optional}>optional</span>
-          <textarea
-            maxLength={2000}
-            rows={3}
-            placeholder={
-              form.kind === "practice"
-                ? "e.g. Defensive shape, lineouts, then a conditioned game."
-                : "What should the team focus on?"
-            }
-            value={form.notes}
-            onChange={(e) => change("notes", e.target.value)}
-          />
-        </label>
-        {error && (
-          <p role="alert" className={styles.formError}>
-            {error}
-          </p>
-        )}
-        {deleting && (
-          <div className={styles.deleteConfirm}>
-            <p>
-              Remove “{event?.title}” on {displayDate(form.date)}? Other
-              sessions in the series will stay.
-            </p>
-            <button
-              type="button"
-              className={styles.danger}
-              disabled={busy}
-              onClick={remove}
-            >
-              {busy ? "Removing…" : "Yes, remove session"}
-            </button>
-            <button
-              type="button"
-              className={styles.textButton}
-              disabled={busy}
-              onClick={() => setDeleting(false)}
-            >
-              Keep session
-            </button>
-          </div>
-        )}
-        <footer className={styles.formFooter}>
-          {event && (
-            <button
-              type="button"
-              className={styles.deleteButton}
-              disabled={busy}
-              onClick={() => setDeleting(true)}
-            >
-              Remove session
-            </button>
-          )}
+      {event && (
+        <div className={hubStyles.tabs}>
           <button
-            type="button"
-            className={styles.secondary}
-            disabled={busy}
-            onClick={close}
+            aria-pressed={panel === "details"}
+            disabled={event.cancelled}
+            onClick={() => setPanel("details")}
           >
-            Cancel
+            Session details
           </button>
-          <button className={styles.primary} disabled={busy || deleting}>
-            {busy
-              ? "Saving…"
-              : event
-                ? "Save changes"
-                : `Add ${count > 1 ? `${count} sessions` : "session"}`}
+          <button
+            aria-pressed={panel === "attendance"}
+            onClick={() => setPanel("attendance")}
+          >
+            Attendance & QR
           </button>
-        </footer>
-      </form>
+        </div>
+      )}
+      {event && panel === "attendance" ? (
+        <SessionAttendance
+          sessionId={event.id}
+          onCancelled={() =>
+            onSaved("Session cancelled and posted to the team feed.")
+          }
+        />
+      ) : (
+        <form className={styles.form} onSubmit={submit}>
+          <fieldset className={styles.typePicker}>
+            <legend>Session type</legend>
+            {SESSION_TYPES.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                aria-pressed={form.kind === t.id}
+                style={sessionStyle(t.id)}
+                onClick={() => chooseType(t.id)}
+              >
+                <span>{t.mark}</span>
+                {t.label}
+              </button>
+            ))}
+          </fieldset>
+          <label>
+            Session title
+            <input
+              autoFocus
+              required
+              maxLength={120}
+              value={form.title}
+              onChange={(e) => change("title", e.target.value)}
+            />
+          </label>
+          <div className={styles.formRow}>
+            <label>
+              Team
+              <select
+                required
+                value={form.team_id}
+                disabled={!!event}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    team_id: e.target.value,
+                    venue:
+                      teams.find((t) => t.id === e.target.value)?.venue || "",
+                  }))
+                }
+              >
+                {teams.map((t) => (
+                  <option value={t.id} key={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              {repeat ? "Start date" : "Date"}
+              <input
+                type="date"
+                required
+                min="2000-01-01"
+                max="2100-12-31"
+                value={form.date}
+                onChange={(e) => change("date", e.target.value)}
+              />
+            </label>
+          </div>
+          <div className={styles.formRow}>
+            <label>
+              Start time
+              <input
+                type="time"
+                required
+                value={form.start_time}
+                onChange={(e) => change("start_time", e.target.value)}
+              />
+            </label>
+            <label>
+              End time
+              <input
+                type="time"
+                required
+                value={form.end_time}
+                onChange={(e) => change("end_time", e.target.value)}
+              />
+            </label>
+          </div>
+          <p className={styles.timezone}>SAST · South Africa (UTC+2)</p>
+          {!event && (
+            <div className={styles.repeatBox}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={repeat}
+                  onChange={(e) => setRepeat(e.target.checked)}
+                />
+                <span>
+                  <strong>Repeat weekly</strong>
+                  <small>Build your training rhythm for the month.</small>
+                </span>
+              </label>
+              {repeat && (
+                <>
+                  <div className={styles.repeatDays}>
+                    {WEEKDAYS.map((d) => (
+                      <button
+                        type="button"
+                        key={d.day}
+                        aria-pressed={weekdays.includes(d.day)}
+                        onClick={() =>
+                          setWeekdays((days) =>
+                            days.includes(d.day)
+                              ? days.filter((day) => day !== d.day)
+                              : [...days, d.day],
+                          )
+                        }
+                      >
+                        {d.label}
+                      </button>
+                    ))}
+                  </div>
+                  <label>
+                    Repeat until
+                    <input
+                      type="date"
+                      required
+                      min={form.date}
+                      max="2100-12-31"
+                      value={until}
+                      onChange={(e) => setUntil(e.target.value)}
+                    />
+                  </label>
+                  <p className={styles.repeatPreview}>
+                    {count} {count === 1 ? "session" : "sessions"} will be
+                    created. Each can be edited separately.
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+          <label>
+            {form.kind === "match" ? "Match venue" : "Venue"}{" "}
+            <span className={styles.optional}>optional</span>
+            <input
+              maxLength={160}
+              placeholder="Where is the team meeting?"
+              value={form.venue}
+              onChange={(e) => change("venue", e.target.value)}
+            />
+          </label>
+          <label>
+            {form.kind === "match"
+              ? "Opponent & match notes"
+              : "Session focus & notes"}{" "}
+            <span className={styles.optional}>optional</span>
+            <textarea
+              maxLength={2000}
+              rows={3}
+              placeholder={
+                form.kind === "practice"
+                  ? "e.g. Defensive shape, lineouts, then a conditioned game."
+                  : "What should the team focus on?"
+              }
+              value={form.notes}
+              onChange={(e) => change("notes", e.target.value)}
+            />
+          </label>
+          {error && (
+            <p role="alert" className={styles.formError}>
+              {error}
+            </p>
+          )}
+          {deleting && (
+            <div className={styles.deleteConfirm}>
+              <p>
+                Remove “{event?.title}” on {displayDate(form.date)}? Other
+                sessions in the series will stay.
+              </p>
+              <button
+                type="button"
+                className={styles.danger}
+                disabled={busy}
+                onClick={remove}
+              >
+                {busy ? "Removing…" : "Yes, remove session"}
+              </button>
+              <button
+                type="button"
+                className={styles.textButton}
+                disabled={busy}
+                onClick={() => setDeleting(false)}
+              >
+                Keep session
+              </button>
+            </div>
+          )}
+          <footer className={styles.formFooter}>
+            {event && (
+              <button
+                type="button"
+                className={styles.deleteButton}
+                disabled={busy}
+                onClick={() => setDeleting(true)}
+              >
+                Remove session
+              </button>
+            )}
+            <button
+              type="button"
+              className={styles.secondary}
+              disabled={busy}
+              onClick={close}
+            >
+              Cancel
+            </button>
+            <button className={styles.primary} disabled={busy || deleting}>
+              {busy
+                ? "Saving…"
+                : event
+                  ? "Save changes"
+                  : `Add ${count > 1 ? `${count} sessions` : "session"}`}
+            </button>
+          </footer>
+        </form>
+      )}
     </Modal>
   );
 }

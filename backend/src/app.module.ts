@@ -1,3 +1,4 @@
+import { HubModule } from './team-hub/hub.module';
 import { CoachProfileModule } from './coach-profile/profile.module';
 import { PortfolioModule } from './coach-portfolio/portfolio.module';
 import { Module } from '@nestjs/common';
@@ -67,6 +68,7 @@ import { PlanningModule } from './coach-planning/planning.module';
     PlanningModule,
     PortfolioModule,
     CoachProfileModule,
+    HubModule,
   ],
   controllers: [TrustController, HealthController],
   providers: [TrustService],

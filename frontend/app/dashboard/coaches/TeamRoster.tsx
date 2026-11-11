@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Modal } from "./CoachWorkspace";
 import { planningRequest, type Team } from "./planning";
 import styles from "./workspace.module.css";
+import PlayerAccount from "../team-hub/PlayerAccount";
 import roster from "./roster.module.css";
 
 export type Player = {
@@ -41,6 +42,7 @@ export default function TeamRoster({ teamId }: { teamId: string }) {
   const [status, setStatus] = useState("active");
   const [editor, setEditor] = useState<Player | "new" | null>(null);
   const [removing, setRemoving] = useState<Player | null>(null);
+  const [accountPlayer, setAccountPlayer] = useState<Player | null>(null);
   const [notice, setNotice] = useState("");
   useEffect(() => {
     let current = true;
@@ -238,6 +240,13 @@ export default function TeamRoster({ teamId }: { teamId: string }) {
                         <div className={roster.rowActions}>
                           <button
                             className={styles.secondary}
+                            aria-label={`Athlete account for ${nameOf(player)}`}
+                            onClick={() => setAccountPlayer(player)}
+                          >
+                            Athlete account
+                          </button>
+                          <button
+                            className={styles.secondary}
                             aria-label={`Edit ${nameOf(player)}`}
                             onClick={() => setEditor(player)}
                           >
@@ -270,13 +279,21 @@ export default function TeamRoster({ teamId }: { teamId: string }) {
                   </div>
                 )}
                 <p className={roster.help}>
-                  These are your team’s roster records. Adding a player doesn’t
-                  create an account or send an invitation.
+                  Link each player’s registered athlete account to give them
+                  access to team updates and session check-in.
                 </p>
               </>
             )}
           </>
         )
+      )}
+      {accountPlayer && (
+        <PlayerAccount
+          teamId={teamId}
+          playerId={accountPlayer.id}
+          name={nameOf(accountPlayer)}
+          close={() => setAccountPlayer(null)}
+        />
       )}
       {editor && (
         <PlayerEditor
