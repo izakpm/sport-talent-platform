@@ -1,2 +1,4 @@
-import AthleteProfile from '../../profile/AthleteProfile';
-export default function Page(){return <AthleteProfile initialTab="sports"/>;}
+import { redirect } from "next/navigation";
+export default function Page() {
+  redirect("/dashboard/profile#sports");
+}

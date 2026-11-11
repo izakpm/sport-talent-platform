@@ -1,2 +1,2 @@
 import Link from 'next/link';
-export default function Page(){return <main style={{padding:32}}><h1>Session attendance</h1><p>Attendance is now linked to your team’s scheduled sessions.</p><p><Link href="/dashboard/athlete/attendance">Athlete attendance and verification requests</Link></p><p><Link href="/dashboard/coaches/verification">Coach verification and QR check-in</Link></p></main>;}
+export default function Page(){return <main style={{padding:32}}><h1>Session attendance</h1><p>Attendance is now linked to your team’s scheduled sessions.</p><p><Link href="/dashboard/athlete/activities#attendance">Athlete attendance and verification requests</Link></p><p><Link href="/dashboard/coaches/verification">Coach verification and QR check-in</Link></p></main>;}

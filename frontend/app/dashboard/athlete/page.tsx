@@ -17,7 +17,7 @@ type Post = {
   created_at: string;
 };
 type User = { first_name?: string; last_name?: string; profile_image?: string };
-const attendance = "/dashboard/athlete/attendance";
+const attendance = "/dashboard/athlete/activities#attendance";
 const date = (value: string) =>
   new Date(value).toLocaleDateString("en-ZA", {
     day: "numeric",
@@ -296,10 +296,10 @@ export default function AthleteOverview() {
                 <Link href="/dashboard/profile">
                   Update my profile <span>↗</span>
                 </Link>
-                <Link href="/dashboard/athlete/sports">
+                <Link href="/dashboard/profile#sports">
                   Manage my sports <span>↗</span>
                 </Link>
-                <Link href="/dashboard/athlete/achievements">
+                <Link href="/dashboard/profile#achievement">
                   My achievements <span>↗</span>
                 </Link>
               </div>

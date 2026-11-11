@@ -1,2 +1,4 @@
-import AttendancePage from "../../team-hub/AttendancePage";
-export default function Page(){return <AttendancePage/>;}
+import { redirect } from "next/navigation";
+export default function Page() {
+  redirect("/dashboard/athlete/activities#attendance");
+}

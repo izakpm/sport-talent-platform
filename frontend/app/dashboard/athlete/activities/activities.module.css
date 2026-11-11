@@ -225,3 +225,10 @@
     font-size: 12px !important;
   }
 }
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}

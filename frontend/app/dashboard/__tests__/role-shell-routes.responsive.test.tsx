@@ -119,7 +119,7 @@ describe('T019 responsive role layout tests', () => {
       setViewport(width, 844);
       const { unmount } = render(<AthleteDashboardPage />);
       expect(await screen.findByText('Your team journey starts here.')).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'View my attendance ↗' })).toHaveAttribute('href', '/dashboard/athlete/attendance');
+      expect(screen.getByRole('link', { name: 'View my attendance ↗' })).toHaveAttribute('href', '/dashboard/athlete/activities#attendance');
       unmount();
     }
   });

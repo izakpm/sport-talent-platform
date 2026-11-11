@@ -1,4 +1,5 @@
 "use client";
+import { useSectionHash } from "../core/useSectionHash";
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
 import { fetchWithAuth } from "../../lib/api";
 import { Modal } from "../coaches/CoachWorkspace";
@@ -72,11 +73,14 @@ export default function AthleteProfile({
 }: {
   initialTab?: string;
 }) {
+  const [tab, setTab] = useSectionHash(
+    ["details", "sports", "achievement", "metric"],
+    initialTab,
+  );
   const [profile, setProfile] = useState<Profile | null>(null),
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
     [retry, setRetry] = useState(0),
-    [tab, setTab] = useState(initialTab),
     [editor, setEditor] = useState<Editor | null>(null),
     [remove, setRemove] = useState<Entry | null>(null),
     [busy, setBusy] = useState(false);

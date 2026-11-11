@@ -136,7 +136,7 @@ export default function AthleteCalendar() {
           <button className={s.primary} onClick={() => setEditing("new")}>
             Plan my own session +
           </button>
-          <Link className={s.secondary} href="/dashboard/athlete/attendance">
+          <Link className={s.secondary} href="/dashboard/athlete/activities#attendance">
             My attendance ↗
           </Link>
         </div>

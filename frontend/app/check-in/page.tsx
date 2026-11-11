@@ -105,7 +105,7 @@ export default function CheckIn() {
                   ? "Your coach has already confirmed your attendance."
                   : "Your coach has already reviewed this record. Speak to them if it needs correcting."}
             </p>
-            <Link className={s.primary} href="/dashboard/athlete/attendance">
+            <Link className={s.primary} href="/dashboard/athlete/activities#attendance">
               View my attendance
             </Link>
           </>

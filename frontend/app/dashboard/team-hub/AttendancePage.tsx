@@ -22,7 +22,13 @@ type Pending = {
   date: string;
   note: string;
 };
-export default function AttendancePage({ coach = false }: { coach?: boolean }) {
+export default function AttendancePage({
+  coach = false,
+  embedded = false,
+}: {
+  coach?: boolean;
+  embedded?: boolean;
+}) {
   const [events, setEvents] = useState<HubEvent[]>([]),
     [teams, setTeams] = useState<HubTeam[]>([]),
     [pending, setPending] = useState<Pending[]>([]),
@@ -82,7 +88,11 @@ export default function AttendancePage({ coach = false }: { coach?: boolean }) {
     <div className={s.workspace}>
       <header className={s.header}>
         <div>
-          <h1>{coach ? "Verification & attendance" : "My attendance"}</h1>
+          {embedded ? (
+            <h2>Team attendance</h2>
+          ) : (
+            <h1>{coach ? "Verification & attendance" : "My attendance"}</h1>
+          )}
           <p className={s.subtitle}>
             {coach
               ? "Approve requests, open QR check-in and keep your register up to date."

@@ -55,7 +55,7 @@ it("excludes cancellations and presents real upcoming sessions and team updates"
   expect(screen.getByText("Bring boots")).toBeInTheDocument();
   expect(
     screen.getByRole("link", { name: "Session & attendance ↗" }),
-  ).toHaveAttribute("href", "/dashboard/athlete/attendance");
+  ).toHaveAttribute("href", "/dashboard/athlete/activities#attendance");
 });
 it("does not present a failed request as an empty team or zero attendance", async () => {
   (hub as jest.Mock).mockRejectedValue(new Error("offline"));

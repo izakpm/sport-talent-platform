@@ -1,0 +1,14 @@
+import {act,fireEvent,render,screen} from '@testing-library/react';
+import {getDashboardRoleConfig} from '../core/roles';
+import Activities from '../athlete/activities/page';
+import Sports from '../athlete/sports/page';
+import Achievements from '../athlete/achievements/page';
+import Attendance from '../athlete/attendance/page';
+import {redirect} from 'next/navigation';
+jest.mock('next/navigation',()=>({redirect:jest.fn()}));
+jest.mock('../athlete/activities/TrainingLog',()=>({__esModule:true,default:()=> <p>Training panel</p>}));
+jest.mock('../team-hub/AttendancePage',()=>({__esModule:true,default:({embedded}:any)=> <p>{embedded?'Embedded attendance':'Standalone attendance'}</p>}));
+beforeEach(()=>{window.history.replaceState(null,'','/');jest.clearAllMocks();});
+it('has exactly the seven agreed athlete destinations',()=>{expect(getDashboardRoleConfig('ATHLETE').navGroups.flatMap(g=>g.items).map(i=>i.name)).toEqual(['Dashboard','Profile','Activities','Matches','Calendar','Team Feed','Connections']);});
+it('redirects legacy links to the corresponding sections',()=>{Sports();expect(redirect).toHaveBeenLastCalledWith('/dashboard/profile#sports');Achievements();expect(redirect).toHaveBeenLastCalledWith('/dashboard/profile#achievement');Attendance();expect(redirect).toHaveBeenLastCalledWith('/dashboard/athlete/activities#attendance');});
+it('opens attendance directly and supports keyboard tabs and hash navigation',()=>{window.history.replaceState(null,'','/#attendance');render(<Activities/>);expect(screen.getByText('Embedded attendance')).toBeInTheDocument();fireEvent.keyDown(screen.getByRole('tab',{name:'Team attendance'}),{key:'ArrowLeft'});expect(screen.getByText('Training panel')).toBeInTheDocument();expect(screen.getByRole('tab',{name:'Training log'})).toHaveAttribute('aria-selected','true');act(()=>{window.history.replaceState(null,'','/#attendance');window.dispatchEvent(new HashChangeEvent('hashchange'));});expect(screen.getByText('Embedded attendance')).toBeInTheDocument();});
