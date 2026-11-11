@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --feature-card-border-top: 3px solid #ffca05;
   --background: #f8fafc;
   --foreground: #111827;
   --surface-card: #ffffff;

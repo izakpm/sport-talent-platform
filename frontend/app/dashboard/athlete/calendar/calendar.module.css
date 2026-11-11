@@ -479,3 +479,7 @@
   gap: 18px;
   min-width: 0;
 }
+
+.banner {
+  border-top: var(--feature-card-border-top);
+}

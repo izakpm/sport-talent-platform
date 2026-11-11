@@ -49,7 +49,7 @@
   border-radius: 14px;
   background: #0b1f2e;
   color: #fff;
-  border-top: 3px solid #ffca05;
+  border-top: var(--feature-card-border-top);
 }
 .hero h2 {
   font-size: clamp(24px, 3vw, 36px);

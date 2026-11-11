@@ -232,3 +232,7 @@
   flex-wrap: wrap;
   margin-bottom: 24px;
 }
+
+.summary {
+  border-top: var(--feature-card-border-top);
+}

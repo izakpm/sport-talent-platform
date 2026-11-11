@@ -377,3 +377,8 @@
     font-size: 9px;
   }
 }
+
+.hero,
+.profile {
+  border-top: var(--feature-card-border-top);
+}

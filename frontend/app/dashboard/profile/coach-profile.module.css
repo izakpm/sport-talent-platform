@@ -279,3 +279,7 @@
     width: 100%;
   }
 }
+
+.hero {
+  border-top: var(--feature-card-border-top);
+}

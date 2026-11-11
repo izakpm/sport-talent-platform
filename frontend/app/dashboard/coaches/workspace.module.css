@@ -1171,3 +1171,7 @@
   outline: 2px solid #b58a00;
   outline-offset: 3px;
 }
+
+.playbook {
+  border-top: var(--feature-card-border-top);
+}
