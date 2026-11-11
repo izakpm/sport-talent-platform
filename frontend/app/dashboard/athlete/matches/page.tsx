@@ -1,385 +1,303 @@
-'use client';
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { hub, type HubTeam } from "../../team-hub/api";
+import { todayDate, shiftMonth } from "../../coaches/planning";
+import { dayLabel, monthLabel, type CalendarEvent } from "../calendar/calendar";
+import s from "../../coaches/workspace.module.css";
+import m from "./matches.module.css";
 
-import { useEffect, useState, type CSSProperties } from 'react';
-import { useRouter } from 'next/navigation';
-import { theme } from '../../../styles/theme';
-import { fetchWithAuth } from '../../../lib/api';
-
-interface Match {
-  id: string;
-  date: string;
-  opponent: string;
-  location: string;
-  position_played?: string;
-  tries_scored?: number;
-  result?: string;
-  sport?: string;
-  url?: string;
-}
-
-export default function DashboardMatchesPage() {
-  const router = useRouter();
-  const [matches, setMatches] = useState<Match[]>([]);
+export default function AthleteMatches() {
+  const [month, setMonth] = useState(() => todayDate().slice(0, 7));
+  const [team, setTeam] = useState("");
+  const [status, setStatus] = useState("all");
+  const [data, setData] = useState<{
+    month: string;
+    events: CalendarEvent[];
+    teams: HubTeam[];
+  } | null>(null);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const [retry, setRetry] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (!token || !storedUser) {
-      router.push('/login');
-      return;
-    }
-
-    loadMatches();
-  }, [router]);
-
-  const loadMatches = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const storedUser = localStorage.getItem('user');
-      if (!storedUser) return;
-
-      const userData = JSON.parse(storedUser);
-
-      const athleteRes = await fetchWithAuth(`/athletes/user/${userData.id}`);
-      if (!athleteRes?.ok) {
-        setError('Failed to load athlete profile');
-        return;
+    let active = true;
+    setLoading(true);
+    setError("");
+    async function refresh() {
+      try {
+        const [events, teams] = await Promise.all([
+          hub<CalendarEvent[]>("/calendar?month=" + month),
+          hub<HubTeam[]>("/teams"),
+        ]);
+        if (active) {
+          setData({
+            month,
+            events: events
+              .filter((e) => e.kind === "match")
+              .sort(
+                (a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at),
+              ),
+            teams,
+          });
+          setTeam((previous) =>
+            !previous ||
+            previous === "personal" ||
+            teams.some((t) => t.id === previous)
+              ? previous
+              : "",
+          );
+          setNow(Date.now());
+          setError("");
+        }
+      } catch (e) {
+        if (active) setError((e as Error).message);
+      } finally {
+        if (active) setLoading(false);
       }
-
-      const athleteData = await athleteRes.json();
-      if (!athleteData || !athleteData.id) {
-        setError('No athlete profile found');
-        return;
-      }
-
-      const placeholderMatches: Match[] = [
-        {
-          id: '1',
-          date: '2026-05-24',
-          opponent: 'South Africa U20',
-          location: 'Johannesburg, SA',
-          position_played: 'Fly-half',
-          tries_scored: 2,
-          result: 'W 28-24',
-          sport: 'Rugby',
-          url: 'https://live.supersportschools.com/events/6a0d8598812f6a842a680ea3/',
-        },
-        {
-          id: '2',
-          date: '2026-05-17',
-          opponent: 'Australia U20',
-          location: 'Melbourne, AU',
-          position_played: 'Fly-half',
-          tries_scored: 1,
-          result: 'W 35-21',
-          sport: 'Rugby',
-          url: 'https://live.supersportschools.com/events/6a0d8598812f6a842a680ea3/',
-        },
-        {
-          id: '3',
-          date: '2026-05-10',
-          opponent: 'New Zealand U20',
-          location: 'Auckland, NZ',
-          position_played: 'Fly-half',
-          tries_scored: 0,
-          result: 'L 19-31',
-          sport: 'Rugby',
-          url: 'https://live.supersportschools.com/events/6a0d8598812f6a842a680ea3/',
-        },
-      ];
-
-      setMatches(placeholderMatches);
-    } catch (err) {
-      console.error('Error loading matches:', err);
-      setError('An error occurred while loading matches');
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const updateUrl = (id: string, value: string) => {
-    setMatches((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, url: value } : m))
-    );
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
+    refresh();
+    const timer = setInterval(refresh, 60000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [month, retry]);
+  const current = data?.month === month ? data : null;
+  const matches = (current?.events || []).filter(
+    (e) => !team || e.team_id === team,
+  );
+  const upcoming = matches.filter(
+    (e) => !e.cancelled && Date.parse(e.ends_at) >= now,
+  );
+  const next = upcoming[0];
+  const visible = matches.filter(
+    (e) =>
+      status === "all" ||
+      (status === "cancelled"
+        ? e.cancelled
+        : !e.cancelled &&
+          (status === "upcoming"
+            ? Date.parse(e.ends_at) >= now
+            : Date.parse(e.ends_at) < now)),
+  );
+  function label(e: CalendarEvent) {
+    return e.cancelled
+      ? "Cancelled"
+      : Date.parse(e.ends_at) < now
+        ? "Past fixture"
+        : Date.parse(e.starts_at) <= now
+          ? "In progress"
+          : "Upcoming";
+  }
   return (
-    <div style={styles.page}>
-      <div style={styles.headerSection}>
-        <p style={styles.kicker}>Match History</p>
-        <h1 style={styles.heading}>Matches</h1>
-        <p style={styles.subtitle}>
-          View your recent match statistics and performance data.
-        </p>
-      </div>
-
-      {loading && (
-        <div style={styles.centerContent}>
-          <p style={styles.loadingText}>Loading your matches...</p>
+    <div className={s.workspace}>
+      <header className={s.header}>
+        <div>
+          <p className={s.eyebrow}>MATCH DAY</p>
+          <h1>My matches</h1>
+          <p className={s.subtitle}>
+            Know where to be. Be ready when the whistle blows.
+          </p>
         </div>
-      )}
-
-      {error && !loading && (
-        <div style={styles.errorCard}>
-          <p style={styles.errorText}>{error}</p>
-          <button style={styles.retryBtn} onClick={loadMatches}>
-            Try Again
+        <Link className={s.primary} href="/dashboard/athlete/calendar">
+          Open my calendar <span aria-hidden="true">↗</span>
+        </Link>
+      </header>
+      <section className={m.toolbar} aria-label="Match filters">
+        <div className={m.monthControls}>
+          <button
+            className={s.secondary}
+            aria-label="Previous month"
+            disabled={month === "1900-01"}
+            onClick={() => setMonth(shiftMonth(month, -1))}
+          >
+            ←
+          </button>
+          <label className={m.monthLabel}>
+            Month
+            <input
+              aria-label="Match month"
+              type="month"
+              min="1900-01"
+              max="2099-12"
+              value={month}
+              onChange={(e) => {
+                if (/^(19|20)\d{2}-(0[1-9]|1[0-2])$/.test(e.target.value))
+                  setMonth(e.target.value);
+              }}
+            />
+          </label>
+          <button
+            className={s.secondary}
+            aria-label="Next month"
+            disabled={month === "2099-12"}
+            onClick={() => setMonth(shiftMonth(month, 1))}
+          >
+            →
+          </button>
+          <button
+            className={s.secondary}
+            onClick={() => setMonth(todayDate().slice(0, 7))}
+          >
+            This month
+          </button>
+        </div>
+        <label>
+          Team
+          <select value={team} onChange={(e) => setTeam(e.target.value)}>
+            <option value="">All teams & personal plans</option>
+            <option value="personal">My personal plans</option>
+            {current?.teams.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Status
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="all">All matches</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="past">Past fixtures</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </label>
+      </section>
+      {error && (
+        <div className={s.error} role="alert">
+          <span>
+            {error}
+            {current ? " Showing the last loaded fixtures." : ""}
+          </span>
+          <button
+            className={s.secondary}
+            onClick={() => setRetry((v) => v + 1)}
+          >
+            Try again
           </button>
         </div>
       )}
-
-      {!loading && !error && matches.length > 0 && (
-        <div style={styles.matchesList}>
-          {matches.map((match) => (
-            <div key={match.id} style={styles.matchCard}>
-
-              {/* Header */}
-              <div style={styles.matchHeader}>
-                <div>
-                  <h3 style={styles.opponent}>{match.opponent}</h3>
-                  <p style={styles.date}>{formatDate(match.date)}</p>
-                </div>
-
-                <div style={styles.resultBadge(match.result?.startsWith('W'))}>
-                  <span style={styles.resultText}>{match.result}</span>
-                </div>
-              </div>
-
-              {/* Details */}
-              <div style={styles.detailsGrid}>
-                <div style={styles.detailItem}>
-                  <p style={styles.detailLabel}>Position</p>
-                  <p style={styles.detailValue}>{match.position_played || '-'}</p>
-                </div>
-
-                <div style={styles.detailItem}>
-                  <p style={styles.detailLabel}>Tries</p>
-                  <p style={styles.detailValue}>{match.tries_scored || 0}</p>
-                </div>
-
-                <div style={styles.detailItem}>
-                  <p style={styles.detailLabel}>Location</p>
-                  <p style={styles.detailValue}>{match.location}</p>
-                </div>
-
-                <div style={styles.detailItem}>
-                  <p style={styles.detailLabel}>Sport</p>
-                  <p style={styles.detailValue}>{match.sport || '-'}</p>
-                </div>
-              </div>
-
-              {/* ✅ URL FIELD */}
-              <div style={styles.urlSection}>
-                <p style={styles.detailLabel}>Match URL</p>
-
-                <input
-                  type="text"
-                  placeholder="Paste YouTube / SuperSport link"
-                  value={match.url || ''}
-                  onChange={(e) => updateUrl(match.id, e.target.value)}
-                  style={styles.urlInput}
-                />
-
-                {match.url && (
-                  <a
-                    href={match.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={styles.link}
-                  >
-                    Watch Match →
-                  </a>
+      {loading && !current ? (
+        <div className={s.loading} role="status">
+          Loading your matches…
+        </div>
+      ) : (
+        current && (
+          <>
+            <section className={m.hero} aria-label="Next match">
+              <div>
+                <p className={m.kicker}>NEXT UP · {monthLabel(month)}</p>
+                <h2>{next?.title || "Your next match starts here."}</h2>
+                {next ? (
+                  <>
+                    <p className={m.heroTeam}>{next.team_name}</p>
+                    <p>
+                      {dayLabel(next.date)} · {next.start_time}–{next.end_time}
+                    </p>
+                    <p>
+                      {next.venue || "Venue to be confirmed"} · {next.timezone}
+                    </p>
+                  </>
+                ) : (
+                  <p>
+                    No upcoming matches in this month for your selection. Browse
+                    another month or check your team calendar.
+                  </p>
                 )}
               </div>
-
+              <div className={m.summary}>
+                <strong>{upcoming.length}</strong>
+                <span>
+                  upcoming {upcoming.length === 1 ? "match" : "matches"}
+                  <br />
+                  in this month
+                </span>
+              </div>
+            </section>
+            <div className={m.listHeading}>
+              <h2>{monthLabel(month)}</h2>
+              <span>
+                {visible.length} {visible.length === 1 ? "fixture" : "fixtures"}
+              </span>
             </div>
-          ))}
-        </div>
-      )}
-
-      {!loading && !error && matches.length === 0 && (
-        <div style={styles.emptyCard}>
-          <p style={styles.emptyText}>No matches found yet.</p>
-          <p style={styles.emptySubText}>
-            Your match history will appear here.
-          </p>
-        </div>
+            {visible.length ? (
+              <div className={m.list}>
+                {visible.map((e) => (
+                  <article
+                    className={`${m.card} ${e.cancelled ? m.cancelled : ""}`}
+                    key={e.id}
+                  >
+                    <div className={m.dateTile}>
+                      <span>
+                        {new Date(e.date + "T12:00:00Z").toLocaleDateString(
+                          "en-ZA",
+                          { month: "short", timeZone: "UTC" },
+                        )}
+                      </span>
+                      <strong>{Number(e.date.slice(8))}</strong>
+                    </div>
+                    <div className={m.content}>
+                      <div className={m.cardTop}>
+                        <p className={m.team}>
+                          {e.team_name}
+                          {e.source === "personal" ? " · Private plan" : ""}
+                        </p>
+                        <span className={e.cancelled ? m.cancelBadge : m.badge}>
+                          {label(e)}
+                        </span>
+                      </div>
+                      <h3>{e.title}</h3>
+                      <p className={m.details}>
+                        {dayLabel(e.date)} · {e.start_time}–{e.end_time} (
+                        {e.timezone})
+                      </p>
+                      <p className={m.venue}>
+                        {e.venue || "Venue to be confirmed"}
+                      </p>
+                      {e.notes && (
+                        <div className={m.notes}>
+                          <strong>
+                            {e.source === "personal"
+                              ? "My notes"
+                              : "Coach’s notes"}
+                          </strong>
+                          <p>{e.notes}</p>
+                        </div>
+                      )}
+                      {e.cancelled && (
+                        <p className={m.cancellation}>
+                          This match has been cancelled.
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className={m.empty}>
+                <h3>No matches to show</h3>
+                <p>
+                  {matches.length
+                    ? "Try another status to see the rest of your fixtures."
+                    : "Matches scheduled by your coach, and your own match plans, will appear here."}
+                </p>
+                <Link
+                  className={s.secondary}
+                  href="/dashboard/athlete/calendar"
+                >
+                  View my calendar
+                </Link>
+              </div>
+            )}
+            <p className={m.footnote}>
+              Fixtures show scheduled matches. Past fixtures do not confirm
+              participation or a result.
+            </p>
+          </>
+        )
       )}
     </div>
   );
 }
-
-const styles: { [key: string]: CSSProperties | any } = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: theme.colors.background,
-    padding: '40px 24px',
-  },
-
-  headerSection: {
-    marginBottom: '40px',
-  },
-
-  kicker: {
-    fontSize: 12,
-    fontWeight: 600,
-    color: theme.colors.textMuted,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-
-  heading: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary,
-    marginBottom: 10,
-  },
-
-  subtitle: {
-    color: theme.colors.textMuted,
-  },
-
-  centerContent: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: 60,
-  },
-
-  loadingText: {
-    color: theme.colors.textMuted,
-  },
-
-  errorCard: {
-    padding: 20,
-    backgroundColor: '#fee2e2',
-    borderRadius: 10,
-    textAlign: 'center',
-  },
-
-  errorText: {
-    color: theme.colors.error,
-  },
-
-  retryBtn: {
-    marginTop: 10,
-    padding: '10px 16px',
-    backgroundColor: theme.colors.error,
-    color: '#fff',
-    border: 'none',
-    borderRadius: 6,
-    cursor: 'pointer',
-  },
-
-  matchesList: {
-    width: '100%', // ✅ FULL WIDTH
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 20,
-  },
-
-  matchCard: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    border: `1px solid ${theme.colors.border}`,
-  },
-
-  matchHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-
-  opponent: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-  },
-
-  date: {
-    fontSize: 14,
-    color: theme.colors.textMuted,
-  },
-
-  resultBadge: (isWin?: boolean) => ({
-    backgroundColor: isWin ? '#23f76d' : '#f74848',
-    padding: '12px 22px',
-    borderRadius: 15,
-    border: 'none',
-  }),
-
-  resultText: {
-    color: theme.colors.textMuted,
-    fontWeight: 'bold',
-  },
-
-  detailsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: 12,
-  },
-
-  detailItem: {
-    backgroundColor: '#f9fafb',
-    padding: 10,
-    borderRadius: 6,
-  },
-
-  detailLabel: {
-    fontSize: 11,
-    color: theme.colors.textMuted,
-  },
-
-  detailValue: {
-    color: theme.colors.textMuted,
-    fontWeight: 'bold',
-  },
-
-  urlSection: {
-    marginTop: 20,
-  },
-
-  urlInput: {
-    color: theme.colors.textMuted,
-    width: '100%',
-    padding: 10,
-    borderRadius: 8,
-    border: `1px solid ${theme.colors.border}`,
-    marginBottom: 8,
-  },
-
-  link: {
-    color: theme.colors.primary,
-    textDecoration: 'underline',
-    fontSize: 14,
-  },
-
-  emptyCard: {
-    textAlign: 'center',
-    padding: 40,
-  },
-
-  emptyText: {
-    fontWeight: 'bold',
-  },
-
-  emptySubText: {
-    color: theme.colors.textMuted,
-  },
-};
