@@ -184,6 +184,14 @@ export class PlanningService {
           throw new ConflictException(
             'Cancelled sessions cannot be edited. Create a new session instead.',
           );
+        const [result] = await tx.query(
+          'SELECT 1 FROM match_results WHERE event_id=$1',
+          [eventId],
+        );
+        if (result)
+          throw new ConflictException(
+            'This match has a recorded result. Edit the result from Matches; its fixture details are locked.',
+          );
         const [attendance] = await tx.query(
           'SELECT 1 FROM coach_session_attendance WHERE event_id=$1 LIMIT 1',
           [eventId],
@@ -243,6 +251,14 @@ export class PlanningService {
         'SELECT id FROM coach_schedule_events WHERE id=$1 AND team_id=$2 FOR UPDATE',
         [eventId, teamId],
       );
+      const [result] = await tx.query(
+        'SELECT 1 FROM match_results WHERE event_id=$1',
+        [eventId],
+      );
+      if (result)
+        throw new ConflictException(
+          'This match has a recorded result. Edit the result from Matches; its fixture details are locked.',
+        );
       const [attendance] = await tx.query(
         'SELECT 1 FROM coach_session_attendance WHERE event_id=$1 LIMIT 1',
         [eventId],

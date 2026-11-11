@@ -33,10 +33,10 @@ describe('coach pages smoke tests', () => {
     expect(screen.getByRole('heading', { name: 'Athlete Activity Feed' })).toBeInTheDocument();
   });
 
-  it('renders Matches page core sections', () => {
+  it('renders Matches page core sections', async () => {
     render(<CoachMatchesPage />);
     expect(screen.getByRole('heading', { name: 'Matches' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Fixture Board' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Previous matches' })).toBeInTheDocument();
   });
 
   it('renders Approvals page core sections', () => {

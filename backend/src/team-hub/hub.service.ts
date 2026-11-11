@@ -214,14 +214,24 @@ export class HubService {
   }
   async calendar(userId: string, month: string) {
     await this.authorize(userId, 'ATHLETE');
-    if (typeof month !== 'string' || !/^(19|20)\d{2}-(0[1-9]|1[0-2])$/.test(month))
+    if (
+      typeof month !== 'string' ||
+      !/^(19|20)\d{2}-(0[1-9]|1[0-2])$/.test(month)
+    )
       throw new BadRequestException('Choose a month between 1900 and 2099.');
     const teamEvents = await this.db.query(
       `SELECT ${EVENT},e.kind,e.notes,t.timezone,'team' AS source FROM coach_schedule_events e JOIN coach_teams t ON t.id=e.team_id WHERE e.date >= $2::date AND e.date < $2::date + interval '1 month' AND EXISTS(SELECT 1 FROM coach_player_accounts m JOIN coach_team_players p ON p.id=m.player_id WHERE m.user_id=$1 AND m.team_id=e.team_id AND p.status='active') ORDER BY e.date,e.start_time,t.name,e.id`,
       [userId, month + '-01'],
     );
-    const personalEvents = await this.db.query(`SELECT ${PERSONAL_EVENT} FROM athlete_calendar_events WHERE user_id=$1 AND date >= $2::date AND date < $2::date + interval '1 month'`,[userId,month+'-01']);
-    return [...teamEvents,...personalEvents].sort((a,b)=>new Date(a.starts_at).getTime()-new Date(b.starts_at).getTime() || a.id.localeCompare(b.id));
+    const personalEvents = await this.db.query(
+      `SELECT ${PERSONAL_EVENT} FROM athlete_calendar_events WHERE user_id=$1 AND date >= $2::date AND date < $2::date + interval '1 month'`,
+      [userId, month + '-01'],
+    );
+    return [...teamEvents, ...personalEvents].sort(
+      (a, b) =>
+        new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime() ||
+        a.id.localeCompare(b.id),
+    );
   }
   async register(userId: string, id: string) {
     await this.authorize(userId, 'COACH');
@@ -368,6 +378,14 @@ export class HubService {
     const reason = textField(body?.reason, 'Cancellation message', 1000);
     return this.db.transaction(async (tx) => {
       const event = await this.ownedEvent(userId, id, tx, true);
+      const [result] = await tx.query(
+        'SELECT 1 FROM match_results WHERE event_id=$1',
+        [id],
+      );
+      if (result)
+        throw new ConflictException(
+          'A match with a recorded result cannot be cancelled. Edit the result from Matches.',
+        );
       if (event.cancelled) return { cancelled: true };
       await tx.query(
         'UPDATE coach_schedule_events SET cancelled=true WHERE id=$1',

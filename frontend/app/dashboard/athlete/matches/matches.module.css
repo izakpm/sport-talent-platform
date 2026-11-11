@@ -262,3 +262,92 @@
     min-width: 0;
   }
 }
+.score {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 20px;
+  background: #f4f6f7;
+  border-left: 4px solid #ffca05;
+  border-radius: 6px;
+  margin: 18px 0;
+}
+.score > strong {
+  font-size: 30px;
+  letter-spacing: -0.03em;
+}
+.score > span {
+  font-weight: 700;
+}
+.score small {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: #617887;
+}
+.score[data-outcome="Win"] {
+  border-color: #27834b;
+}
+.score[data-outcome="Loss"] {
+  border-color: #a44c3a;
+}
+.performance {
+  margin: 20px 0;
+  padding-top: 18px;
+  border-top: 1px solid #d6dfe4;
+}
+.performance h4 {
+  margin: 0;
+  font-size: 15px;
+}
+.performance h4 span {
+  font-size: 11px;
+  font-weight: 400;
+  color: #617887;
+  margin-left: 8px;
+}
+.metrics {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.metrics dt {
+  color: #617887;
+  font-size: 11px;
+}
+.metrics dd {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.personalNotes {
+  white-space: pre-wrap;
+}
+.notes summary {
+  cursor: pointer;
+}
+.fields {
+  display: grid;
+  gap: 18px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.statsFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.editorActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+@media (max-width: 480px) {
+  .statsFields {
+    grid-template-columns: 1fr;
+  }
+}
