@@ -92,7 +92,9 @@ it("filters by team, type, future end time and cancellation independently", () =
 it("opens real match details and supports a team filter", async () => {
   render(<Calendar />);
   await screen.findByRole("button", { name: /10:00 · Match Match vs North/ });
-  fireEvent.change(screen.getByLabelText("Team"), { target: { value: "one" } });
+  fireEvent.change(screen.getByLabelText("Schedule"), {
+    target: { value: "one" },
+  });
   expect(
     screen.queryByRole("button", { name: /Cancelled · Gym Gym session/ }),
   ).not.toBeInTheDocument();

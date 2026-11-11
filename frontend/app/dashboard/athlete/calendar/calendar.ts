@@ -1,5 +1,6 @@
 import { type HubEvent } from "../../team-hub/api";
 export type CalendarEvent = HubEvent & {
+  source?: "team" | "personal";
   kind: string;
   notes: string;
   timezone: string;

@@ -161,6 +161,14 @@ After building the API, set `RUN_ACTIVITY_DB_CHECK=1` and run `node backend/test
 
 ### Athlete team calendar
 
-The athlete Calendar now reads `GET /team-hub/calendar?month=YYYY-MM`, replacing the sample events. This authenticated endpoint accepts a validated calendar month (1900–2099), requires an active athlete account, and returns sessions only for current active roster/account links. Month navigation is not limited to the older attendance endpoint’s 31-day upcoming window. No database migration is required.
+The athlete Calendar now reads `GET /team-hub/calendar?month=YYYY-MM`, replacing the sample events. This authenticated endpoint accepts a validated calendar month (1900–2099), requires an active athlete account, and returns sessions only for current active roster/account links. Month navigation is not limited to the older attendance endpoint’s 31-day upcoming window. Personal planning now requires the additional migration described below.
 
 Month and list views share team/type/upcoming/cancellation filters. Events use their team-local dates and times, with the timezone shown in details. Match highlighting, selected-day details, coach notes and cancellation notices are available on desktop and mobile. The “Next up” panel is scoped to the displayed month and active filters, excludes cancellations, and includes sessions still in progress. The calendar refreshes every minute while open. The team-hub database check now also covers future-month matches, month boundaries, cancellations and inactive/unlinked account isolation.
+
+### Personal calendar plans
+
+Apply `docs/sql/athlete-personal-calendar.sql` before deploying personal planning. It creates an RLS-protected private `athlete_calendar_events` table with no direct anonymous/authenticated Supabase access. The calendar endpoint now combines active team memberships with the signed-in athlete’s personal plans, ordered chronologically. Personal plans are identified by `source: personal` and the display-only `team_id: personal` filter value.
+
+Athletes use Calendar → Plan my own session to schedule a future session, even without a team. Plans include type, date, start/end times (SAST), venue and notes. Athletes may edit their own active plans or cancel them with confirmation; cancelled records remain visible. Personal endpoints cannot edit team events or another athlete’s plans. Planning does not create completed training logs, attendance or verification. The editor flags overlaps with events loaded for the displayed month, but does not prohibit intentional overlaps or guarantee cross-month conflict detection.
+
+After building the API, run `node backend/test/personal-calendar-db-check.cjs` with `RUN_PERSONAL_CALENDAR_CHECK=1`. Set `APPLY_PERSONAL_CALENDAR_MIGRATION=1` only when intentionally applying the additive migration. All synthetic test records are rolled back independently of the committed migration.

@@ -1,3 +1,4 @@
+import { PersonalCalendarService } from './personal-calendar.service';
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   Header,
   Module,
   Param,
+  Patch,
   ParseUUIDPipe,
   Post,
   Query,
@@ -18,7 +20,10 @@ type Request = { user: { userId: string } };
 @Controller('team-hub')
 @UseGuards(JwtAuthGuard)
 export class HubController {
-  constructor(private readonly service: HubService) {}
+  constructor(
+    private readonly service: HubService,
+    private readonly personal: PersonalCalendarService,
+  ) {}
   @Get('teams') teams(@Req() r: Request) {
     return this.service.teams(r.user.userId);
   }
@@ -47,6 +52,25 @@ export class HubController {
     @Body() b: any,
   ) {
     return this.service.link(r.user.userId, t, p, b);
+  }
+  @Post('personal-sessions') createPersonal(
+    @Req() r: Request,
+    @Body() body: any,
+  ) {
+    return this.personal.save(r.user.userId, body);
+  }
+  @Patch('personal-sessions/:id') editPersonal(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
+  ) {
+    return this.personal.save(r.user.userId, body, id);
+  }
+  @Post('personal-sessions/:id/cancel') cancelPersonal(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.personal.cancel(r.user.userId, id);
   }
   @Get('calendar') @Header('Cache-Control', 'private, no-store') calendar(
     @Req() r: Request,
@@ -112,5 +136,8 @@ export class HubController {
     return this.service.scan(r.user.userId, b, true);
   }
 }
-@Module({ controllers: [HubController], providers: [HubService] })
+@Module({
+  controllers: [HubController],
+  providers: [HubService, PersonalCalendarService],
+})
 export class HubModule {}
