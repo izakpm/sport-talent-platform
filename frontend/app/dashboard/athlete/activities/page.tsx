@@ -1,732 +1,723 @@
-'use client';
-
-import { useEffect, useState, type CSSProperties } from 'react';
-import { theme } from '../../../styles/theme';
-import { fetchWithAuth } from '../../../lib/api';
-
-type Activity = {
-  id: string;
-  sport_id?: string;
-  sport?: string;
-  activity_type?: string;
-  activity_category?: string;
-  title?: string;
-  description?: string;
-  start_date?: string;
-  start_time?: string;
-  location?: string;
-  verified?: boolean;
+"use client";
+import Link from "next/link";
+import { useEffect, useState, type FormEvent } from "react";
+import { Modal } from "../../coaches/CoachWorkspace";
+import {
+  training,
+  trainingStatus,
+  trainingDate,
+  type TrainingActivity,
+  type TrainingOptions,
+} from "../../team-hub/training-api";
+import { notifyAttendance } from "../../team-hub/api";
+import s from "../../coaches/workspace.module.css";
+import a from "./activities.module.css";
+type Action = {
+  kind: "request" | "withdraw" | "delete";
+  activity: TrainingActivity;
 };
-
-type Sport = {
-  id: string;
-  name: string;
-};
-
-export default function DashboardActivitiesPage() {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
-  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [sports, setSports] = useState<Sport[]>([]);
-  const activityTypes = ['Training', 'Match', 'Practice', 'Strength', 'Recovery'];
-
-  const [sport, setSport] = useState('');
-  const [activityType, setActivityType] = useState('');
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [startDate, setStartDate] = useState('');
-
-  const [sportFilter, setSportFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [locationFilter, setLocationFilter] = useState('');
-  const [dateFromFilter, setDateFromFilter] = useState('');
-  const [dateToFilter, setDateToFilter] = useState('');
-  const [verifiedFilter, setVerifiedFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('date_desc');
-
+export default function AthleteActivities() {
+  const [data, setData] = useState<TrainingActivity[] | null>(null),
+    [options, setOptions] = useState<TrainingOptions | null>(null),
+    [error, setError] = useState(""),
+    [notice, setNotice] = useState(""),
+    [retry, setRetry] = useState(0),
+    [editor, setEditor] = useState<TrainingActivity | "new" | null>(null),
+    [action, setAction] = useState<Action | null>(null),
+    [status, setStatus] = useState(""),
+    [sport, setSport] = useState(""),
+    [kind, setKind] = useState(""),
+    [query, setQuery] = useState(""),
+    [from, setFrom] = useState(""),
+    [to, setTo] = useState("");
   useEffect(() => {
-    const loadSports = async () => {
-      try {
-        const res = await fetchWithAuth('/sports');
-        if (!res?.ok) return;
-        const data = (await res.json()) as Sport[] | { data: Sport[] };
-        setSports(Array.isArray(data) ? data : data.data || []);
-      } catch {
-        // ignore load errors for sports dropdown
-      }
-    };
-
-    loadSports();
-  }, []);
-
-  const handleCreate = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
-      const userId = user?.id;
-
-      // Ensure we have an athlete id (athlete record may be separate from user)
-      let athleteId = null;
-      if (userId) {
-        const aRes = await fetchWithAuth(`/athletes/user/${userId}`);
-        if (aRes?.ok) {
-          const aData = await aRes.json();
-          athleteId = aData?.id;
-        }
-
-        if (!athleteId) {
-          // create athlete record
-          const createRes = await fetchWithAuth('/athletes', {
-            method: 'POST',
-            body: JSON.stringify({ user_id: userId }),
-          });
-          if (createRes?.ok) {
-            const created = await createRes.json();
-            athleteId = created?.id;
+    let active = true;
+    const refresh = () =>
+      Promise.all([
+        training<TrainingActivity[]>(),
+        training<TrainingOptions>("/options"),
+      ])
+        .then(([rows, choices]) => {
+          if (active) {
+            setData(rows);
+            setOptions(choices);
+            setError("");
           }
-        }
-      }
-
-      const title = `${activityType}${description ? ` - ${description}` : ''}`;
-
-      const payload = {
-        athlete_id: athleteId,
-        sport_id: sport || undefined,
-        activity_type: activityType,
-        title,
-        description,
-        start_date: startDate || undefined,
-        location: location || undefined,
-      };
-
-      let res;
-      if (editingActivity) {
-        res = await fetchWithAuth(`/activities/${editingActivity.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
+        })
+        .catch((e) => {
+          if (active) setError(e.message);
         });
-      } else {
-        res = await fetchWithAuth('/activities', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-      }
-
-      if (res?.ok) {
-        setShowModal(false);
-        setEditingActivity(null);
-        // reload activities
-        const res2 = await fetchWithAuth(`/activities${athleteId ? `?athlete_id=${athleteId}` : ''}`);
-        if (res2?.ok) {
-          const data = (await res2.json()) as Activity[] | { data: Activity[] };
-          setActivities(Array.isArray(data) ? data : data.data || []);
-        }
-      } else {
-        alert('Failed to save activity');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Error creating activity');
-    }
-  };
-
-  useEffect(() => {
-    const loadActivities = async () => {
-      try {
-        const user = JSON.parse(localStorage.getItem('user') || 'null');
-        const userId = user?.id;
-
-        // Prefer athlete.id (from athletes table) if present; fallback to user id
-        let athleteId = userId;
-        if (userId) {
-          const aRes = await fetchWithAuth(`/athletes/user/${userId}`);
-          if (aRes?.ok) {
-            const aData = await aRes.json();
-            athleteId = aData?.id || athleteId;
-          }
-        }
-
-        const res = await fetchWithAuth(`/activities${athleteId ? `?athlete_id=${athleteId}` : ''}`);
-        if (!res?.ok) return;
-        const data = (await res.json()) as Activity[] | { data: Activity[] };
-        setActivities(Array.isArray(data) ? data : data.data || []);
-      } catch (e) {
-        console.error('loadActivities error', e);
-        setActivities([]);
-      }
+    refresh();
+    const timer = setInterval(refresh, 60000);
+    return () => {
+      active = false;
+      clearInterval(timer);
     };
-
-    loadActivities();
-  }, []);
-
-  const handleEditActivity = (activity: Activity) => {
-    setEditingActivity(activity);
-    setSport(activity.sport_id || '');
-    setActivityType(activity.activity_type || '');
-    setDescription(activity.description || '');
-    setLocation(activity.location || '');
-    setStartDate(activity.start_date || '');
-    setMenuOpenId(null);
-    setShowModal(true);
-  };
-
-  const handleDeleteActivity = async (activity: Activity) => {
-    if (!window.confirm(`Delete activity "${activity.title || activity.activity_type}"?`)) return;
-    try {
-      const res = await fetchWithAuth(`/activities/${activity.id}`, { method: 'DELETE' });
-      if (res?.ok) {
-        setActivities((prev) => prev.filter((a) => a.id !== activity.id));
-        setMenuOpenId(null);
-      } else {
-        alert('Failed to delete activity');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Error deleting activity');
-    }
-  };
-
-  const filteredActivities = activities
-    .filter((activity) => {
-      const activityDate = activity.start_date ? new Date(activity.start_date) : null;
-      const dateFrom = dateFromFilter ? new Date(dateFromFilter) : null;
-      const dateTo = dateToFilter ? new Date(dateToFilter) : null;
-      const typeText = activity.activity_category || activity.activity_type || '';
-      const sportText = activity.sport || '';
-      const locationText = activity.location || '';
-
-      if (typeFilter && typeText.toLowerCase() !== typeFilter.toLowerCase()) {
-        return false;
-      }
-
-      if (sportFilter && sportText.toLowerCase() !== sportFilter.toLowerCase()) {
-        return false;
-      }
-
-      if (locationFilter && !locationText.toLowerCase().includes(locationFilter.toLowerCase())) {
-        return false;
-      }
-
-      if (verifiedFilter !== 'all') {
-        const isVerified = Boolean(activity.verified);
-        if (verifiedFilter === 'verified' && !isVerified) return false;
-        if (verifiedFilter === 'unverified' && isVerified) return false;
-      }
-
-      if (dateFrom && activityDate && activityDate < dateFrom) {
-        return false;
-      }
-
-      if (dateTo && activityDate && activityDate > dateTo) {
-        return false;
-      }
-
-      return true;
-    })
-    .sort((a, b) => {
-      const aDate = a.start_date ? new Date(a.start_date).getTime() : 0;
-      const bDate = b.start_date ? new Date(b.start_date).getTime() : 0;
-      if (sortBy === 'date_asc') return aDate - bDate;
-      if (sortBy === 'date_desc') return bDate - aDate;
-      return 0;
-    });
-
+  }, [retry]);
+  function saved(rows: TrainingActivity[], message: string) {
+    setData(rows);
+    setNotice(message);
+    setError("");
+    setEditor(null);
+    setAction(null);
+    notifyAttendance();
+  }
+  const visible = (data || []).filter(
+    (v) =>
+      (!status || v.status === status) &&
+      (!sport || v.sport_id === sport) &&
+      (!kind || v.training_kind === kind) &&
+      (!from || v.date >= from) &&
+      (!to || v.date <= to) &&
+      (!query ||
+        [v.title, v.location, v.description]
+          .join(" ")
+          .toLowerCase()
+          .includes(query.toLowerCase())),
+  );
+  const today = new Date().toLocaleDateString("en-CA", {
+    timeZone: "Africa/Johannesburg",
+  });
+  const cutoff = new Date(Date.now() - 29 * 86400000).toLocaleDateString(
+    "en-CA",
+    { timeZone: "Africa/Johannesburg" },
+  );
+  const recent = (data || []).filter(
+    (v) => v.date >= cutoff && v.date <= today,
+  );
   return (
-    <div style={styles.page}>
-      <div style={styles.header}>
+    <div className={s.workspace}>
+      <header className={s.header}>
         <div>
-          <p style={styles.kicker}>Athlete Activities</p>
-          <h1 style={styles.heading}>Training & Game Log</h1>
-          <p style={styles.description}>Review your recent activity entries and stay on top of your schedule.</p>
+          <p className={a.eyebrow}>MY TRAINING LOG</p>
+          <h1>Put your work on record.</h1>
+          <p className={s.subtitle}>
+            Log the session. Capture the detail. Ask your coach to confirm it.
+          </p>
+        </div>
+        <button
+          className={s.primary}
+          disabled={!options}
+          onClick={() => setEditor("new")}
+        >
+          Log training session +
+        </button>
+      </header>
+      {error && (
+        <p role="alert" className={s.error}>
+          {error} {data && "Showing your last loaded records."}{" "}
+          <button onClick={() => setRetry((n) => n + 1)}>Retry</button>
+        </p>
+      )}
+      {notice && (
+        <p role="status" className={s.notice}>
+          {notice}
+        </p>
+      )}
+      <section className={a.summary}>
+        <div>
+          <span>LAST 30 DAYS</span>
+          <strong>
+            {data ? recent.length : "—"} <small>sessions logged</small>
+          </strong>
         </div>
         <div>
-          <button style={styles.addButton} onClick={() => setShowModal(true)}>+ Add Activity</button>
+          <span>TRAINING TIME · LAST 30 DAYS</span>
+          <strong>
+            {data
+              ? Math.round(
+                  (recent.reduce((n, v) => n + (v.duration_minutes || 0), 0) /
+                    60) *
+                    10,
+                ) / 10
+              : "—"}{" "}
+            <small>hours</small>
+          </strong>
         </div>
+        <div>
+          <span>AWAITING YOUR COACH</span>
+          <strong>
+            {data ? data.filter((v) => v.status === "pending").length : "—"}{" "}
+            <small>
+              {data?.filter((v) => v.status === "pending").length === 1
+                ? "request"
+                : "requests"}
+            </small>
+          </strong>
+        </div>
+      </section>
+      <aside className={a.tip}>
+        <div>
+          <strong>Attended a scheduled team session?</strong>
+          <p>
+            Use your team attendance record to request confirmation or scan your
+            coach’s QR code at training. No separate log is needed.
+          </p>
+        </div>
+        <Link href="/dashboard/athlete/attendance">My attendance ↗</Link>
+      </aside>
+      <div className={a.filters}>
+        <label>
+          Search
+          <input
+            type="search"
+            placeholder="Session, venue or notes"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </label>
+        <label>
+          Sport
+          <select value={sport} onChange={(e) => setSport(e.target.value)}>
+            <option value="">All sports</option>
+            {options?.sports.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Session type
+          <select value={kind} onChange={(e) => setKind(e.target.value)}>
+            <option value="">All types</option>
+            {options?.kinds.map((v) => (
+              <option key={v}>{v}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Status
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="">All statuses</option>
+            {[
+              "self_reported",
+              "pending",
+              "verified",
+              "declined",
+              "legacy_verified",
+            ].map((v) => (
+              <option key={v} value={v}>
+                {trainingStatus(v)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          From
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+          />
+        </label>
+        <label>
+          To
+          <input
+            type="date"
+            min={from || undefined}
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+          />
+        </label>
       </div>
-
-      <section style={styles.filterCard}>
-        <div style={styles.filterGrid}>
-          <label style={styles.filterLabel}>
-            Date from
-            <input
-              style={styles.filterInput}
-              type="date"
-              value={dateFromFilter}
-              onChange={(e) => setDateFromFilter(e.target.value)}
-            />
-          </label>
-          <label style={styles.filterLabel}>
-            Date to
-            <input
-              style={styles.filterInput}
-              type="date"
-              value={dateToFilter}
-              onChange={(e) => setDateToFilter(e.target.value)}
-            />
-          </label>
-          <label style={styles.filterLabel}>
-            Sport
-            <select
-              style={styles.filterInput}
-              value={sportFilter}
-              onChange={(e) => setSportFilter(e.target.value)}
-            >
-              <option value="">All sports</option>
-              {sports.map((s) => (
-                <option key={s.id} value={s.name}>{s.name}</option>
-              ))}
-            </select>
-          </label>
-          <label style={styles.filterLabel}>
-            Type
-            <select
-              style={styles.filterInput}
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
-              <option value="">All types</option>
-              {activityTypes.map((type) => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-          </label>
-          <label style={styles.filterLabel}>
-            Location
-            <input
-              style={styles.filterInput}
-              type="search"
-              placeholder="Search location"
-              value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value)}
-            />
-          </label>
-          <label style={styles.filterLabel}>
-            Verified
-            <select
-              style={styles.filterInput}
-              value={verifiedFilter}
-              onChange={(e) => setVerifiedFilter(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="verified">Verified</option>
-              <option value="unverified">Unverified</option>
-            </select>
-          </label>
+      {(query || sport || kind || status || from || to) && (
+        <div className={a.results}>
+          <span>{visible.length} matching sessions</span>
+          <button
+            className={s.textButton}
+            onClick={() => {
+              setQuery("");
+              setSport("");
+              setKind("");
+              setStatus("");
+              setFrom("");
+              setTo("");
+            }}
+          >
+            Clear filters
+          </button>
         </div>
-
-        <div style={styles.filterFooter}>
-          <div style={styles.resultText}>{filteredActivities.length} activities shown</div>
-          <label style={styles.filterLabelInline}>
-            Sort by
-            <select
-              style={styles.filterInput}
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="date_desc">Date newest</option>
-              <option value="date_asc">Date oldest</option>
-            </select>
-          </label>
-        </div>
-      </section>
-
-      <section style={styles.card}>
-        <h2 style={styles.cardTitle}>Recent Activity</h2>
-
-        {activities.length === 0 ? (
-          <p style={styles.placeholder}>No activity records available yet.</p>
-        ) : (
-          <div style={styles.list}>
-            {activities.map((activity) => {
-              const sportText = activity.sport || '-';
-              const typeText = activity.activity_category || activity.activity_type || '-';
-              const dateText = activity.start_date || (activity.start_time ? new Date(activity.start_time).toLocaleDateString() : '-');
-              const titleText = activity.title || typeText;
-              const activityDescription = activity.description || '';
-              const locationText = activity.location || '-';
-
-              return (
-                <div key={activity.id} style={styles.activityCard}>
-                  <div style={styles.activityHeader}>
-                    <div style={styles.activityHeaderLeft}>
-                      <h3 style={styles.activityTitle}>{titleText}</h3>
-                      {activityDescription ? (
-                        <p style={styles.activityDescription}>{activityDescription}</p>
-                      ) : null}
-                    </div>
-
-                    <div style={styles.headerActions}>
-                      <span style={{
-                        ...styles.verifiedBadge,
-                        background: activity.verified ? theme.colors.success : theme.colors.error,
-                        color: theme.colors.white,
-                      }}>
-                        Verified
-                      </span>
-
-                      <div style={styles.menuContainer}>
-                        <button
-                          style={styles.menuBtn}
-                          onClick={() => setMenuOpenId(menuOpenId === activity.id ? null : activity.id)}
-                        >
-                          ⋮
-                        </button>
-                        {menuOpenId === activity.id && (
-                          <div style={styles.menuPopup}>
-                            <button style={styles.menuItem} onClick={() => handleEditActivity(activity)}>
-                              Edit Activity
-                            </button>
-                            <button style={styles.menuItem} onClick={() => handleDeleteActivity(activity)}>
-                              Delete Activity
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+      )}
+      {!data && !error ? (
+        <p role="status">Loading your training log…</p>
+      ) : data && !visible.length ? (
+        <section className={s.empty}>
+          <h2>
+            {data.length
+              ? "No sessions match these filters."
+              : "Every session counts."}
+          </h2>
+          <p>
+            {data.length
+              ? "Try another date, sport or status."
+              : "Start with a completed practice, gym session, fitness test or recovery session."}
+          </p>
+          {!data.length && (
+            <button className={s.primary} onClick={() => setEditor("new")}>
+              Log your first session
+            </button>
+          )}
+        </section>
+      ) : (
+        <div className={a.list}>
+          {visible.map((v) => {
+            const locked = ["pending", "verified", "legacy_verified"].includes(
+              v.status,
+            );
+            return (
+              <article className={a.card} key={v.id}>
+                <div className={a.cardHead}>
+                  <div>
+                    <p className={a.meta}>
+                      {trainingDate(v.date)}
+                      {v.time ? ` · ${v.time} SAST` : ""} ·{" "}
+                      {v.sport || "Sport not recorded"}
+                    </p>
+                    <h2>{v.title || "Training session"}</h2>
                   </div>
-
-                  <div style={styles.activityMeta}>
-                    <div style={styles.metaChip}>
-                      <span style={styles.metaLabel}>Date</span>
-                      {dateText}
-                    </div>
-                    <div style={styles.metaChip}>
-                      <span style={styles.metaLabel}>Type</span>
-                      {typeText}
-                    </div>
-                    <div style={styles.metaChip}>
-                      <span style={styles.metaLabel}>Sport</span>
-                      {sportText}
-                    </div>
-                    <div style={styles.metaChip}>
-                      <span style={styles.metaLabel}>Location</span>
-                      {locationText}
-                    </div>
-                  </div>
+                  <span
+                    className={`${a.badge} ${v.status === "verified" ? a.verified : ""}`}
+                  >
+                    {trainingStatus(v.status)}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {showModal && (
-        <div style={styles.modalOverlay}>
-              <div style={styles.modal}>
-            <h3 style={{ marginTop: 0, color: theme.colors.textPrimary }}>Add Activity</h3>
-
-            <div style={{ display: 'grid', gap: 10 }}>
-              <label style={{ color: theme.colors.textPrimary }}>
-                Sport
-                <select style={styles.input} value={sport} onChange={(e) => setSport(e.target.value)}>
-                  <option value="">Select sport</option>
-                  {sports.map((s) => (
-                    <option key={s.id} value={s.id}>{s.name}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label style={{ color: theme.colors.textPrimary }}>
-                Activity Type
-                <select style={styles.input} value={activityType} onChange={(e) => setActivityType(e.target.value)}>
-                  <option value="">Select type</option>
-                  {activityTypes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label style={{ color: theme.colors.textPrimary }}>
-                Start Date
-                <input type="date" style={styles.input} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-              </label>
-
-              <label style={{ color: theme.colors.textPrimary }}>
-                Location
-                <input type="text" style={styles.input} value={location} onChange={(e) => setLocation(e.target.value)} />
-              </label>
-
-              <label style={{ color: theme.colors.textPrimary }}>
-                Description
-                <textarea style={styles.input} value={description} onChange={(e) => setDescription(e.target.value)} />
-              </label>
-
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                <button style={styles.cancelButton} onClick={() => setShowModal(false)}>Cancel</button>
-                <button style={styles.saveButton} onClick={handleCreate}>Save</button>
-              </div>
-            </div>
-          </div>
+                <div className={a.facts}>
+                  <span>{v.training_kind}</span>
+                  {v.duration_minutes != null && (
+                    <span>{v.duration_minutes} min</span>
+                  )}
+                  {v.effort != null && <span>Effort {v.effort}/10</span>}
+                  {v.location && <span>{v.location}</span>}
+                </div>
+                {v.description && <p className={a.notes}>{v.description}</p>}
+                {v.coach_name && (
+                  <p className={a.coach}>Coach: {v.coach_name}</p>
+                )}
+                {v.review_note && (
+                  <p className={a.feedback}>
+                    <strong>Coach feedback:</strong> {v.review_note}
+                  </p>
+                )}
+                <footer className={a.footer}>
+                  <div className={a.actions}>
+                    {!locked && (
+                      <>
+                        <button
+                          className={s.primary}
+                          onClick={() =>
+                            setAction({ kind: "request", activity: v })
+                          }
+                        >
+                          {v.status === "declined"
+                            ? "Request again"
+                            : "Request verification"}
+                        </button>
+                        <button
+                          className={s.secondary}
+                          onClick={() => setEditor(v)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className={s.textButton}
+                          onClick={() =>
+                            setAction({ kind: "delete", activity: v })
+                          }
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                    {v.status === "pending" && (
+                      <button
+                        className={s.secondary}
+                        onClick={() =>
+                          setAction({ kind: "withdraw", activity: v })
+                        }
+                      >
+                        Withdraw request
+                      </button>
+                    )}
+                  </div>
+                  <small>
+                    {v.status === "pending"
+                      ? "Withdraw before editing."
+                      : locked
+                        ? "Confirmed record · editing locked."
+                        : "Self-reported until a coach confirms it."}
+                  </small>
+                </footer>
+              </article>
+            );
+          })}
         </div>
+      )}
+      {editor && options && (
+        <TrainingEditor
+          activity={editor === "new" ? null : editor}
+          options={options}
+          close={() => setEditor(null)}
+          saved={(rows) =>
+            saved(
+              rows,
+              "Session saved. You can now request verification from its card.",
+            )
+          }
+        />
+      )}
+      {action && options && (
+        <TrainingAction
+          action={action}
+          options={options}
+          close={() => setAction(null)}
+          saved={(rows) =>
+            saved(
+              rows,
+              action.kind === "request"
+                ? "Verification request sent to your coach."
+                : action.kind === "withdraw"
+                  ? "Request withdrawn. You can edit this session."
+                  : "Session deleted.",
+            )
+          }
+        />
       )}
     </div>
   );
 }
-
-const styles: Record<string, CSSProperties> = {
-  page: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 24,
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: 24,
-  },
-  kicker: {
-    color: theme.colors.primary,
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-    marginBottom: 8,
-  },
-  heading: {
-    margin: 0,
-    fontSize: 32,
-    color: theme.colors.textPrimary,
-  },
-  description: {
-    marginTop: 12,
-    fontSize: 15,
-    color: theme.colors.textMuted,
-    maxWidth: 620,
-  },
-  card: {
-    background: theme.colors.card,
-    borderRadius: 22,
-    padding: 24,
-    boxShadow: '0 12px 30px rgba(15, 23, 42, 0.06)',
-  },
-  addButton: {
-    background: theme.colors.primary,
-    color: theme.colors.white,
-    borderRadius: 12,
-    padding: '10px 14px',
-    border: 'none',
-    fontWeight: 700,
-    cursor: 'pointer',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(0,0,0,0.4)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modal: {
-    background: theme.colors.card,
-    color: theme.colors.textPrimary,
-    padding: 20,
-    borderRadius: 12,
-    width: 520,
-  },
-  input: {
-    width: '100%',
-    padding: 8,
-    marginTop: 6,
-    borderRadius: 8,
-    border: '1px solid #e2e8f0',
-    background: theme.colors.inputBackground,
-    color: theme.typography.body.color,
-  },
-  cancelButton: {
-    background: '#f3f4f6',
-    border: 'none',
-    padding: '8px 12px',
-    borderRadius: 8,
-    cursor: 'pointer',
-  },
-  saveButton: {
-    background: theme.colors.primary,
-    color: theme.colors.white,
-    border: 'none',
-    padding: '8px 12px',
-    borderRadius: 8,
-    cursor: 'pointer',
-  },
-  cardTitle: {
-    margin: 0,
-    marginBottom: 18,
-    fontSize: 18,
-    fontWeight: 700,
-    color: theme.typography.subheading.color,
-  },
-  filterCard: {
-    background: theme.colors.card,
-    borderRadius: 22,
-    padding: 24,
-    boxShadow: '0 12px 30px rgba(15, 23, 42, 0.06)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 18,
-  },
-  filterGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-    gap: 16,
-  },
-  filterLabel: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8,
-    color: theme.colors.textPrimary,
-    fontSize: 14,
-  },
-  filterLabelInline: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    color: theme.colors.textPrimary,
-    fontSize: 14,
-  },
-  filterInput: {
-    width: '100%',
-    padding: 10,
-    borderRadius: 12,
-    border: `1px solid ${theme.colors.border}`,
-    background: theme.colors.inputBackground,
-    color: theme.typography.body.color,
-    fontSize: 14,
-  },
-  filterFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 16,
-    flexWrap: 'wrap',
-  },
-  resultText: {
-    color: theme.colors.textMuted,
-    fontSize: 14,
-  },
-  list: {
-    display: 'grid',
-    gap: 16,
-  },
-  activityCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 18,
-    padding: 22,
-    borderRadius: 24,
-    background: theme.colors.card,
-    border: `1px solid ${theme.colors.border}`,
-    boxShadow: '0 12px 24px rgba(15, 23, 42, 0.06)',
-  },
-  activityDetails: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 14,
-  },
-  activityHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: 18,
-    flexWrap: 'wrap',
-  },
-  verifiedBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 999,
-    padding: '0 16px',
-    height: 34,
-    fontSize: 12,
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-  },
-  activityTitle: {
-    margin: 0,
-    fontSize: 18,
-    color: theme.colors.textPrimary,
-    fontWeight: 700,
-    lineHeight: 1.3,
-  },
-  activityDescription: {
-    margin: 0,
-    fontSize: 14,
-    color: theme.colors.textMuted,
-    maxWidth: 740,
-    lineHeight: 1.6,
-  },
-  activityMeta: {
-    display: 'flex',
-    gap: 14,
-    flexWrap: 'wrap',
-  },
-  activityHeaderLeft: {
-    flex: 1,
-    minWidth: 0,
-  },
-
-  headerActions: {
-    display: 'flex',
-    gap: 8,
-    alignItems: 'flex-start',
-    flex: 'none',
-  },
-  metaChip: {
-    display: 'inline-flex',
-    flexDirection: 'column',
-    gap: 4,
-    borderRadius: 14,
-    background: theme.colors.grey[100],
-    padding: '12px 16px',
-    minWidth: 120,
-    color: theme.colors.textPrimary,
-  },
-  metaLabel: {
-    color: theme.colors.textMuted,
-    fontSize: 10,
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-  },
-  placeholder: {
-    color: theme.colors.textMuted,
-    fontSize: 15,
-  },
-  menuContainer: {
-    position: 'relative',
-    marginLeft: 8,
-  },
-
-  menuBtn: {
-    background: 'transparent',
-    border: 'none',
-    fontSize: 20,
-    cursor: 'pointer',
-    padding: '4px 8px',
-    color: theme.colors.textMuted,
-  },
-
-  menuPopup: {
-    position: 'absolute',
-    right: 0,
-    top: '100%',
-    backgroundColor: theme.colors.card,
-    border: `1px solid ${theme.colors.border}`,
-    borderRadius: theme.spacing.borderRadius,
-    boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-    zIndex: 100,
-    minWidth: 160,
-  },
-
-  menuItem: {
-    display: 'block',
-    width: '100%',
-    padding: '10px 14px',
-    background: 'transparent',
-    border: 'none',
-    textAlign: 'left',
-    cursor: 'pointer',
-    fontSize: 14,
-    color: theme.colors.textPrimary,
-  },
-};
+function TrainingEditor({
+  activity,
+  options,
+  close,
+  saved,
+}: {
+  activity: TrainingActivity | null;
+  options: TrainingOptions;
+  close: () => void;
+  saved: (rows: TrainingActivity[]) => void;
+}) {
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    setBusy(true);
+    setError("");
+    try {
+      const body = {
+        title: f.get("title"),
+        sport_id: f.get("sport_id"),
+        training_kind: f.get("training_kind"),
+        date: f.get("date"),
+        time: f.get("time"),
+        duration_minutes: Number(f.get("duration_minutes")),
+        location: f.get("location"),
+        description: f.get("description"),
+        effort: f.get("effort") ? Number(f.get("effort")) : null,
+      };
+      saved(
+        await training<TrainingActivity[]>(
+          activity ? "/" + activity.id : "",
+          activity ? "PUT" : "POST",
+          body,
+        ),
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Modal
+      title={activity ? "Edit training session" : "Log a training session"}
+      description="Record a completed session. All times are South African time (SAST)."
+      close={() => {
+        if (!busy) close();
+      }}
+    >
+      <form className={s.form} onSubmit={submit}>
+        <fieldset disabled={busy} className={a.fieldset}>
+          <label>
+            Session title
+            <input
+              name="title"
+              required
+              maxLength={120}
+              defaultValue={activity?.title || ""}
+              placeholder="e.g. Strength session — lower body"
+            />
+          </label>
+          <div className={s.formRow}>
+            <label>
+              Sport
+              <select
+                name="sport_id"
+                required
+                defaultValue={
+                  activity?.sport_id ||
+                  (options.sports.length === 1 ? options.sports[0].id : "")
+                }
+              >
+                <option value="">Choose sport</option>
+                {options.sports.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Session type
+              <select
+                name="training_kind"
+                required
+                defaultValue={
+                  options.kinds.includes(activity?.training_kind || "")
+                    ? activity?.training_kind
+                    : "Practice"
+                }
+              >
+                {options.kinds.map((v) => (
+                  <option key={v}>{v}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className={s.formRow}>
+            <label>
+              Date
+              <input
+                name="date"
+                type="date"
+                required
+                min="1900-01-01"
+                max={new Date().toLocaleDateString("en-CA", {
+                  timeZone: "Africa/Johannesburg",
+                })}
+                defaultValue={
+                  activity?.date ||
+                  new Date().toLocaleDateString("en-CA", {
+                    timeZone: "Africa/Johannesburg",
+                  })
+                }
+              />
+            </label>
+            <label>
+              Start time (SAST)
+              <input
+                name="time"
+                required
+                type="time"
+                defaultValue={activity?.time || ""}
+              />
+            </label>
+          </div>
+          <div className={s.formRow}>
+            <label>
+              Duration (minutes)
+              <input
+                name="duration_minutes"
+                type="number"
+                min="1"
+                max="1440"
+                step="1"
+                required
+                defaultValue={activity?.duration_minutes || 60}
+              />
+            </label>
+            <label>
+              Effort (optional)
+              <select name="effort" defaultValue={activity?.effort ?? ""}>
+                <option value="">Not recorded</option>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <option key={i} value={i + 1}>
+                    {i + 1}
+                    {i === 0 ? " — very easy" : i === 9 ? " — maximal" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <label>
+            Venue (optional)
+            <input
+              name="location"
+              maxLength={160}
+              defaultValue={activity?.location || ""}
+            />
+          </label>
+          <label>
+            Session notes
+            <textarea
+              name="description"
+              rows={4}
+              maxLength={2000}
+              defaultValue={activity?.description || ""}
+              placeholder="What did you work on? Include drills, sets, reps or distances."
+            />
+          </label>
+        </fieldset>
+        {error && (
+          <p role="alert" className={s.formError}>
+            {error}
+          </p>
+        )}
+        {activity?.status === "declined" && (
+          <p className={s.formTip}>
+            Saving changes returns this session to self-reported. You can send a
+            new verification request.
+          </p>
+        )}
+        <div className={s.formFooter}>
+          <button
+            className={s.secondary}
+            type="button"
+            disabled={busy}
+            onClick={close}
+          >
+            Cancel
+          </button>
+          <button className={s.primary} disabled={busy}>
+            {busy ? "Saving…" : "Save session"}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+function TrainingAction({
+  action,
+  options,
+  close,
+  saved,
+}: {
+  action: Action;
+  options: TrainingOptions;
+  close: () => void;
+  saved: (rows: TrainingActivity[]) => void;
+}) {
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  const isRequest = action.kind === "request";
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    setBusy(true);
+    setError("");
+    try {
+      saved(
+        await training<TrainingActivity[]>(
+          "/" +
+            action.activity.id +
+            (action.kind === "delete" ? "" : "/request"),
+          isRequest ? "POST" : "DELETE",
+          isRequest
+            ? { coach_id: f.get("coach_id"), note: f.get("note") }
+            : undefined,
+        ),
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Modal
+      title={
+        isRequest
+          ? "Request coach verification"
+          : action.kind === "delete"
+            ? "Delete this session?"
+            : "Withdraw verification request?"
+      }
+      description={action.activity.title}
+      close={() => {
+        if (!busy) close();
+      }}
+    >
+      <form className={s.form} onSubmit={submit}>
+        {isRequest ? (
+          options.coaches.length ? (
+            <>
+              <label>
+                Coach
+                <select
+                  required
+                  name="coach_id"
+                  disabled={busy}
+                  defaultValue={
+                    options.coaches.length === 1 ? options.coaches[0].id : ""
+                  }
+                >
+                  <option value="">Choose your coach</option>
+                  {options.coaches.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} · {c.teams}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Note to coach (optional)
+                <textarea
+                  name="note"
+                  maxLength={1000}
+                  rows={3}
+                  disabled={busy}
+                  placeholder="Give your coach any context they need to confirm the session."
+                />
+              </label>
+              <p className={s.formTip}>
+                Your coach receives an in-app request with this session’s
+                details. Only request confirmation from a coach who can verify
+                the work.
+              </p>
+            </>
+          ) : (
+            <p className={s.formTip}>
+              No linked coach yet. Ask your coach to add you to an active team
+              roster and link the email you used to register. You can keep
+              logging sessions meanwhile.
+            </p>
+          )
+        ) : (
+          <p>
+            {action.kind === "delete"
+              ? "This removes the training log permanently."
+              : "Your coach will no longer see this pending request. You can edit the session and request verification again."}
+          </p>
+        )}
+        {error && (
+          <p role="alert" className={s.formError}>
+            {error}
+          </p>
+        )}
+        <div className={s.formFooter}>
+          <button
+            className={s.secondary}
+            type="button"
+            disabled={busy}
+            onClick={close}
+          >
+            Cancel
+          </button>
+          <button
+            className={s.primary}
+            disabled={busy || (isRequest && !options.coaches.length)}
+          >
+            {busy
+              ? "Working…"
+              : isRequest
+                ? "Send request"
+                : action.kind === "delete"
+                  ? "Delete session"
+                  : "Withdraw request"}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}

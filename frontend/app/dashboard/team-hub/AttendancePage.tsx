@@ -7,6 +7,7 @@ import {
   attendanceLabel,
   notifyAttendance,
 } from "./api";
+import TrainingRequests from "./TrainingRequests";
 import SessionAttendance from "./SessionAttendance";
 import { Modal } from "../coaches/CoachWorkspace";
 import s from "../coaches/workspace.module.css";
@@ -99,9 +100,10 @@ export default function AttendancePage({ coach = false }: { coach?: boolean }) {
           {notice}
         </p>
       )}
+      {coach && <TrainingRequests />}
       {coach && (
         <section className={h.card}>
-          <h2>Verification requests ({pending.length})</h2>
+          <h2>Attendance requests ({pending.length})</h2>
           {!pending.length ? (
             <p className={h.help}>
               You’re up to date. New athlete requests will appear here.

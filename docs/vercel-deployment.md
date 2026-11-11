@@ -148,3 +148,13 @@ Apply `docs/sql/athlete-profile.sql` before deploying `/athlete-profile`. It add
 Athletes use Profile → My details / Sports & positions / Achievements / Performance metrics. Sports and Achievements navigation opens the same editor. Each metric result has its own test date and notes; adding a result preserves previous measurements. Email remains read-only. Photos accept JPG, PNG or WebP up to 2 MB.
 
 Run the rollback-only database check after building the API: set `RUN_ATHLETE_PROFILE_DB_CHECK=1` and run `node backend/test/athlete-profile-db-check.cjs`. Set `APPLY_ATHLETE_PROFILE_MIGRATION=1` only when intentionally applying the migration; migration changes are committed separately from rolled-back synthetic fixtures.
+
+### Athlete training logs and coach verification
+
+Apply `docs/sql/athlete-activities.sql` before deploying this release. The migration preserves existing `activities`, adds training type/effort fields, and creates the private `activity_coach_requests` table. Both activities and requests use RLS with direct anonymous/authenticated Supabase access revoked; the authenticated NestJS API enforces ownership. Legacy activity verification records are retained and displayed as “Previously verified”.
+
+The `/activities` endpoints now require JWT authentication and derive the athlete from the signed-in account, ignoring old query-based owner selection. Athletes record completed sessions in SAST with duration, sport, type, notes, venue and optional effort. `/activities/options` lists only coaches linked through an active team roster. Requests appear in the coach Verification page and the combined pending count. Notifications are in-app, with periodic refresh; no email/SMS is sent.
+
+Pending logs cannot be edited or deleted until the athlete withdraws the request. Coach-verified and legacy-verified logs are locked. Only the selected active, linked coach can review; a decline requires feedback. Editing a declined log clears the review before resubmission. Requests, withdrawal and decisions serialize on the activity row. Scheduled-team attendance and QR check-ins retain their separate flow, linked from Activities.
+
+After building the API, set `RUN_ACTIVITY_DB_CHECK=1` and run `node backend/test/activity-db-check.cjs` for the rollback-only workflow test. `APPLY_ACTIVITY_MIGRATION=1` intentionally commits the additive migration before creating disposable test records.

@@ -1,38 +1,68 @@
-import { Controller, Get, Post, Body, Query, Param, Delete, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ActivitiesService } from './activities.service';
-
+type Request = { user: { userId: string } };
 @Controller('activities')
+@UseGuards(JwtAuthGuard)
 export class ActivitiesController {
   constructor(private readonly service: ActivitiesService) {}
-
-  @Get()
-  getActivities(@Query('athlete_id') athlete_id?: string) {
-    return this.service.findAll(athlete_id);
+  @Get() @Header('Cache-Control', 'private, no-store') list(@Req() r: Request) {
+    return this.service.findAll(r.user.userId);
   }
-
-  @Post()
-  createActivity(@Body() body: any) {
-    const payload = { ...body };
-    if (body.start_date && !body.start_time) {
-      payload.start_time = new Date(body.start_date);
-    }
-    if (body.activity_type) {
-      payload.activity_type = body.activity_type;
-    }
-    return this.service.create(payload);
+  @Get('options') options(@Req() r: Request) {
+    return this.service.options(r.user.userId);
   }
-
-  @Put(':id')
-  updateActivity(@Param('id') id: string, @Body() body: any) {
-    const payload = { ...body };
-    if (body.start_date && !body.start_time) {
-      payload.start_time = new Date(body.start_date);
-    }
-    return this.service.update(id, payload);
+  @Get('review-requests') @Header('Cache-Control', 'private, no-store') pending(
+    @Req() r: Request,
+  ) {
+    return this.service.pending(r.user.userId);
   }
-
-  @Delete(':id')
-  deleteActivity(@Param('id') id: string) {
-    return this.service.remove(id);
+  @Post() create(@Req() r: Request, @Body() b: any) {
+    return this.service.save(r.user.userId, b);
+  }
+  @Put(':id') update(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() b: any,
+  ) {
+    return this.service.save(r.user.userId, b, id);
+  }
+  @Delete(':id') remove(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.service.remove(r.user.userId, id);
+  }
+  @Post(':id/request') request(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() b: any,
+  ) {
+    return this.service.request(r.user.userId, id, b);
+  }
+  @Delete(':id/request') withdraw(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.service.withdraw(r.user.userId, id);
+  }
+  @Post(':id/review') decide(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() b: any,
+  ) {
+    return this.service.decide(r.user.userId, id, b);
   }
 }
