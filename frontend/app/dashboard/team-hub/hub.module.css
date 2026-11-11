@@ -11,6 +11,7 @@
   align-items: center;
   font-weight: 600;
 }
+.filters input,
 .filters select {
   padding: 11px 14px;
   border: 1px solid #cbd6de;

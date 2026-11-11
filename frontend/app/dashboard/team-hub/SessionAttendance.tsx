@@ -19,6 +19,8 @@ export default function SessionAttendance({
   sessionId: string;
   onCancelled?: () => void;
 }) {
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
   const [data, setData] = useState<{
       event: HubEvent;
       players: Player[];
@@ -40,7 +42,10 @@ export default function SessionAttendance({
     const load = () =>
       hub<{ event: HubEvent; players: Player[] }>(`/sessions/${sessionId}`)
         .then((d) => {
-          if (active) setData(d);
+          if (active) {
+            setData(d);
+            setError("");
+          }
         })
         .catch((e) => {
           if (active) setError(e.message);
@@ -83,6 +88,19 @@ export default function SessionAttendance({
     }
   }
   const expired = !!qr && new Date(qr.expires_at).getTime() <= now;
+  const started = !!data && new Date(data.event.starts_at).getTime() <= now;
+  const checkInOpen =
+    !!data &&
+    now >= new Date(data.event.starts_at).getTime() - 30 * 60000 &&
+    now <= new Date(data.event.ends_at).getTime() + 60 * 60000;
+  const players =
+    data?.players.filter(
+      (player) =>
+        `${player.first_name} ${player.last_name}`
+          .toLowerCase()
+          .includes(search.toLowerCase().trim()) &&
+        (filter === "all" || (player.status || "unrecorded") === filter),
+    ) || [];
   return (
     <div>
       {error && (
@@ -120,7 +138,7 @@ export default function SessionAttendance({
               <div className={h.rowActions}>
                 <button
                   className={s.primary}
-                  disabled={busy}
+                  disabled={busy || !checkInOpen}
                   onClick={generate}
                 >
                   {qr ? "Generate new QR code" : "Show check-in QR code"}
@@ -195,8 +213,38 @@ export default function SessionAttendance({
             QR entries are recorded as check-ins. You can correct attendance
             below. Verification requests need your approval.
           </p>
+          {!started && !data.event.cancelled && (
+            <p className={h.help}>
+              Attendance can be recorded once this session starts.
+            </p>
+          )}
+          <div className={h.filters}>
+            <label>
+              Find a player
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Player name"
+              />
+            </label>
+            <label>
+              Attendance status
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              >
+                <option value="all">All players</option>
+                <option value="pending">Awaiting review</option>
+                <option value="unrecorded">Not recorded</option>
+                <option value="verified">Attended</option>
+                <option value="absent">Absent</option>
+                <option value="declined">Declined</option>
+              </select>
+            </label>
+          </div>
           <div className={h.register}>
-            {data.players.map((player) => (
+            {players.map((player) => (
               <div className={h.player} key={player.id}>
                 <div className={h.row}>
                   <div>
@@ -217,7 +265,7 @@ export default function SessionAttendance({
                     <div className={h.rowActions}>
                       <button
                         className={s.secondary}
-                        disabled={busy}
+                        disabled={busy || !started}
                         onClick={() =>
                           action(
                             `/sessions/${sessionId}/players/${player.id}`,
@@ -229,7 +277,7 @@ export default function SessionAttendance({
                       </button>
                       <button
                         className={s.textButton}
-                        disabled={busy}
+                        disabled={busy || !started}
                         onClick={() =>
                           action(
                             `/sessions/${sessionId}/players/${player.id}`,
@@ -250,6 +298,9 @@ export default function SessionAttendance({
                 {player.note && <p>{player.note}</p>}
               </div>
             ))}
+            {!!data.players.length && !players.length && (
+              <p>No players match these filters.</p>
+            )}
             {!data.players.length && (
               <p>Add players to the team before recording attendance.</p>
             )}

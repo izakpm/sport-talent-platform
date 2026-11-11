@@ -5,7 +5,11 @@ import { notifyAttendance } from "./api";
 import { Modal } from "../coaches/CoachWorkspace";
 import s from "../coaches/workspace.module.css";
 import h from "./hub.module.css";
-export default function TrainingRequests() {
+export default function TrainingRequests({
+  onCount,
+}: {
+  onCount?: (count: number) => void;
+}) {
   const [rows, setRows] = useState<TrainingActivity[] | null>(null),
     [error, setError] = useState(""),
     [retry, setRetry] = useState(0),
@@ -31,12 +35,15 @@ export default function TrainingRequests() {
       clearInterval(timer);
     };
   }, [retry]);
+  useEffect(() => {
+    if (rows) onCount?.(rows.length);
+  }, [rows, onCount]);
   return (
     <section className={h.card}>
       <h2>Training log requests{rows ? ` (${rows.length})` : ""}</h2>
       <p className={h.help}>
         Review sessions athletes have logged themselves. Team attendance
-        requests are listed separately below.
+        requests are in the Attendance requests tab.
       </p>
       {error && (
         <p role="alert" className={s.error}>
