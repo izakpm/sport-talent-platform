@@ -28,29 +28,17 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
     role: 'ATHLETE',
     roleLabel: 'Athlete',
     dashboardPath: '/dashboard/athlete',
-    navGroups: [
-      {
-        label: 'Athlete',
-        items: [{ name: 'My Profile', href: '/dashboard/profile' }],
-      },
-      {
-        label: 'Dashboards',
-        items: [{ name: 'My Dashboard', href: '/dashboard/athlete' }],
-      },
-      {
-        label: 'Pages',
-        items: [
-          { name: 'Team feed', href: '/dashboard/athlete/feed' },
-          { name: 'Attendance', href: '/dashboard/athlete/attendance' },
-          { name: 'Activities', href: '/dashboard/athlete/activities' },
-          { name: 'Matches', href: '/dashboard/athlete/matches' },
-          { name: 'Achievements', href: '/dashboard/athlete/achievements' },
-          { name: 'Sports', href: '/dashboard/athlete/sports' },
-          { name: 'Calendar', href: '/dashboard/athlete/calendar' },
-          { name: 'Connections', href: '/dashboard/athlete/connections' },
-        ],
-      },
-    ],
+    navGroups: [{ label: 'Athlete workspace', items: [
+      { name: 'Overview', href: '/dashboard/athlete' },
+      { name: 'Attendance', href: '/dashboard/athlete/attendance' },
+      { name: 'Team feed', href: '/dashboard/athlete/feed' },
+      { name: 'Activities', href: '/dashboard/athlete/activities' },
+      { name: 'Achievements', href: '/dashboard/athlete/achievements' },
+      { name: 'Sports', href: '/dashboard/athlete/sports' },
+      { name: 'Matches', href: '/dashboard/athlete/matches' },
+      { name: 'Calendar', href: '/dashboard/athlete/calendar' },
+      { name: 'Connections', href: '/dashboard/athlete/connections' },
+    ] }],
   },
   COACH: {
     role: 'COACH',

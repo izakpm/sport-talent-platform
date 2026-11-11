@@ -104,14 +104,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return()=>{active=false;clearInterval(timer);window.removeEventListener('attendance-updated',refresh);};
   },[userRole]);
 
-  if (userRole === 'COACH') return <div className={coach.shell}>
+  if (userRole === 'COACH' || userRole === 'ATHLETE') return <div className={coach.shell}>
     <a href="#coach-content" className={coach.skip}>Skip to content</a>
     <aside className={coach.sidebar}>
-      <Link href="/dashboard/coaches" className={coach.brand}><img src="/PlayVerified Logo.png" alt="PlayVerified" width="176" height="60" /></Link>
-      <p className={coach.label}>COACH WORKSPACE</p>
-      <nav className={coach.nav} aria-label="Coach navigation">{roleConfig.navGroups[0].items.map((item, index) => <Link key={item.href} href={item.href}
-        aria-current={pathname === item.href || (index !== 0 && pathname.startsWith(`${item.href}/`)) ? 'page' : undefined}><span aria-hidden="true">{['▦', '◉', '▤', '✉', '✓', '★', '↗', '▧'][index]}</span><span>{item.name}{item.name === 'Verification' && pendingCount > 0 ? ` (${pendingCount})` : ''}</span></Link>)}</nav>
-      <div className={coach.account}><span className={coach.avatar}>{userPhoto ? <img src={userPhoto} alt={`${userName}'s profile photo`} /> : userName.charAt(0)}</span><Link href="/dashboard/profile"><strong>{userName}</strong><small>Coach · View profile ↗</small></Link></div>
+      <Link href={roleConfig.dashboardPath} className={coach.brand}><img src="/PlayVerified Logo.png" alt="PlayVerified" width="176" height="60" /></Link>
+      <p className={coach.label}>{userRole === 'COACH' ? 'COACH WORKSPACE' : 'ATHLETE WORKSPACE'}</p>
+      <nav className={coach.nav} aria-label={`${roleConfig.roleLabel} navigation`}>{roleConfig.navGroups[0].items.map((item, index) => <Link key={item.href} href={item.href}
+        aria-current={pathname === item.href || (index !== 0 && pathname.startsWith(`${item.href}/`)) ? 'page' : undefined}><span aria-hidden="true">{(userRole === 'COACH' ? ['▦', '◉', '▤', '✉', '✓', '★', '↗', '▧'] : ['▦', '✓', '✉', '↗', '★', '◉', '▤', '◷', '◇'])[index]}</span><span>{item.name}{item.name === 'Verification' && pendingCount > 0 ? ` (${pendingCount})` : ''}</span></Link>)}</nav>
+      <div className={coach.account}><span className={coach.avatar}>{userPhoto ? <img src={userPhoto} alt={`${userName}'s profile photo`} /> : userName.charAt(0)}</span><Link href="/dashboard/profile"><strong>{userName}</strong><small>{roleConfig.roleLabel} · View profile ↗</small></Link></div>
       <button className={coach.logout} onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); router.push('/login'); }}>Sign out ↗</button>
     </aside><main id="coach-content" className={coach.main}>{children}</main>
   </div>;

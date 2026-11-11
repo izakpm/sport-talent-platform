@@ -1,363 +1,329 @@
-'use client';
-
-import { useEffect, useState, type CSSProperties } from 'react';
-import { useRouter } from 'next/navigation';
-import { theme } from '../../styles/theme';
-import { fetchWithAuth } from '../../lib/api';
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
-  ActionButton,
-  ActionLinkList,
-  DetailList,
-  MetricCard,
-  StatusPill,
-  SurfaceCard,
-} from '../components/primitives';
-
-const ATHLETE_SHELL_FALLBACK = {
-  activityCount: 3,
-  sportCount: 2,
+  hub,
+  attendanceLabel,
+  type HubEvent,
+  type HubTeam,
+} from "../team-hub/api";
+import s from "./overview.module.css";
+type Post = {
+  id: string;
+  title: string;
+  body: string;
+  team_name: string;
+  category: string;
+  created_at: string;
 };
-
-export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
-  const [athlete, setAthlete] = useState<any>(null);
-  const [activityCount, setActivityCount] = useState(ATHLETE_SHELL_FALLBACK.activityCount);
-  const [sportCount, setSportCount] = useState(ATHLETE_SHELL_FALLBACK.sportCount);
-
-  const router = useRouter();
-
+type User = { first_name?: string; last_name?: string; profile_image?: string };
+const attendance = "/dashboard/athlete/attendance";
+const date = (value: string) =>
+  new Date(value).toLocaleDateString("en-ZA", {
+    day: "numeric",
+    month: "short",
+    timeZone: "Africa/Johannesburg",
+  });
+const time = (value: string) =>
+  new Date(value).toLocaleTimeString("en-ZA", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Africa/Johannesburg",
+  });
+export default function AthleteOverview() {
+  const [user, setUser] = useState<User>({});
+  const [data, setData] = useState<{
+    events: HubEvent[];
+    teams: HubTeam[];
+    posts: Post[];
+  } | null>(null);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
+  const [now, setNow] = useState(0);
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (!token || !storedUser) {
-      router.push('/login');
-      return;
-    }
-
-    let userData: any;
     try {
-      userData = JSON.parse(storedUser);
-    } catch {
-      userData = { id: '', first_name: 'Athlete', role: 'ATHLETE' };
-    }
-
-    setUser(userData);
-    if (userData.id) {
-      loadAthlete(userData.id);
-    }
-    loadAnalytics();
+      setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+    } catch {}
   }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/login');
-  };
-
-  const loadAthlete = async (userId: string) => {
-    try {
-      const resAthlete = await fetchWithAuth(`/athletes/user/${userId}`);
-      if (!resAthlete?.ok) {
-        setAthlete(null);
-        setSportCount(ATHLETE_SHELL_FALLBACK.sportCount);
-        return;
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const [events, teams, posts] = await Promise.all([
+          hub<HubEvent[]>("/sessions"),
+          hub<HubTeam[]>("/teams"),
+          hub<Post[]>("/feed"),
+        ]);
+        if (active) {
+          setData({ events, teams, posts });
+          setNow(Date.now());
+          setError("");
+        }
+      } catch {
+        if (active)
+          setError(
+            "We couldn’t refresh your team information. Please try again.",
+          );
       }
-
-      const athleteText = await resAthlete.text();
-      if (!athleteText) return;
-
-      const athleteData = JSON.parse(athleteText);
-      if (!athleteData || !athleteData.id) {
-        setAthlete(null);
-        setSportCount(ATHLETE_SHELL_FALLBACK.sportCount);
-        return;
-      }
-
-      const resSports = await fetchWithAuth(`/athlete-sports/${athleteData.id}`);
-      const sports = resSports?.ok ? await resSports.json() : [];
-      const sportsArray = Array.isArray(sports) ? sports : sports.data || [];
-      const computedSports = new Set(sportsArray.map((item: any) => item.sport_id)).size;
-      setSportCount(computedSports || ATHLETE_SHELL_FALLBACK.sportCount);
-
-      setAthlete({
-        ...athleteData,
-        sports: sportsArray,
-      });
-    } catch (err) {
-      console.error('Athlete load error:', err);
-      setAthlete(null);
-      setSportCount(ATHLETE_SHELL_FALLBACK.sportCount);
-    }
-  };
-
-  const loadAnalytics = async () => {
-    try {
-      const resActivities = await fetchWithAuth('/activities');
-      if (!resActivities?.ok) {
-        setActivityCount(ATHLETE_SHELL_FALLBACK.activityCount);
-        return;
-      }
-      const data = await resActivities.json();
-      const computedActivities = Array.isArray(data) ? data.length : data.data?.length ?? 0;
-      setActivityCount(computedActivities || ATHLETE_SHELL_FALLBACK.activityCount);
-    } catch (err) {
-      console.error('Analytics load error:', err);
-      setActivityCount(ATHLETE_SHELL_FALLBACK.activityCount);
-    }
-  };
-
+    };
+    refresh();
+    const timer = setInterval(refresh, 60000);
+    window.addEventListener("attendance-updated", refresh);
+    return () => {
+      active = false;
+      clearInterval(timer);
+      window.removeEventListener("attendance-updated", refresh);
+    };
+  }, [retry]);
+  const events = data?.events.filter((e) => !e.cancelled) || [];
+  const upcoming = events
+    .filter((e) => new Date(e.ends_at).getTime() >= now)
+    .sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at));
+  const past = events.filter((e) => Date.parse(e.ends_at) < now);
+  const verified = past.filter((e) => e.attendance_status === "verified");
+  const pending = events.filter((e) => e.attendance_status === "pending");
+  const next = upcoming[0];
   return (
-    <div style={styles.page}>
-      <div style={styles.headerRow}>
+    <div className={s.page}>
+      <header className={s.header}>
         <div>
-          <p style={styles.kicker}>Welcome back</p>
-          <h1 style={styles.heading}>{user ? `Hello, ${user.first_name || 'Athlete'}` : 'Welcome to PlayVerified'}</h1>
-          <p style={styles.subtitle}>
-            Your athlete dashboard is ready. Manage profile data, upcoming activity, and progress from one place.
-          </p>
+          <p className={s.eyebrow}>YOUR SPORT. YOUR STORY.</p>
+          <h1>Welcome back{user.first_name ? `, ${user.first_name}` : ""}.</h1>
+          <p>Keep showing up. Make every session part of your story.</p>
         </div>
-
-        <ActionButton label="Logout" onClick={handleLogout} />
-      </div>
-
-      <div style={styles.heroSection}>
-        <div style={styles.heroContent}>
-          <p style={styles.heroLabel}>Athlete Dashboard</p>
-          <h2 style={styles.heroTitle}>My Dashboard</h2>
-          <p style={styles.heroText}>
-            Track your training performance, manage sports, and stay connected with your athletic network.
+        <Link className={s.outline} href="/dashboard/profile">
+          My sporting profile ↗
+        </Link>
+      </header>
+      {error && (
+        <div role="alert" className={s.error}>
+          {error} {data && "Showing your last loaded information."}{" "}
+          <button onClick={() => setRetry((n) => n + 1)}>Try again</button>
+        </div>
+      )}
+      <section className={s.hero}>
+        <img src="/Athlete.png" alt="Rugby athlete on the field" />
+        <div className={s.heroContent}>
+          <p className={s.eyebrow}>BUILT THROUGH DEDICATION</p>
+          <h2>
+            Your next session.
+            <br />
+            <em>Your next step.</em>
+          </h2>
+          <p>
+            A sporting portfolio starts with the work you put in. Stay connected
+            to your team and keep your attendance on record.
           </p>
-          <div style={styles.heroChips}>
-            <StatusPill label={`Role: ${user?.role ?? 'Athlete'}`} />
-            <StatusPill label={`Sports: ${sportCount}`} />
-            <StatusPill label={`Activities: ${activityCount}`} />
+          <Link className={s.yellow} href={attendance}>
+            View my attendance ↗
+          </Link>
+        </div>
+      </section>
+      <div className={s.stats} aria-label="Your team summary">
+        <Metric
+          label="My teams"
+          value={data ? data.teams.length : null}
+          note="Linked by your coach"
+        />
+        <Metric
+          label="Upcoming sessions"
+          value={data ? upcoming.length : null}
+          note="Scheduled over the next 31 days"
+        />
+        <Metric
+          label="Recorded attendance"
+          value={data ? verified.length : null}
+          note="Completed sessions · last 90 days"
+        />
+        <Metric
+          label="Awaiting verification"
+          value={data ? pending.length : null}
+          note="Requests with your coach"
+        />
+      </div>
+      {!data && !error && <p role="status">Loading your team information…</p>}
+      {data && (
+        <>
+          {!data.teams.length && (
+            <section className={s.join}>
+              <div>
+                <h2>Your team journey starts here.</h2>
+                <p>
+                  Ask your coach to add you to their roster and link the email
+                  you used to register. Your sessions and team messages will
+                  then appear here.
+                </p>
+              </div>
+              <Link className={s.outline} href="/dashboard/profile">
+                Check my details ↗
+              </Link>
+            </section>
+          )}
+          <div className={s.columns}>
+            <section className={s.card}>
+              <div className={s.sectionTitle}>
+                <h2>Up next</h2>
+                <Link href={attendance}>All sessions ↗</Link>
+              </div>
+              {next ? (
+                <>
+                  <div className={s.next}>
+                    <span className={s.tag}>
+                      {Date.parse(next.starts_at) <= now
+                        ? "HAPPENING NOW"
+                        : date(next.starts_at)}
+                    </span>
+                    <h3>{next.title}</h3>
+                    <p>{next.team_name}</p>
+                    <strong>
+                      {time(next.starts_at)} – {time(next.ends_at)} SAST
+                    </strong>
+                    <p>{next.venue || "Venue to be confirmed"}</p>
+                    <Link className={s.yellow} href={attendance}>
+                      Session & attendance ↗
+                    </Link>
+                  </div>
+                  {upcoming.slice(1, 4).map((e) => (
+                    <Link className={s.row} key={e.id} href={attendance}>
+                      <span className={s.date}>
+                        {date(e.starts_at)}
+                        <small>{time(e.starts_at)}</small>
+                      </span>
+                      <span>
+                        <strong>{e.title}</strong>
+                        <small>{e.team_name}</small>
+                      </span>
+                      <span aria-hidden="true">↗</span>
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <div className={s.empty}>
+                  <h3>No upcoming sessions yet</h3>
+                  <p>
+                    Sessions scheduled by your coach will appear here. Check
+                    your team feed for updates.
+                  </p>
+                  <Link href="/dashboard/athlete/feed">Open team feed ↗</Link>
+                </div>
+              )}
+              <p className={s.footnote}>
+                At training? Scan the QR code displayed by your coach with your
+                phone camera to check in.
+              </p>
+            </section>
+            <section className={s.card}>
+              <div className={s.sectionTitle}>
+                <h2>From your team</h2>
+                <Link href="/dashboard/athlete/feed">Open feed ↗</Link>
+              </div>
+              {data.posts.length ? (
+                data.posts.slice(0, 3).map((p) => (
+                  <article className={s.post} key={p.id}>
+                    <div className={s.meta}>
+                      <span>{p.team_name}</span>
+                      <time dateTime={p.created_at}>{date(p.created_at)}</time>
+                    </div>
+                    <span className={s.tag}>
+                      {p.category === "cancellation"
+                        ? "SESSION CANCELLED"
+                        : p.category === "reminder"
+                          ? "REMINDER"
+                          : "TEAM UPDATE"}
+                    </span>
+                    <h3>{p.title}</h3>
+                    <p>{p.body}</p>
+                  </article>
+                ))
+              ) : (
+                <div className={s.empty}>
+                  <h3>You’re all caught up</h3>
+                  <p>
+                    Team announcements, kit reminders and session cancellations
+                    will appear here.
+                  </p>
+                </div>
+              )}
+            </section>
           </div>
-        </div>
-
-        <div style={styles.heroImageWrapper}>
-          <img src="/creative-tim/bg-profile.jpeg" alt="Dashboard" style={styles.heroImage} />
-        </div>
-      </div>
-
-      <div style={styles.statsGrid}>
-        <MetricCard label="Connected people" value="12" note="Keep building your network." />
-        <MetricCard label="Achievements" value="8" note="Recent milestones unlocked." />
-        <MetricCard label="Profile completion" value="86%" note="Update your details to increase visibility." />
-      </div>
-
-      <div style={styles.cardsGrid}>
-        <SurfaceCard style={styles.card}>
-          <h3 style={styles.cardHeading}>Quick actions</h3>
-          <ActionLinkList
-            items={[
-              { href: '/dashboard/profile', label: 'My Profile' },
-              { href: '/dashboard/athlete/activities', label: 'Activities' },
-              { href: '/dashboard/athlete/connections', label: 'Connections' },
-              { href: '/dashboard/athlete/achievements', label: 'Achievements' },
-              { href: '/dashboard/athlete/sports', label: 'Sports' },
-            ]}
-          />
-        </SurfaceCard>
-
-        <SurfaceCard style={styles.card}>
-          <h3 style={styles.cardHeading}>Latest summary</h3>
-          <p style={styles.text}>
-            Your current athlete details are being synced with PlayVerified. Use the sidebar to navigate between profile and performance pages.
-          </p>
-          <DetailList
-            labelColumnWidth="1fr auto"
-            items={[
-              { label: 'Active sports', value: sportCount },
-              { label: 'Recorded sessions', value: activityCount },
-            ]}
-          />
-        </SurfaceCard>
-      </div>
+          <div className={s.columns}>
+            <section className={s.card}>
+              <div className={s.sectionTitle}>
+                <h2>Your attendance record</h2>
+                <Link href={attendance}>View record ↗</Link>
+              </div>
+              {past.length ? (
+                past
+                  .sort(
+                    (a, b) => Date.parse(b.starts_at) - Date.parse(a.starts_at),
+                  )
+                  .slice(0, 3)
+                  .map((e) => (
+                    <Link href={attendance} className={s.record} key={e.id}>
+                      <div>
+                        <strong>{e.title}</strong>
+                        <small>
+                          {date(e.starts_at)} · {e.team_name}
+                        </small>
+                      </div>
+                      <span className={s.status}>
+                        {attendanceLabel(
+                          e.attendance_status,
+                          e.attendance_method,
+                        )}
+                      </span>
+                    </Link>
+                  ))
+              ) : (
+                <p className={s.empty}>
+                  Your completed team sessions will appear here. You can request
+                  verification if you missed the QR check-in.
+                </p>
+              )}
+              <p className={s.footnote}>
+                QR check-ins and coach-verified attendance are labelled
+                separately.
+              </p>
+            </section>
+            <section className={`${s.card} ${s.profile}`}>
+              <p className={s.eyebrow}>BUILD YOUR SPORTING PORTFOLIO</p>
+              <h2>Let your dedication show.</h2>
+              <p>
+                Keep your details current, add your sports and record the
+                milestones that matter to you.
+              </p>
+              <div className={s.links}>
+                <Link href="/dashboard/profile">
+                  Update my profile <span>↗</span>
+                </Link>
+                <Link href="/dashboard/athlete/sports">
+                  Manage my sports <span>↗</span>
+                </Link>
+                <Link href="/dashboard/athlete/achievements">
+                  My achievements <span>↗</span>
+                </Link>
+              </div>
+            </section>
+          </div>
+        </>
+      )}
     </div>
   );
 }
-
-const styles: Record<string, CSSProperties> = {
-  page: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 24,
-  },
-  headerRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 20,
-    flexWrap: 'wrap',
-  },
-  kicker: {
-    color: theme.colors.primary,
-    fontSize: 14,
-    fontWeight: 700,
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  heading: {
-    margin: 0,
-    fontSize: 34,
-    color: theme.colors.textPrimary,
-  },
-  subtitle: {
-    marginTop: 14,
-    maxWidth: 680,
-    color: theme.colors.textMuted,
-    lineHeight: 1.7,
-  },
-  logoutBtn: {
-    padding: '12px 22px',
-    borderRadius: theme.spacing.borderRadius,
-    border: 'none',
-    background: theme.colors.primary,
-    color: theme.colors.white,
-    fontWeight: 700,
-    cursor: 'pointer',
-  },
-  heroSection: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: 24,
-    background: theme.colors.card,
-    borderRadius: theme.spacing.borderRadiusLg,
-    padding: 28,
-    border: `1px solid ${theme.colors.border}`,
-    boxShadow: theme.shadows.medium,
-  },
-  heroContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    gap: 18,
-  },
-  heroLabel: {
-    margin: 0,
-    color: theme.colors.primary,
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: '0.10em',
-    fontSize: 13,
-  },
-  heroTitle: {
-    margin: 0,
-    fontSize: 34,
-    color: theme.colors.textPrimary,
-  },
-  heroText: {
-    maxWidth: 620,
-    color: theme.colors.textMuted,
-    lineHeight: 1.75,
-  },
-  heroChips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  chip: {
-    padding: '10px 16px',
-    borderRadius: theme.spacing.borderRadiusPill,
-    background: theme.colors.infoSoft,
-    color: theme.colors.primary,
-    fontWeight: 700,
-    fontSize: 13,
-  },
-  heroImageWrapper: {
-    borderRadius: theme.spacing.borderRadiusLg,
-    overflow: 'hidden',
-    minHeight: 260,
-    boxShadow: theme.shadows.medium,
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    display: 'block',
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-    gap: 20,
-  },
-  statCard: {
-    background: theme.colors.card,
-    borderRadius: theme.spacing.borderRadius,
-    padding: 24,
-    border: `1px solid ${theme.colors.border}`,
-    boxShadow: theme.shadows.soft,
-  },
-  statLabel: {
-    color: theme.colors.textMuted,
-    fontSize: 13,
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-  },
-  statValue: {
-    fontSize: 32,
-    fontWeight: 700,
-    color: theme.colors.textPrimary,
-  },
-  statNote: {
-    marginTop: 12,
-    color: theme.colors.textMuted,
-    fontSize: 14,
-  },
-  cardsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-    gap: 20,
-  },
-  card: {
-    background: theme.colors.card,
-    borderRadius: theme.spacing.borderRadius,
-    padding: 24,
-    border: `1px solid ${theme.colors.border}`,
-    boxShadow: theme.shadows.soft,
-  },
-  cardHeading: {
-    margin: 0,
-    marginBottom: 18,
-    fontSize: 18,
-    fontWeight: 700,
-  },
-  text: {
-    color: theme.colors.textMuted,
-    lineHeight: 1.75,
-    marginBottom: 22,
-  },
-  linkGrid: {
-    display: 'grid',
-    gap: 12,
-  },
-  quickLink: {
-    display: 'inline-block',
-    padding: '12px 18px',
-    borderRadius: 14,
-    background: theme.colors.infoSoft,
-    color: theme.colors.primary,
-    textDecoration: 'none',
-    fontWeight: 700,
-  },
-  listRow: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: 16,
-  },
-  listItem: {
-    padding: 18,
-    borderRadius: 18,
-    background: theme.colors.surfaceMuted,
-    border: `1px solid ${theme.colors.border}`,
-  },
-  listNumber: {
-    fontSize: 28,
-    fontWeight: 700,
-    color: theme.colors.textPrimary,
-    marginBottom: 6,
-  },
-};
+function Metric({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: number | null;
+  note: string;
+}) {
+  return (
+    <div className={s.metric}>
+      <p>{label}</p>
+      <strong>{value === null ? "—" : value}</strong>
+      <small>{note}</small>
+    </div>
+  );
+}
