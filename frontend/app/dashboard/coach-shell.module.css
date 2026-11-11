@@ -87,9 +87,8 @@
   flex-shrink: 0;
   font-size: 13px;
 }
-.account a {
+.accountDetails {
   color: #d6dfe4;
-  text-decoration: none;
   min-width: 0;
   font-size: 12px;
 }
@@ -106,12 +105,17 @@
   font-size: 10px;
 }
 .logout {
-  background: none;
-  border: 0;
-  padding: 15px 0 0;
-  text-align: left;
-  color: #617887;
-  font-size: 10px;
+  background: #ffca05;
+  border: 1px solid #ffca05;
+  border-radius: 7px;
+  margin-top: 16px;
+  padding: 11px 16px;
+  min-height: 44px;
+  text-align: center;
+  color: #0b1f2e;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
   cursor: pointer;
 }
 .main {
@@ -160,9 +164,13 @@
   .brand {
     font-size: 19px;
   }
-  .label,
-  .logout {
+  .label {
     display: none;
+  }
+  .logout {
+    grid-row: 3;
+    grid-column: 2;
+    margin-top: 0;
   }
   .nav {
     grid-row: 2;
@@ -183,7 +191,7 @@
     border: 0;
     padding: 0;
   }
-  .account a {
+  .accountDetails {
     font-size: 10px;
   }
   .account strong {
@@ -208,7 +216,6 @@
 }
 .nav a:focus-visible,
 .brand:focus-visible,
-.account a:focus-visible,
 .logout:focus-visible {
   outline: 2px solid #ffca05;
   outline-offset: 4px;
@@ -220,8 +227,7 @@
   margin-top: auto;
 }
 .label,
-.account small,
-.logout {
+.account small {
   color: #bbcdd8;
 }
 @media (max-width: 700px) {
@@ -242,3 +248,5 @@
 .avatar{overflow:hidden;flex-shrink:0}.avatar img{width:100%;height:100%;object-fit:cover;display:block}.sidebar{overflow-y:auto}@media(max-width:700px){.sidebar{overflow-y:visible}}
 
 @media(min-width:701px){.sidebar{overflow:hidden}.brand,.label,.account,.logout{flex-shrink:0}.label{margin:24px 8px 12px}.nav{min-height:0;overflow-y:auto;gap:3px;margin-bottom:18px;scrollbar-width:thin}.nav a{padding:10px 8px;gap:8px;flex-shrink:0}.nav a>span:first-child{flex-shrink:0}}
+
+.logout:hover { background: #e9b900; border-color: #e9b900; }
