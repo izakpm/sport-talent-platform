@@ -36,6 +36,7 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
       { name: 'Calendar', href: '/dashboard/athlete/calendar' },
       { name: 'Team Feed', href: '/dashboard/athlete/feed' },
       { name: 'Connections', href: '/dashboard/athlete/connections' },
+      { name: 'Resources', href: '/dashboard/athlete/resources' },
     ] }],
   },
   COACH: {

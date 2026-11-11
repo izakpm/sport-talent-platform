@@ -1,3 +1,4 @@
+import { ResourcesModule } from './resources/resources.module';
 import { MatchesModule } from './matches/matches.module';
 import { AthleteProfileModule } from './athlete-profile/profile.module';
 import { HubModule } from './team-hub/hub.module';
@@ -49,6 +50,7 @@ import { PlanningModule } from './coach-planning/planning.module';
 
     // ✅ Register your modules here
     ActivitiesModule,
+    ResourcesModule,
 
     VerificationModule,
 
