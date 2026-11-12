@@ -1,3 +1,4 @@
+import { GuardianModule } from './guardian/guardian.module';
 import { ResourcesModule } from './resources/resources.module';
 import { MatchesModule } from './matches/matches.module';
 import { AthleteProfileModule } from './athlete-profile/profile.module';
@@ -43,13 +44,20 @@ import { PlanningModule } from './coach-planning/planning.module';
 
       ssl: {
         rejectUnauthorized: true,
-        ...(process.env.DB_SSL_CA ? { ca: process.env.DB_SSL_CA.replace(/\\n/g, '\n') } : {}),
+        ...(process.env.DB_SSL_CA
+          ? { ca: process.env.DB_SSL_CA.replace(/\\n/g, '\n') }
+          : {}),
       },
-      extra: { max: 5, idleTimeoutMillis: 10000, connectionTimeoutMillis: 10000 },
+      extra: {
+        max: 5,
+        idleTimeoutMillis: 10000,
+        connectionTimeoutMillis: 10000,
+      },
     }),
 
     // ✅ Register your modules here
     ActivitiesModule,
+    GuardianModule,
     ResourcesModule,
 
     VerificationModule,
@@ -72,7 +80,8 @@ import { PlanningModule } from './coach-planning/planning.module';
     PlanningModule,
     PortfolioModule,
     CoachProfileModule,
-    HubModule, MatchesModule,
+    HubModule,
+    MatchesModule,
     AthleteProfileModule,
   ],
   controllers: [TrustController, HealthController],

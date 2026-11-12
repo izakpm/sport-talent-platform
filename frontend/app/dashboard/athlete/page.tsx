@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { childContext } from "../../lib/guardian-context";
 import { useEffect, useState } from "react";
 import {
   hub,
@@ -16,7 +17,7 @@ type Post = {
   category: string;
   created_at: string;
 };
-type User = { first_name?: string; last_name?: string; profile_image?: string };
+type User = { first_name?: string; last_name?: string; profile_image?: string | null };
 const attendance = "/dashboard/athlete/activities#attendance";
 const date = (value: string) =>
   new Date(value).toLocaleDateString("en-ZA", {
@@ -42,7 +43,9 @@ export default function AthleteOverview() {
   const [now, setNow] = useState(0);
   useEffect(() => {
     try {
-      setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+      setUser(
+        childContext() || JSON.parse(localStorage.getItem("user") || "{}"),
+      );
     } catch {}
   }, []);
   useEffect(() => {

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import GuardianRequests from "../../parents/GuardianRequests";
 import { useEffect, useState } from "react";
 import { hub } from "../../team-hub/api";
 import s from "../../coaches/workspace.module.css";
@@ -73,6 +74,7 @@ export default function Connections() {
     teammates = data?.people.filter((p) => p.role === "teammate").length || 0;
   return (
     <div className={s.workspace}>
+      <GuardianRequests />
       <header className={s.header}>
         <div>
           <p className={s.eyebrow}>MY TEAM NETWORK</p>

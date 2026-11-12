@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Connections from "./page";
 import { hub } from "../../team-hub/api";
 jest.mock("../../team-hub/api", () => ({ hub: jest.fn() }));
+jest.mock("../../parents/GuardianRequests", () => ({ __esModule: true, default: () => null }));
 const data = {
   teams: [
     { id: "a", name: "First XV", age_group: "U18", sport: "Rugby" },

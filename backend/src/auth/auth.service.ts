@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -12,10 +16,19 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
+    if (
+      typeof email !== 'string' ||
+      !email.trim() ||
+      typeof password !== 'string' ||
+      !password
+    )
+      throw new UnauthorizedException('Invalid credentials');
+    const user = await this.usersService.findByEmail(
+      email.trim().toLowerCase(),
+    );
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     let isMatch = false;
@@ -27,24 +40,37 @@ export class AuthService {
       isMatch = password === user.password_hash;
       if (isMatch) {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await this.usersService.update(user.id, { password_hash: hashedPassword });
+        await this.usersService.update(user.id, {
+          password_hash: hashedPassword,
+        });
       }
     }
 
     if (!isMatch) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     return this.signUser(user);
   }
 
   async register(data: any) {
+    if (
+      !data ||
+      typeof data.email !== 'string' ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) ||
+      typeof data.password !== 'string' ||
+      data.password.length < 6 ||
+      !['ATHLETE', 'COACH', 'GUARDIAN', 'SCHOOL', 'ORG'].includes(data.role)
+    )
+      throw new BadRequestException(
+        'Enter a valid email, a password of at least six characters and an available account type.',
+      );
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await this.usersService.create({
-      email: data.email,
+      email: data.email.trim().toLowerCase(),
       password_hash: hashedPassword,
-      role: data.role,
+      role: data.role === 'ORG' ? 'SCHOOL' : data.role,
       first_name: data.first_name,
       last_name: data.last_name,
     });

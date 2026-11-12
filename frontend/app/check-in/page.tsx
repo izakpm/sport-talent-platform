@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { childContext, type GuardianChild } from "../lib/guardian-context";
 import { hub, type HubEvent, attendanceLabel } from "../dashboard/team-hub/api";
 import {
   rememberCheckIn,
@@ -10,6 +11,8 @@ import {
 import s from "../dashboard/coaches/workspace.module.css";
 import h from "../dashboard/team-hub/hub.module.css";
 export default function CheckIn() {
+  const [child, setChild] = useState<GuardianChild | null>(null);
+  useEffect(() => setChild(childContext()), []);
   const [code, setCode] = useState(""),
     [event, setEvent] = useState<HubEvent | null>(null),
     [error, setError] = useState(""),
@@ -76,6 +79,15 @@ export default function CheckIn() {
           className={h.publicLogo}
         />
         <h1>Session check-in</h1>
+        {child && (
+          <p>
+            Checking in for{" "}
+            <strong>
+              {child.first_name} {child.last_name}
+            </strong>
+            . <Link href="/dashboard/parents">Choose another child</Link>
+          </p>
+        )}
         {loading ? (
           <p role="status">Checking session…</p>
         ) : login ? (
@@ -105,7 +117,10 @@ export default function CheckIn() {
                   ? "Your coach has already confirmed your attendance."
                   : "Your coach has already reviewed this record. Speak to them if it needs correcting."}
             </p>
-            <Link className={s.primary} href="/dashboard/athlete/activities#attendance">
+            <Link
+              className={s.primary}
+              href="/dashboard/athlete/activities#attendance"
+            >
               View my attendance
             </Link>
           </>
@@ -121,9 +136,17 @@ export default function CheckIn() {
                   <br />
                   {event.venue}
                 </p>
-                <p>Confirm only if you are at this session.</p>
+                <p>
+                  {child
+                    ? "Confirm only if this child is attending this session."
+                    : "Confirm only if you are at this session."}
+                </p>
                 <button className={s.primary} disabled={busy} onClick={confirm}>
-                  {busy ? "Checking in…" : "I’m here — check in"}
+                  {busy
+                    ? "Checking in…"
+                    : child
+                      ? "My child is here — check in"
+                      : "I’m here — check in"}
                 </button>
               </>
             )}

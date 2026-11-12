@@ -1,4 +1,5 @@
 "use client";
+import { childContext, selectChild } from "../../lib/guardian-context";
 import { useSectionHash } from "../core/useSectionHash";
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
 import { fetchWithAuth } from "../../lib/api";
@@ -86,6 +87,16 @@ export default function AthleteProfile({
     [busy, setBusy] = useState(false);
   function saved(data: Profile) {
     setProfile(data);
+    const child = childContext();
+    if (child) {
+      selectChild({
+        ...child,
+        first_name: data.user.first_name,
+        last_name: data.user.last_name,
+        profile_image: data.user.profile_image,
+      });
+      return;
+    }
     try {
       localStorage.setItem("user", JSON.stringify(data.user));
     } catch {}
@@ -235,7 +246,12 @@ export default function AthleteProfile({
               {[
                 ["First name", user.first_name],
                 ["Last name", user.last_name],
-                ["Sign-in email", user.email],
+                [
+                  "Sign-in email",
+                  childContext()
+                    ? "Managed by parent — no email required"
+                    : user.email,
+                ],
                 ["Phone", user.phone],
                 ["Nationality", details.nationality],
                 ["Province / region", details.province],

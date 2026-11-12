@@ -54,7 +54,7 @@ export default function PlayerAccount({
       setNotice(
         unlink
           ? "Account unlinked. Past attendance records are retained."
-          : "Athlete linked. They can now read team updates and check in.",
+          : "Athlete linked. Their account or parent can now see the team schedule, updates and attendance.",
       );
       setRetry((n) => n + 1);
     } catch (e) {
@@ -89,7 +89,7 @@ export default function PlayerAccount({
               {current.first_name} {current.last_name}
             </strong>
             <br />
-            {current.email}
+            {current.email || "Parent-managed athlete (no email)"}
           </p>
           <p>
             Unlinking removes access to this team’s feed and future check-ins.
@@ -117,13 +117,14 @@ export default function PlayerAccount({
           }}
         >
           <p>
-            Use the email the player registered with as an athlete. Check that
-            it belongs to this player before linking.
+            Use the athlete’s registered email, or the sharing code their parent
+            generated for a child without email. Check that it belongs to this
+            player before linking.
           </p>
           <label>
-            Athlete’s registered email
+            Athlete email or parent sharing code
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

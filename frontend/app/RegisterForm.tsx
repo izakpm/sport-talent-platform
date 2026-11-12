@@ -87,9 +87,11 @@ export default function RegisterPage() {
             aria-pressed={role === r}
             onClick={() => setRole(r)}
           >
-            {r === "SCHOOL"
-              ? "School / Club"
-              : r.charAt(0) + r.slice(1).toLowerCase()}
+            {r === "GUARDIAN"
+              ? "Parent / Guardian"
+              : r === "SCHOOL"
+                ? "School / Club"
+                : r.charAt(0) + r.slice(1).toLowerCase()}
           </button>
         ))}
       </fieldset>

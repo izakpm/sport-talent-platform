@@ -1,3 +1,4 @@
+import { codeHash } from '../guardian/guardian.service';
 import { PERSONAL_EVENT } from './personal-calendar.service';
 import {
   BadRequestException,
@@ -111,13 +112,18 @@ export class HubService {
         return { linked: false };
       }
       const email = textField(body?.email, 'Athlete email', 254).toLowerCase();
-      const [athlete] = await tx.query(
-        "SELECT id FROM users WHERE lower(email)=$1 AND role='ATHLETE' AND status IS DISTINCT FROM 'SUSPENDED'",
-        [email],
-      );
+      const [athlete] = /^pv-[0-9a-f]{24}$/i.test(email)
+        ? await tx.query(
+            `SELECT u.id FROM guardian_links l JOIN users u ON u.id=l.child_id JOIN users g ON g.id=l.guardian_id WHERE l.coach_code_hash=$1 AND l.coach_code_expires>now() AND l.mode='managed' AND l.status='accepted' AND u.role='ATHLETE' AND u.status IS DISTINCT FROM 'SUSPENDED' AND g.status IS DISTINCT FROM 'SUSPENDED'`,
+            [codeHash(email)],
+          )
+        : await tx.query(
+            "SELECT id FROM users WHERE lower(email)=$1 AND role='ATHLETE' AND status IS DISTINCT FROM 'SUSPENDED'",
+            [email],
+          );
       if (!athlete)
         throw new BadRequestException(
-          'No active athlete account matches that email. Ask the player to register first.',
+          'No active athlete matches that email or sharing code. Check the email, or ask the parent for a fresh code.',
         );
       const [current] = await tx.query(
         'SELECT user_id FROM coach_player_accounts WHERE player_id=$1',

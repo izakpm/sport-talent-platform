@@ -53,8 +53,10 @@ const metrics = [
 ] as const;
 export default function MatchesWorkspace({
   coach = false,
+  readOnly = false,
 }: {
   coach?: boolean;
+  readOnly?: boolean;
 }) {
   const [rows, setRows] = useState<Match[] | null>(null),
     [error, setError] = useState(""),
@@ -199,7 +201,8 @@ export default function MatchesWorkspace({
               )}
             </section>
           )}
-          {!e.cancelled &&
+          {!readOnly &&
+            !e.cancelled &&
             Date.parse(e.ends_at) < now &&
             (coach || e.result) && (
               <button
