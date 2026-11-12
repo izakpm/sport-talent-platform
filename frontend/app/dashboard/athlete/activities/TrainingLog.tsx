@@ -386,16 +386,20 @@ export default function AthleteActivities() {
     </div>
   );
 }
-function TrainingEditor({
+export function TrainingEditor({
   activity,
   options,
   close,
   saved,
+  saveRequest = training,
+  childName,
 }: {
   activity: TrainingActivity | null;
   options: TrainingOptions;
   close: () => void;
   saved: (rows: TrainingActivity[]) => void;
+  saveRequest?: typeof training;
+  childName?: string;
 }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -417,7 +421,7 @@ function TrainingEditor({
         effort: f.get("effort") ? Number(f.get("effort")) : null,
       };
       saved(
-        await training<TrainingActivity[]>(
+        await saveRequest<TrainingActivity[]>(
           activity ? "/" + activity.id : "",
           activity ? "PUT" : "POST",
           body,
@@ -432,7 +436,7 @@ function TrainingEditor({
   return (
     <Modal
       title={activity ? "Edit training session" : "Log a training session"}
-      description="Record a completed session. All times are South African time (SAST)."
+      description={`${childName ? childName + " · " : ""}Record a completed session. All times are South African time (SAST).`}
       close={() => {
         if (!busy) close();
       }}
@@ -587,16 +591,20 @@ function TrainingEditor({
     </Modal>
   );
 }
-function TrainingAction({
+export function TrainingAction({
   action,
   options,
   close,
   saved,
+  saveRequest = training,
+  childName,
 }: {
   action: Action;
   options: TrainingOptions;
   close: () => void;
   saved: (rows: TrainingActivity[]) => void;
+  saveRequest?: typeof training;
+  childName?: string;
 }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -608,7 +616,7 @@ function TrainingAction({
     setError("");
     try {
       saved(
-        await training<TrainingActivity[]>(
+        await saveRequest<TrainingActivity[]>(
           "/" +
             action.activity.id +
             (action.kind === "delete" ? "" : "/request"),
@@ -633,7 +641,9 @@ function TrainingAction({
             ? "Delete this session?"
             : "Withdraw verification request?"
       }
-      description={action.activity.title}
+      description={[childName, action.activity.title]
+        .filter(Boolean)
+        .join(" · ")}
       close={() => {
         if (!busy) close();
       }}
@@ -678,9 +688,10 @@ function TrainingAction({
             </>
           ) : (
             <p className={s.formTip}>
-              No linked coach yet. Ask your coach to add you to an active team
-              roster and link the email you used to register. You can keep
-              logging sessions meanwhile.
+              {childName
+                ? "No linked coach yet. Share your child’s coach code from My children so their coach can link them to a team."
+                : "No linked coach yet. Ask your coach to add you to an active team roster and link the email you used to register."}{" "}
+              You can keep logging sessions meanwhile.
             </p>
           )
         ) : (
@@ -721,4 +732,3 @@ function TrainingAction({
     </Modal>
   );
 }
-

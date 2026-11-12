@@ -30,7 +30,7 @@ import {
   type CalendarEvent,
 } from "../athlete/calendar/calendar";
 import { attendanceLabel } from "../team-hub/api";
-import { trainingStatus } from "../team-hub/training-api";
+import { ParentTraining } from "./ParentTraining";
 import { outcome } from "../matches/MatchesWorkspace";
 import { Modal } from "../coaches/CoachWorkspace";
 import s from "../coaches/workspace.module.css";
@@ -830,65 +830,60 @@ export function FamilyContent({ section }: { section: Section }) {
                     </button>
                   ))}
                 </div>
-                {managed.map((r) => (
-                  <section className={p.card} key={r.child.id}>
-                    <ChildBadges children={[r.child]} />
-                    <div className={p.sectionHeading}>
-                      <h2>
-                        {r.child.first_name}'s{" "}
-                        {tab === "attendance" ? "attendance" : "training"}
-                      </h2>
-                      <button
-                        className={s.primary}
-                        onClick={() =>
-                          editChild(
-                            r.child,
-                            "/dashboard/athlete/activities" +
-                              (tab === "attendance" ? "#attendance" : ""),
-                          )
-                        }
-                      >
-                        {tab === "attendance"
-                          ? "Manage attendance"
-                          : "Log or manage training"}{" "}
-                        ↗
-                      </button>
-                    </div>
-                    {tab === "attendance" ? (
-                      r.attendance?.length ? (
-                        r.attendance.map((e) => (
-                          <div className={p.record} key={e.id}>
-                            <strong>{e.title}</strong>
-                            <p>
-                              {e.date} · {e.team_name} ·{" "}
-                              {e.cancelled
-                                ? "Cancelled"
-                                : attendanceLabel(
-                                    e.attendance_status,
-                                    e.attendance_method,
-                                  )}
-                            </p>
-                          </div>
-                        ))
-                      ) : (
-                        <p>No team attendance recorded yet.</p>
-                      )
-                    ) : r.activities?.length ? (
-                      r.activities.map((e) => (
-                        <div className={p.record} key={e.id}>
-                          <strong>{e.title}</strong>
-                          <p>
-                            {e.date} · {e.training_kind} ·{" "}
-                            {e.duration_minutes ?? "—"} minutes ·{" "}
-                            {trainingStatus(e.status)}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No training logged yet.</p>
-                    )}
-                  </section>
-                ))}
+                {managed.map((r) =>
+                  tab !== "attendance" ? (
+                    <ParentTraining
+                      key={r.child.id}
+                      child={r.child}
+                      activities={r.activities || []}
+                    />
+                  ) : (
+                    <section className={p.card} key={r.child.id}>
+                      <ChildBadges children={[r.child]} />
+                      <div className={p.sectionHeading}>
+                        <h2>
+                          {r.child.first_name}'s{" "}
+                          {tab === "attendance" ? "attendance" : "training"}
+                        </h2>
+                        <button
+                          className={s.primary}
+                          onClick={() =>
+                            editChild(
+                              r.child,
+                              "/dashboard/athlete/activities" +
+                                (tab === "attendance" ? "#attendance" : ""),
+                            )
+                          }
+                        >
+                          {tab === "attendance"
+                            ? "Manage attendance"
+                            : "Log or manage training"}{" "}
+                          ↗
+                        </button>
+                      </div>
+                      {tab === "attendance" ? (
+                        r.attendance?.length ? (
+                          r.attendance.map((e) => (
+                            <div className={p.record} key={e.id}>
+                              <strong>{e.title}</strong>
+                              <p>
+                                {e.date} · {e.team_name} ·{" "}
+                                {e.cancelled
+                                  ? "Cancelled"
+                                  : attendanceLabel(
+                                      e.attendance_status,
+                                      e.attendance_method,
+                                    )}
+                              </p>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No team attendance recorded yet.</p>
+                        )
+                      ) : null}
+                    </section>
+                  ),
+                )}
               </>
             )}
             {section === "connections" && (
