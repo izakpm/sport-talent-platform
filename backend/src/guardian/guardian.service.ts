@@ -8,11 +8,52 @@ import {
 import { DataSource } from 'typeorm';
 import { randomBytes, createHash } from 'node:crypto';
 import { textField, validDate } from '../coach-planning/planning.validation';
+import { profileInput } from '../coach-profile/profile.validation';
 export const codeHash = (code: string) =>
   createHash('sha256').update(code.trim().toUpperCase()).digest('hex');
 @Injectable()
 export class GuardianService {
   constructor(private readonly db: DataSource) {}
+  async profile(id: string) {
+    await this.authorize(id);
+    const [user] = await this.db.query(
+      'SELECT id,first_name,last_name,email,phone,profile_image,role FROM users WHERE id=$1',
+      [id],
+    );
+    return user;
+  }
+  async updateProfile(id: string, body: any) {
+    const allowed = new Set([
+      'first_name',
+      'last_name',
+      'phone',
+      'profile_image',
+    ]);
+    if (
+      !body ||
+      typeof body !== 'object' ||
+      Array.isArray(body) ||
+      Object.keys(body).some((key) => !allowed.has(key))
+    )
+      throw new BadRequestException(
+        'Only your name, phone number and photo can be changed here.',
+      );
+    const data = profileInput(body);
+    await this.db.transaction(async (tx) => {
+      const [user] = await tx.query(
+        'SELECT role,status FROM users WHERE id=$1 FOR UPDATE',
+        [id],
+      );
+      if (!user || user.role !== 'GUARDIAN' || user.status === 'SUSPENDED')
+        throw new ForbiddenException('An active parent account is required.');
+      const fields = Object.entries(data);
+      await tx.query(
+        `UPDATE users SET ${fields.map(([key], i) => `${key}=$${i + 2}`).join(',')} WHERE id=$1`,
+        [id, ...fields.map(([, value]) => value)],
+      );
+    });
+    return this.profile(id);
+  }
   async authorize(id: string, role = 'GUARDIAN') {
     const [u] = await this.db.query(
       'SELECT role,status FROM users WHERE id=$1',

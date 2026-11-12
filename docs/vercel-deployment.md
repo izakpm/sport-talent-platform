@@ -214,3 +214,9 @@ Coach team rosters generate single-use, seven-day invitation links. Only token h
 Acceptance creates no membership. The owning coach must confirm before a roster account link is inserted, either for a new player or an existing active, unlinked entry without another athlete's attendance history. Transactions lock invitations and relevant guardian/player records, recheck current authority, and reject reused, expired, revoked or withdrawn invitations. Existing manual account-linking workflows remain available; this change does not certify coach identities or introduce public athlete search.
 
 Validation: backend guardian tests, frontend JoinTeam/TeamInvitations/TeamRoster/parent tests, and both production builds. The test accounts were also exercised against Supabase for parent acceptance, no access before confirmation, coach approval, existing/new roster entries, withdrawal, expiry, revocation, read-only restrictions and concurrent acceptance.
+
+### Parent's own profile
+
+`/dashboard/parents/profile` edits the signed-in parent's name, phone and profile photo through `GET/PATCH /guardian/profile`. Email is displayed read-only. The server derives the account from the JWT, allows only those personal fields, validates photo type/size and rechecks the active guardian role before saving. It does not accept an account or child ID. No migration is required.
+
+Children's sporting profiles remain at `/dashboard/parents/children/profiles`, with the existing all-children filter and in-place editors. My children links to this view, including a child-specific filter from each child card. Saving the parent's own profile refreshes their sidebar identity/photo without switching to child context.

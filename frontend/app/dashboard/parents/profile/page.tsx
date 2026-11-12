@@ -1,4 +1,1 @@
-import FamilyWorkspace from "../FamilyWorkspace";
-export default function Page() {
-  return <FamilyWorkspace section="profile" />;
-}
+export { default } from "../ParentProfile";

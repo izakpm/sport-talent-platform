@@ -148,7 +148,11 @@ export default function DashboardLayout({
   if (!identityReady)
     return <main aria-busy="true">Loading your workspace…</main>;
   if (userRole === "GUARDIAN")
-    return <ParentShell name={userName}>{children}</ParentShell>;
+    return (
+      <ParentShell name={userName} photo={userPhoto}>
+        {children}
+      </ParentShell>
+    );
 
   if (userRole === "COACH" || userRole === "ATHLETE")
     return (
@@ -183,9 +187,7 @@ export default function DashboardLayout({
                     : undefined
                 }
               >
-                <span aria-hidden="true">
-                  {dashboardNavIcons[item.name]}
-                </span>
+                <span aria-hidden="true">{dashboardNavIcons[item.name]}</span>
                 <span>
                   {item.name}
                   {item.name === "Verification" && pendingCount > 0

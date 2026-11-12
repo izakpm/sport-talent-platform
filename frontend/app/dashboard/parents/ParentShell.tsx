@@ -16,9 +16,11 @@ import p from "./parents.module.css";
 export default function ParentShell({
   children,
   name,
+  photo,
 }: {
   children: ReactNode;
   name: string;
+  photo?: string;
 }) {
   const path = usePathname(),
     router = useRouter();
@@ -100,7 +102,13 @@ export default function ParentShell({
             <Link
               key={item.href}
               href={item.href}
-              aria-current={path === item.href ? "page" : undefined}
+              aria-current={
+                path === item.href ||
+                (item.href !== "/dashboard/parents" &&
+                  path.startsWith(item.href + "/"))
+                  ? "page"
+                  : undefined
+              }
             >
               <span aria-hidden="true">{dashboardNavIcons[item.name]}</span>
               <span>{item.name}</span>
@@ -108,7 +116,13 @@ export default function ParentShell({
           ))}
         </nav>
         <div className={s.account}>
-          <span className={s.avatar}>{name[0]}</span>
+          <span className={s.avatar}>
+            {photo ? (
+              <img src={photo} alt={`${name}'s profile photo`} />
+            ) : (
+              name[0]
+            )}
+          </span>
           <div className={s.accountDetails}>
             <strong>{name}</strong>
             <small>Parent / Guardian</small>
@@ -139,7 +153,7 @@ export default function ParentShell({
                   : "Read-only access approved by this athlete"}
               </span>
             </div>
-            <Link href="/dashboard/parents/profile">
+            <Link href="/dashboard/parents/children/profiles">
               Back to family profiles ↗
             </Link>
           </div>

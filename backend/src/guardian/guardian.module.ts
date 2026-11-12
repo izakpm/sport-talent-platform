@@ -7,6 +7,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Patch,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,6 +21,14 @@ export class GuardianController {
     private readonly service: GuardianService,
     private readonly invites: TeamInvitationsService,
   ) {}
+  @Get('profile') @Header('Cache-Control', 'private, no-store') profile(
+    @Req() r: any,
+  ) {
+    return this.service.profile(r.user.userId);
+  }
+  @Patch('profile') updateProfile(@Req() r: any, @Body() body: any) {
+    return this.service.updateProfile(r.user.userId, body);
+  }
   @Post('team-invites/teams/:team') createInvite(
     @Req() r: any,
     @Param('team', ParseUUIDPipe) team: string,

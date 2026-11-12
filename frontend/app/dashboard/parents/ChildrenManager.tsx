@@ -101,6 +101,12 @@ export default function Parents() {
           <p className={s.subtitle}>Be part of their sporting journey.</p>
         </div>
         <div className={p.actions}>
+          <Link
+            className={s.secondary}
+            href="/dashboard/parents/children/profiles"
+          >
+            Children's profiles ↗
+          </Link>
           <button
             className={s.primary}
             onClick={() => {
@@ -187,7 +193,9 @@ export default function Parents() {
                 {child.status === "accepted" && (
                   <Link
                     className={s.primary}
-                    href={"/dashboard/parents/profile?child=" + child.id}
+                    href={
+                      "/dashboard/parents/children/profiles?child=" + child.id
+                    }
                   >
                     View profile ↗
                   </Link>
