@@ -31,12 +31,15 @@ export default function ResourceViewer({
 }: {
   resource: Resource;
 }) {
+  const [portrait, setPortrait] = useState(false);
   const [play, setPlay] = useState(false),
     [failed, setFailed] = useState(false);
   const embed =
     r.format === "video" && r.source_url ? embedUrl(r.source_url) : null;
   return (
-    <article className={s.viewer}>
+    <article
+      className={`${s.viewer} ${r.format === "video" ? s.videoPost : ""}`}
+    >
       <div className={s.eyebrow}>{topics[r.topic]}</div>
       <h1>{r.title}</h1>
       <div className={s.meta}>
@@ -48,7 +51,14 @@ export default function ResourceViewer({
       ) : r.media_url ? (
         r.format === "video" ? (
           <video
-            className={`${s.media} ${s.video}`}
+            className={`${s.media} ${portrait ? s.portraitVideo : s.video}`}
+            onLoadedMetadata={(event) =>
+              setPortrait(
+                event.currentTarget.videoHeight >
+                  event.currentTarget.videoWidth,
+              )
+            }
+            playsInline
             controls
             preload="metadata"
             poster={r.thumbnail_url || undefined}

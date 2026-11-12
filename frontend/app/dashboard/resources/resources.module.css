@@ -441,3 +441,84 @@
     transform: none;
   }
 }
+
+.postAuthor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+}
+.authorAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0b1f2e;
+  color: #ffca05;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 750;
+  flex-shrink: 0;
+}
+.postAuthor strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+}
+.postAuthor div > span {
+  display: block;
+  font-size: 11px;
+  color: #617887;
+  margin-top: 3px;
+}
+.posterLink {
+  display: block;
+  position: relative;
+  background: #0b1f2e;
+}
+.portraitArt {
+  aspect-ratio: 4/5;
+  object-position: center 25%;
+}
+.playBadge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ffca05;
+  box-shadow: 0 4px 20px #0004;
+  color: #0b1f2e;
+  font-size: 20px;
+  padding-left: 3px;
+}
+.videoPost {
+  max-width: 760px;
+  padding: 28px;
+  background: white;
+  border: 1px solid #d6dfe4;
+  border-top: var(--feature-card-border-top);
+  border-radius: 14px;
+}
+.portraitVideo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 75vh;
+  aspect-ratio: 9/16;
+  margin: 24px auto;
+  object-fit: contain;
+}
+@media (max-width: 650px) {
+  .videoPost {
+    padding: 20px;
+  }
+  .portraitVideo {
+    width: 100%;
+  }
+}

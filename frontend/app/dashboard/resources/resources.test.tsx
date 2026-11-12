@@ -42,7 +42,9 @@ it("shows a featured resource and read-only cards with topic and format filterin
   render(<ResourceLibrary />);
   expect(await screen.findByText("FEATURED RESOURCE")).toBeInTheDocument();
   expect(screen.queryByText("+ Add resource")).not.toBeInTheDocument();
-  expect(screen.getAllByRole("link", { name: /Watch video/ })).toHaveLength(2);
+  expect(screen.getAllByRole("link", { name: /^Watch video ↗$/ })).toHaveLength(
+    2,
+  );
   fireEvent.click(screen.getByRole("button", { name: "Nutrition" }));
   fireEvent.change(screen.getByLabelText("Format"), {
     target: { value: "audio" },
