@@ -12,12 +12,16 @@ export function PersonalEditor({
   events,
   close,
   saved,
+  saveRequest = hub,
+  childName,
 }: {
   event: CalendarEvent | null;
   date: string;
   events: CalendarEvent[];
   close: () => void;
   saved: (e: CalendarEvent) => void;
+  saveRequest?: typeof hub;
+  childName?: string;
 }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -42,7 +46,7 @@ export function PersonalEditor({
     const f = new FormData(e.currentTarget);
     try {
       saved(
-        await hub<CalendarEvent>(
+        await saveRequest<CalendarEvent>(
           "/personal-sessions" + (event ? "/" + event.id : ""),
           {
             title: f.get("title"),
@@ -65,7 +69,11 @@ export function PersonalEditor({
   return (
     <Modal
       title={event ? "Edit personal session" : "Plan a personal session"}
-      description="Only you can see this plan. Times are South African time (SAST)."
+      description={
+        childName
+          ? `Planning for ${childName}. Times are South African time (SAST).`
+          : "Only you can see this plan. Times are South African time (SAST)."
+      }
       close={() => {
         if (!busy) close();
       }}
@@ -177,17 +185,21 @@ export function CancelPersonal({
   event,
   close,
   saved,
+  saveRequest = hub,
+  childName,
 }: {
   event: CalendarEvent;
   close: () => void;
   saved: (e: CalendarEvent) => void;
+  saveRequest?: typeof hub;
+  childName?: string;
 }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   return (
     <Modal
       title="Cancel personal session?"
-      description={event.title}
+      description={childName ? `${childName} · ${event.title}` : event.title}
       close={() => {
         if (!busy) close();
       }}
@@ -214,7 +226,7 @@ export function CancelPersonal({
               setError("");
               try {
                 saved(
-                  await hub<CalendarEvent>(
+                  await saveRequest<CalendarEvent>(
                     "/personal-sessions/" + event.id + "/cancel",
                     {},
                   ),

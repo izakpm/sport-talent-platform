@@ -13,24 +13,8 @@ export type Section =
   | "calendar"
   | "feed"
   | "connections";
-export type Profile = {
-  details: { bio?: string; province?: string };
-  sports: {
-    sport_name: string;
-    position_name?: string;
-    primary_position?: boolean;
-  }[];
-  entries: {
-    id: string;
-    kind: string;
-    title: string;
-    date: string;
-    organization?: string;
-    notes?: string;
-    value?: number | null;
-    unit?: string;
-  }[];
-};
+import type { Profile } from "../profile/AthleteProfile";
+export type { Profile } from "../profile/AthleteProfile";
 export type Network = {
   teams: { id: string; name: string }[];
   people: { id: string; name: string; role: string; team_ids: string[] }[];
@@ -133,4 +117,28 @@ export function mergeShared<T extends { id: string }>(
       } else result.set(item.id, { item, children: [row.child] });
     }
   return [...result.values()];
+}
+
+export async function childWrite<T>(
+  child: GuardianChild,
+  path: string,
+  method: string,
+  body?: unknown,
+): Promise<T> {
+  if (child.mode !== "managed" || child.status !== "accepted")
+    throw Error("This athlete's information is read-only.");
+  const res = await fetchWithAuth(path, {
+    method,
+    headers: { "X-Athlete-Id": child.id },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  });
+  if (!res) throw Error("Your session expired. Please sign in again.");
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok)
+    throw Error(
+      typeof data.message === "string"
+        ? data.message
+        : "Unable to save. Please try again.",
+    );
+  return data;
 }

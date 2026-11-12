@@ -102,7 +102,7 @@ export class PersonalCalendarService {
             'Cancelled sessions cannot be edited. Create a new session instead.',
           );
         const [row] = await tx.query(
-          `UPDATE athlete_calendar_events SET title=$2,kind=$3,date=$4,start_time=$5,end_time=$6,venue=$7,notes=$8 WHERE user_id=$1 AND id=$9 RETURNING ${PERSONAL_EVENT}`,
+          `WITH updated AS (UPDATE athlete_calendar_events SET title=$2,kind=$3,date=$4,start_time=$5,end_time=$6,venue=$7,notes=$8 WHERE user_id=$1 AND id=$9 RETURNING ${PERSONAL_EVENT}) SELECT * FROM updated`,
           [...values, id],
         );
         return row;
@@ -118,7 +118,7 @@ export class PersonalCalendarService {
     return this.db.transaction(async (tx) => {
       await this.authorize(userId, tx);
       const [row] = await tx.query(
-        `UPDATE athlete_calendar_events SET cancelled=true WHERE user_id=$1 AND id=$2 RETURNING ${PERSONAL_EVENT}`,
+        `WITH updated AS (UPDATE athlete_calendar_events SET cancelled=true WHERE user_id=$1 AND id=$2 RETURNING ${PERSONAL_EVENT}) SELECT * FROM updated`,
         [userId, id],
       );
       if (!row) throw new NotFoundException('Personal session not found.');

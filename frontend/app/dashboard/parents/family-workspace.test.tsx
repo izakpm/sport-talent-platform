@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FamilyContent } from "./FamilyWorkspace";
 import { fetchWithAuth } from "../../lib/api";
-import { loadChild, mergeShared } from "./family-data";
+import { loadChild, mergeShared, childWrite } from "./family-data";
 import { getDashboardRoleConfig } from "../core/roles";
 import type { GuardianChild } from "../../lib/guardian-context";
 jest.mock("../../lib/api", () => ({ fetchWithAuth: jest.fn() }));
@@ -156,4 +156,158 @@ it("opens and closes shared session details", async () => {
   expect(screen.getByRole("dialog")).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+});
+
+const editableProfile = {
+  user: { id: "one", first_name: "Junior", last_name: "Test", phone: "" },
+  details: { province: "Gauteng", bio: "" },
+  sports: [],
+  entries: [],
+  catalog: { sports: [], positions: [], metrics: { "Bench press": "kg" } },
+};
+function editorApi() {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute("open");
+  };
+  api.mockImplementation(async (path: string, options: any) =>
+    path === "/guardian/children"
+      ? ok(children)
+      : path.startsWith("/athlete-profile")
+        ? ok(editableProfile)
+        : options?.method
+          ? ok({ id: "new-session", date: "2027-01-15" })
+          : ok([]),
+  );
+}
+it.each([
+  [
+    "My details",
+    "Edit details for Junior",
+    "First name",
+    "Junior Updated",
+    "/athlete-profile",
+    "PATCH",
+  ],
+  [
+    "Achievements",
+    "Add achievement for Junior",
+    "Achievement",
+    "QA award",
+    "/athlete-profile/entries",
+    "POST",
+  ],
+  [
+    "Performance metrics",
+    "Record metric for Junior",
+    "Result (kg)",
+    "40",
+    "/athlete-profile/entries",
+    "POST",
+  ],
+])(
+  "saves %s directly with explicit child identity",
+  async (tab, action, label, value, path, method) => {
+    editorApi();
+    render(<FamilyContent section="profile" />);
+    await screen.findByRole("heading", { name: "Junior Test" });
+    fireEvent.click(screen.getByRole("button", { name: tab }));
+    fireEvent.click(screen.getByRole("button", { name: action }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("Editing Junior Test");
+    fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    if (tab !== "My details")
+      fireEvent.change(
+        screen.getByLabelText(
+          tab === "Achievements" ? "Achievement date" : "Test date",
+        ),
+        { target: { value: "2026-11-12" } },
+      );
+    fireEvent.submit(
+      screen.getByRole("button", { name: "Save changes" }).closest("form")!,
+    );
+    await waitFor(() =>
+      expect(api).toHaveBeenCalledWith(
+        path,
+        expect.objectContaining({ method, headers: { "X-Athlete-Id": "one" } }),
+      ),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    expect(JSON.parse(localStorage.getItem("user")!).id).toBe("parent");
+    expect(sessionStorage.getItem("guardian-child")).toBeNull();
+  },
+);
+it("adds a session without leaving the family calendar", async () => {
+  editorApi();
+  render(<FamilyContent section="calendar" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Add session for Junior" }),
+  );
+  expect(screen.getByRole("dialog")).toHaveTextContent(
+    "Planning for Junior Test",
+  );
+  fireEvent.change(screen.getByLabelText("Session title"), {
+    target: { value: "QA fitness" },
+  });
+  fireEvent.change(screen.getByLabelText("Date"), {
+    target: { value: "2027-01-15" },
+  });
+  fireEvent.change(screen.getByLabelText("Start time (SAST)"), {
+    target: { value: "16:00" },
+  });
+  fireEvent.change(screen.getByLabelText("End time (SAST)"), {
+    target: { value: "17:00" },
+  });
+  fireEvent.submit(
+    screen
+      .getByRole("button", { name: "Save personal session" })
+      .closest("form")!,
+  );
+  await waitFor(() =>
+    expect(api).toHaveBeenCalledWith(
+      "/team-hub/personal-sessions",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "X-Athlete-Id": "one" },
+        body: expect.stringContaining('"title":"QA fitness"'),
+      }),
+    ),
+  );
+  await waitFor(() =>
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+  );
+  expect(sessionStorage.getItem("guardian-child")).toBeNull();
+});
+it("blocks older athlete writes before making a request", async () => {
+  await expect(
+    childWrite(children[1], "/athlete-profile", "PATCH", {}),
+  ).rejects.toThrow("read-only");
+  expect(api).not.toHaveBeenCalled();
+});
+it("keeps a failed form open with the server validation error", async () => {
+  editorApi();
+  api.mockImplementation(async (path: string, options: any) =>
+    options?.method
+      ? {
+          ok: false,
+          json: async () => ({ message: "This child is no longer linked." }),
+        }
+      : path === "/guardian/children"
+        ? ok(children)
+        : ok(editableProfile),
+  );
+  render(<FamilyContent section="profile" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Edit details for Junior" }),
+  );
+  fireEvent.submit(
+    screen.getByRole("button", { name: "Save changes" }).closest("form")!,
+  );
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "This child is no longer linked.",
+  );
+  expect(screen.getByRole("dialog")).toBeInTheDocument();
 });

@@ -46,3 +46,45 @@ describe('personal calendar', () => {
     ).rejects.toThrow();
   });
 });
+
+describe('personal session mutation responses', () => {
+  it('returns the edited event as an object through a SELECT result', async () => {
+    const row = { id: 'event', date: body.date, venue: 'Updated field' };
+    const tx = {
+      query: jest
+        .fn()
+        .mockResolvedValueOnce([{ role: 'ATHLETE' }])
+        .mockResolvedValueOnce([{ cancelled: false }])
+        .mockResolvedValueOnce([row]),
+    };
+    const service = new PersonalCalendarService({
+      transaction: (fn: any) => fn(tx),
+    } as any);
+    expect(
+      await service.save('child', { ...body, venue: row.venue }, 'event'),
+    ).toEqual(row);
+    expect(tx.query.mock.calls[2][0]).toContain('SELECT * FROM updated');
+    expect(tx.query.mock.calls[2][1][0]).toBe('child');
+  });
+  it('returns cancellation state and rejects unknown or other-user sessions', async () => {
+    const row = { id: 'event', date: body.date, cancelled: true };
+    const tx = {
+      query: jest
+        .fn()
+        .mockResolvedValueOnce([{ role: 'ATHLETE' }])
+        .mockResolvedValueOnce([row]),
+    };
+    const service = new PersonalCalendarService({
+      transaction: (fn: any) => fn(tx),
+    } as any);
+    expect(await service.cancel('child', 'event')).toEqual(row);
+    expect(tx.query.mock.calls[1][0]).toContain('SELECT * FROM updated');
+    expect(tx.query.mock.calls[1][1]).toEqual(['child', 'event']);
+    tx.query
+      .mockResolvedValueOnce([{ role: 'ATHLETE' }])
+      .mockResolvedValueOnce([]);
+    await expect(
+      service.cancel('child', 'someone-elses-event'),
+    ).rejects.toThrow('not found');
+  });
+});

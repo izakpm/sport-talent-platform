@@ -25,7 +25,7 @@ type Sport = {
   primary_position: boolean;
   is_primary: boolean;
 };
-type Profile = {
+export type Profile = {
   user: {
     id: string;
     first_name: string;
@@ -44,7 +44,7 @@ type Profile = {
     metrics: Record<string, string>;
   };
 };
-type Editor = {
+export type Editor = {
   kind: "personal" | "photo" | "sport" | "achievement" | "metric";
   sport?: string;
   entry?: Entry;
@@ -449,16 +449,20 @@ export default function AthleteProfile({
     </div>
   );
 }
-function ProfileEditor({
+export function ProfileEditor({
   profile,
   editor,
   close,
   saved,
+  saveRequest = request,
+  description = "Save your changes when you’re ready.",
 }: {
   profile: Profile;
   editor: Editor;
   close: () => void;
   saved: (p: Profile) => void;
+  saveRequest?: typeof request;
+  description?: string;
 }) {
   const [confirmRemoval, setConfirmRemoval] = useState(false);
   const [busy, setBusy] = useState(false),
@@ -536,7 +540,7 @@ function ProfileEditor({
     }
     setBusy(true);
     try {
-      saved(await request(path, method, body));
+      saved(await saveRequest(path, method, body));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -564,7 +568,7 @@ function ProfileEditor({
   return (
     <Modal
       title={title}
-      description="Save your changes when you’re ready."
+      description={description}
       close={() => {
         if (!busy) close();
       }}
@@ -832,7 +836,7 @@ function ProfileEditor({
                 setError("");
                 try {
                   saved(
-                    await request("/sport", "PUT", {
+                    await saveRequest("/sport", "PUT", {
                       sport_id: editor.sport,
                       position_ids: [],
                       primary_position_id: "",

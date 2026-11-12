@@ -3,10 +3,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import {
+  ProfileEditor,
+  type Editor,
+  type Profile,
+} from "../profile/AthleteProfile";
+import {
+  PersonalEditor,
+  CancelPersonal,
+} from "../athlete/calendar/PersonalEditor";
 import { family } from "./family-api";
 import { selectChild, type GuardianChild } from "../../lib/guardian-context";
 import {
   loadChild,
+  childWrite,
   mergeShared,
   type ChildData,
   type Section,
@@ -80,6 +90,51 @@ export default function FamilyWorkspace({ section }: { section: Section }) {
 }
 export function FamilyContent({ section }: { section: Section }) {
   const params = useSearchParams();
+  const [profileEditor, setProfileEditor] = useState<{
+    child: GuardianChild;
+    profile: Profile;
+    editor: Editor;
+  } | null>(null);
+  const [sessionEditor, setSessionEditor] = useState<{
+    child: GuardianChild;
+    event: CalendarEvent | null;
+    events: CalendarEvent[];
+  } | null>(null);
+  const [cancelSession, setCancelSession] = useState<{
+    child: GuardianChild;
+    event: CalendarEvent;
+  } | null>(null);
+  const [notice, setNotice] = useState("");
+  function openProfile(row: ChildData, editor: Editor) {
+    if (row.child.mode === "managed" && row.profile) {
+      setNotice("");
+      setProfileEditor({ child: row.child, profile: row.profile, editor });
+    }
+  }
+  function openSession(
+    child: GuardianChild,
+    event: CalendarEvent | null = null,
+  ) {
+    if (child.mode !== "managed") return;
+    setNotice("");
+    setEvent(null);
+    setSessionEditor({
+      child,
+      event,
+      events: rows.find((r) => r.child.id === child.id)?.calendar || [],
+    });
+  }
+  function sessionSaved(child: GuardianChild, session: CalendarEvent) {
+    setSessionEditor(null);
+    setCancelSession(null);
+    setEvent(null);
+    setMonth(session.date.slice(0, 7));
+    setRetry((v) => v + 1);
+    setNotice(
+      `${fullName(child)}: ${session.cancelled ? "personal session cancelled" : "personal session saved"}.`,
+    );
+  }
+
   const [children, setChildren] = useState<GuardianChild[]>([]),
     [rows, setRows] = useState<ChildData[]>([]),
     [filter, setFilter] = useState(""),
@@ -310,6 +365,26 @@ export function FamilyContent({ section }: { section: Section }) {
           Refresh
         </button>
       </div>
+      {notice && (
+        <p className={s.notice} role="status">
+          {notice}
+        </p>
+      )}
+      {["calendar", "overview"].includes(section) &&
+        !loading &&
+        managed.length > 0 && (
+          <div className={p.actions}>
+            {managed.map((r) => (
+              <button
+                key={r.child.id}
+                className={s.primary}
+                onClick={() => openSession(r.child)}
+              >
+                Add session for {r.child.first_name}
+              </button>
+            ))}
+          </div>
+        )}
       {error && (
         <p className={s.error} role="alert">
           {error}
@@ -457,25 +532,6 @@ export function FamilyContent({ section }: { section: Section }) {
                 </div>
                 <h2 className={p.sectionHeading}>Sessions this month</h2>
                 {renderEvents(events)}
-                {managed.length > 0 && (
-                  <div className={p.card}>
-                    <h3>Add a personal session</h3>
-                    <p>Choose who you are scheduling for.</p>
-                    <div className={p.actions}>
-                      {managed.map((r) => (
-                        <button
-                          key={r.child.id}
-                          className={s.secondary}
-                          onClick={() =>
-                            editChild(r.child, "/dashboard/athlete/calendar")
-                          }
-                        >
-                          Plan for {r.child.first_name} ↗
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </>
             )}
             {section === "profile" && (
@@ -521,11 +577,24 @@ export function FamilyContent({ section }: { section: Section }) {
                       {tab === "sports" &&
                         (r.profile?.sports.length ? (
                           r.profile.sports.map((v, i) => (
-                            <p key={i}>
+                            <div key={i}>
                               <strong>{v.sport_name}</strong> ·{" "}
                               {v.position_name || "Position not added"}
                               {v.primary_position ? " · Primary position" : ""}
-                            </p>
+                              {r.child.mode === "managed" && (
+                                <button
+                                  className={s.textButton}
+                                  onClick={() =>
+                                    openProfile(r, {
+                                      kind: "sport",
+                                      sport: v.sport_id,
+                                    })
+                                  }
+                                >
+                                  Edit positions
+                                </button>
+                              )}
+                            </div>
                           ))
                         ) : (
                           <p>No sports or positions added yet.</p>
@@ -548,6 +617,16 @@ export function FamilyContent({ section }: { section: Section }) {
                                     .join(" · ")}
                                 </p>
                                 {e.notes && <p>{e.notes}</p>}
+                                {r.child.mode === "managed" && (
+                                  <button
+                                    className={s.secondary}
+                                    onClick={() =>
+                                      openProfile(r, { kind: e.kind, entry: e })
+                                    }
+                                  >
+                                    Edit {e.title}
+                                  </button>
+                                )}
                               </div>
                             ))
                         ) : (
@@ -563,10 +642,26 @@ export function FamilyContent({ section }: { section: Section }) {
                         <button
                           className={s.primary}
                           onClick={() =>
-                            editChild(r.child, "/dashboard/profile#" + tab)
+                            openProfile(r, {
+                              kind:
+                                tab === "details"
+                                  ? "personal"
+                                  : tab === "sports"
+                                    ? "sport"
+                                    : tab === "achievement"
+                                      ? "achievement"
+                                      : "metric",
+                            })
                           }
                         >
-                          Edit {r.child.first_name}'s profile ↗
+                          {tab === "achievement"
+                            ? "Add achievement"
+                            : tab === "metric"
+                              ? "Record metric"
+                              : tab === "sports"
+                                ? "Add sport & positions"
+                                : "Edit details"}{" "}
+                          for {r.child.first_name}
                         </button>
                       )}
                     </article>
@@ -850,10 +945,93 @@ export function FamilyContent({ section }: { section: Section }) {
           <p>{event.item.team_name || "Personal session"}</p>
           <p>{event.item.venue || "Venue to be confirmed"}</p>
           <p>{event.item.notes}</p>
+          {event.item.source === "personal" &&
+            !event.item.cancelled &&
+            event.children
+              .filter((c) => c.mode === "managed")
+              .map((child) => (
+                <div className={p.actions} key={child.id}>
+                  <button
+                    className={s.primary}
+                    onClick={() => openSession(child, event.item)}
+                  >
+                    Edit personal session
+                  </button>
+                  <button
+                    className={s.secondary}
+                    onClick={() => {
+                      setCancelSession({ child, event: event.item });
+                      setEvent(null);
+                    }}
+                  >
+                    Cancel personal session
+                  </button>
+                </div>
+              ))}
           {event.item.cancelled && (
             <p role="status">This session has been cancelled.</p>
           )}
         </Modal>
+      )}
+      {profileEditor && (
+        <ProfileEditor
+          key={
+            profileEditor.child.id +
+            profileEditor.editor.kind +
+            (profileEditor.editor.entry?.id || "")
+          }
+          profile={profileEditor.profile}
+          editor={profileEditor.editor}
+          description={`Editing ${fullName(profileEditor.child)}'s sporting profile.`}
+          close={() => setProfileEditor(null)}
+          saveRequest={(path = "", method = "GET", body) =>
+            childWrite<Profile>(
+              profileEditor.child,
+              "/athlete-profile" + path,
+              method,
+              body,
+            )
+          }
+          saved={() => {
+            setNotice(`${fullName(profileEditor.child)}: profile saved.`);
+            setProfileEditor(null);
+            setRetry((v) => v + 1);
+          }}
+        />
+      )}
+      {sessionEditor && (
+        <PersonalEditor
+          event={sessionEditor.event}
+          date={month === todayDate().slice(0, 7) ? todayDate() : month + "-01"}
+          events={sessionEditor.events}
+          childName={fullName(sessionEditor.child)}
+          close={() => setSessionEditor(null)}
+          saveRequest={<T,>(path: string, body?: unknown, method?: string) =>
+            childWrite<T>(
+              sessionEditor.child,
+              "/team-hub" + path,
+              method || "POST",
+              body,
+            )
+          }
+          saved={(e) => sessionSaved(sessionEditor.child, e)}
+        />
+      )}
+      {cancelSession && (
+        <CancelPersonal
+          event={cancelSession.event}
+          childName={fullName(cancelSession.child)}
+          close={() => setCancelSession(null)}
+          saveRequest={<T,>(path: string, body?: unknown, method?: string) =>
+            childWrite<T>(
+              cancelSession.child,
+              "/team-hub" + path,
+              method || "POST",
+              body,
+            )
+          }
+          saved={(e) => sessionSaved(cancelSession.child, e)}
+        />
       )}
     </div>
   );
