@@ -10,6 +10,7 @@ import {
   type GuardianChild,
 } from "../../lib/guardian-context";
 import { getDashboardRoleConfig } from "../core/roles";
+import { dashboardNavIcons } from "../core/nav-icons";
 import s from "../coach-shell.module.css";
 import p from "./parents.module.css";
 export default function ParentShell({
@@ -101,7 +102,7 @@ export default function ParentShell({
               href={item.href}
               aria-current={path === item.href ? "page" : undefined}
             >
-              <span>•</span>
+              <span aria-hidden="true">{dashboardNavIcons[item.name]}</span>
               <span>{item.name}</span>
             </Link>
           ))}

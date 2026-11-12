@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ParentShell from "./parents/ParentShell";
+import { dashboardNavIcons } from "./core/nav-icons";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type CSSProperties } from "react";
 import { theme } from "../styles/theme";
@@ -183,11 +184,7 @@ export default function DashboardLayout({
                 }
               >
                 <span aria-hidden="true">
-                  {
-                    (userRole === "COACH"
-                      ? ["▦", "◉", "◇", "◷", "▤", "✉", "✓"]
-                      : ["▦", "◉", "↗", "▤", "◷", "✉", "◇", "▧"])[index]
-                  }
+                  {dashboardNavIcons[item.name]}
                 </span>
                 <span>
                   {item.name}
