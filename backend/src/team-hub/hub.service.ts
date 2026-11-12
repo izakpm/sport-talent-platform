@@ -287,7 +287,7 @@ export class HubService {
     await this.authorize(userId, 'COACH');
     const event = await this.ownedEvent(userId, id);
     const players = await this.db.query(
-      `SELECT p.id,p.first_name,p.last_name,p.status AS player_status,a.status,a.method,a.note,a.created_at,a.reviewed_at,(m.user_id IS NOT NULL) AS linked FROM coach_team_players p LEFT JOIN coach_session_attendance a ON a.player_id=p.id AND a.event_id=$2 LEFT JOIN coach_player_accounts m ON m.player_id=p.id WHERE p.team_id=$1 AND (p.status='active' OR a.event_id IS NOT NULL) ORDER BY p.last_name,p.first_name`,
+      `SELECT p.id,COALESCE(NULLIF(u.first_name,''),p.first_name) AS first_name,COALESCE(NULLIF(u.last_name,''),p.last_name) AS last_name,p.status AS player_status,a.status,a.method,a.note,a.created_at,a.reviewed_at,(m.user_id IS NOT NULL) AS linked FROM coach_team_players p LEFT JOIN coach_session_attendance a ON a.player_id=p.id AND a.event_id=$2 LEFT JOIN coach_player_accounts m ON m.player_id=p.id AND m.team_id=p.team_id LEFT JOIN users u ON u.id=m.user_id WHERE p.team_id=$1 AND (p.status='active' OR a.event_id IS NOT NULL) ORDER BY COALESCE(NULLIF(u.last_name,''),p.last_name),COALESCE(NULLIF(u.first_name,''),p.first_name)`,
       [event.team_id, id],
     );
     return { event, players };
@@ -295,7 +295,7 @@ export class HubService {
   async pending(userId: string) {
     await this.authorize(userId, 'COACH');
     return this.db.query(
-      `SELECT a.*,e.title,to_char(e.date,'YYYY-MM-DD') AS date,t.name AS team_name,p.first_name,p.last_name FROM coach_session_attendance a JOIN coach_schedule_events e ON e.id=a.event_id JOIN coach_teams t ON t.id=e.team_id JOIN coach_team_players p ON p.id=a.player_id WHERE t.coach_id=$1 AND a.status='pending' AND NOT e.cancelled ORDER BY a.created_at`,
+      `SELECT a.*,e.title,to_char(e.date,'YYYY-MM-DD') AS date,t.name AS team_name,COALESCE(NULLIF(u.first_name,''),p.first_name) AS first_name,COALESCE(NULLIF(u.last_name,''),p.last_name) AS last_name FROM coach_session_attendance a JOIN coach_schedule_events e ON e.id=a.event_id JOIN coach_teams t ON t.id=e.team_id JOIN coach_team_players p ON p.id=a.player_id LEFT JOIN coach_player_accounts m ON m.player_id=p.id AND m.team_id=p.team_id LEFT JOIN users u ON u.id=m.user_id WHERE t.coach_id=$1 AND a.status='pending' AND NOT e.cancelled ORDER BY a.created_at`,
       [userId],
     );
   }

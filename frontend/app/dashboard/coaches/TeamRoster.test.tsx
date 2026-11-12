@@ -15,6 +15,24 @@ const player = {
   is_captain: true,
   status: "active",
 };
+it("uses profile names as read-only for linked players", async () => {
+  request.mockResolvedValue({
+    ok: true,
+    json: async () => ({ team, players: [{ ...player, linked: true }] }),
+  } as Response);
+  render(<TeamRoster teamId="team" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Edit Siya Kolisi" }),
+  );
+  const dialog = screen.getByRole("dialog");
+  expect(within(dialog).getByLabelText("First name")).toHaveAttribute(
+    "readonly",
+  );
+  expect(within(dialog).getByLabelText("Last name")).toHaveAttribute(
+    "readonly",
+  );
+  expect(within(dialog).getByLabelText("Rugby position")).toBeEnabled();
+});
 beforeEach(() => {
   request.mockReset();
   HTMLDialogElement.prototype.showModal = function () {

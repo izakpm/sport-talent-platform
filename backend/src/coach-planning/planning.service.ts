@@ -66,7 +66,7 @@ export class PlanningService {
     );
     if (!team) throw new NotFoundException('Team not found.');
     const players = await this.db.query(
-      `SELECT * FROM coach_team_players WHERE team_id=$1 ORDER BY status,shirt_number NULLS LAST,lower(last_name),lower(first_name),id`,
+      `SELECT p.*,COALESCE(NULLIF(u.first_name,''),p.first_name) AS first_name,COALESCE(NULLIF(u.last_name,''),p.last_name) AS last_name,(u.id IS NOT NULL) AS linked FROM coach_team_players p LEFT JOIN coach_player_accounts m ON m.player_id=p.id AND m.team_id=p.team_id LEFT JOIN users u ON u.id=m.user_id WHERE p.team_id=$1 ORDER BY p.status,p.shirt_number NULLS LAST,lower(COALESCE(NULLIF(u.last_name,''),p.last_name)),lower(COALESCE(NULLIF(u.first_name,''),p.first_name)),p.id`,
       [teamId],
     );
     return { team, players };
@@ -108,7 +108,17 @@ export class PlanningService {
             `INSERT INTO coach_team_players(team_id,first_name,last_name,position,shirt_number,is_captain,status) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
             values,
           );
-      return player;
+      // Linked account names are authoritative, including the save response.
+      const [account] = await tx.query(
+        'SELECT u.first_name,u.last_name FROM coach_player_accounts m JOIN users u ON u.id=m.user_id WHERE m.player_id=$1 AND m.team_id=$2',
+        [player.id, teamId],
+      );
+      return {
+        ...player,
+        first_name: account?.first_name || player.first_name,
+        last_name: account?.last_name || player.last_name,
+        linked: !!account,
+      };
     });
   }
   async removePlayer(userId: string, teamId: string, playerId: string) {

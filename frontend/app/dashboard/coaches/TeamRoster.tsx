@@ -18,6 +18,7 @@ export type Player = {
   shirt_number: number | null;
   is_captain: boolean;
   status: "active" | "inactive";
+  linked?: boolean;
 };
 const POSITIONS = [
   "Prop",
@@ -299,7 +300,10 @@ export default function TeamRoster({ teamId }: { teamId: string }) {
           teamId={teamId}
           playerId={accountPlayer.id}
           name={nameOf(accountPlayer)}
-          close={() => setAccountPlayer(null)}
+          close={() => {
+            setAccountPlayer(null);
+            setRetry((value) => value + 1);
+          }}
         />
       )}
       {editor && (
@@ -388,7 +392,11 @@ function PlayerEditor({
   return (
     <Modal
       title={player ? "Edit player" : "Add to your squad."}
-      description="Start with their name. The rest can be added later."
+      description={
+        player?.linked
+          ? "Their name comes from their athlete profile. Update their team details below."
+          : "Start with their name. The rest can be added later."
+      }
       close={() => !busy && close()}
     >
       <form onSubmit={submit} className={styles.form}>
@@ -407,6 +415,7 @@ function PlayerEditor({
               maxLength={80}
               autoComplete="off"
               value={form.first_name}
+              readOnly={!!player?.linked}
               onChange={(e) =>
                 setForm((f) => ({ ...f, first_name: e.target.value }))
               }
@@ -419,6 +428,7 @@ function PlayerEditor({
               maxLength={80}
               autoComplete="off"
               value={form.last_name}
+              readOnly={!!player?.linked}
               onChange={(e) =>
                 setForm((f) => ({ ...f, last_name: e.target.value }))
               }
