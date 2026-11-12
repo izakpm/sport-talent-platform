@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import ResourceLibrary from "./ResourceLibrary";
+import ResourceCard from "./ResourceCard";
 import ResourceEditor from "./ResourceEditor";
 import ResourceViewer, { embedUrl } from "./ResourceViewer";
 import { resources, uploadFile, type Resource } from "./api";
@@ -15,6 +16,60 @@ jest.mock("./api", () => ({
   uploadFile: jest.fn(),
 }));
 const api = resources as jest.Mock;
+it("plays inside the card and stops the previous video", async () => {
+  api.mockImplementation(async () => ({
+    ...row,
+    media_url: "https://storage.example/video.mp4",
+    transcript: "Transcript",
+  }));
+  const { container } = render(
+    <>
+      <ResourceCard resource={row} />
+      <ResourceCard resource={{ ...row, id: "two", title: "Second video" }} />
+    </>,
+  );
+  expect(api).not.toHaveBeenCalled();
+  fireEvent.click(
+    screen.getByRole("button", { name: `Watch video: ${row.title}` }),
+  );
+  await waitFor(() =>
+    expect(container.querySelector("video")).toHaveAttribute(
+      "src",
+      "https://storage.example/video.mp4",
+    ),
+  );
+  expect(api).toHaveBeenCalledWith("/one");
+  expect(container.querySelector("video")).toHaveAttribute("controls");
+  expect(screen.getByText("Read transcript")).toBeInTheDocument();
+  expect(
+    screen.queryByRole("link", { name: row.title }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Watch video: Second video" }),
+  );
+  await waitFor(() =>
+    expect(container.querySelector("video")).toHaveAttribute(
+      "aria-label",
+      "Second video",
+    ),
+  );
+  expect(container.querySelectorAll("video")).toHaveLength(1);
+});
+it("retries inline playback after a failed request", async () => {
+  api.mockRejectedValueOnce(new Error("Offline")).mockResolvedValueOnce(row);
+  render(<ResourceCard resource={row} />);
+  fireEvent.click(
+    screen.getByRole("button", { name: `Watch video: ${row.title}` }),
+  );
+  await screen.findByRole("alert");
+  fireEvent.click(
+    screen.getByRole("button", { name: `Retry video: ${row.title}` }),
+  );
+  expect(await screen.findByTitle(row.title)).toHaveAttribute(
+    "src",
+    expect.stringContaining("youtube-nocookie.com"),
+  );
+});
 const row: Resource = {
   id: "one",
   title: "Match-day mindset",
@@ -42,9 +97,9 @@ it("shows a featured resource and read-only cards with topic and format filterin
   render(<ResourceLibrary />);
   expect(await screen.findByText("FEATURED RESOURCE")).toBeInTheDocument();
   expect(screen.queryByText("+ Add resource")).not.toBeInTheDocument();
-  expect(screen.getAllByRole("link", { name: /^Watch video ↗$/ })).toHaveLength(
-    2,
-  );
+  expect(
+    screen.getAllByRole("button", { name: `Watch video: ${row.title}` }),
+  ).toHaveLength(2);
   fireEvent.click(screen.getByRole("button", { name: "Nutrition" }));
   fireEvent.change(screen.getByLabelText("Format"), {
     target: { value: "audio" },

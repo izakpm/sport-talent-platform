@@ -8,6 +8,7 @@ import {
   actionLabel,
   durationLabel,
 } from "./api";
+import InlineVideo from "./InlineVideo";
 import ResourceCard, { Artwork } from "./ResourceCard";
 import s from "./resources.module.css";
 import w from "../coaches/workspace.module.css";
@@ -107,7 +108,11 @@ export default function ResourceLibrary({
       </header>
       {!admin && !filtered && !loading && featured && (
         <section className={s.feature}>
-          <Artwork resource={featured} className={s.featureImage} />
+          {featured.format === "video" ? (
+            <InlineVideo key={featured.id} resource={featured} />
+          ) : (
+            <Artwork resource={featured} className={s.featureImage} />
+          )}
           <div className={s.featureCopy}>
             <div className={s.eyebrow}>FEATURED RESOURCE</div>
             <h2>{featured.title}</h2>
@@ -115,12 +120,14 @@ export default function ResourceLibrary({
             <p>
               {featured.author} · {durationLabel(featured)}
             </p>
-            <Link
-              className={w.primary}
-              href={`/dashboard/athlete/resources/${featured.id}`}
-            >
-              {actionLabel(featured)} ↗
-            </Link>
+            {featured.format !== "video" && (
+              <Link
+                className={w.primary}
+                href={`/dashboard/athlete/resources/${featured.id}`}
+              >
+                {actionLabel(featured)} ↗
+              </Link>
+            )}
           </div>
         </section>
       )}

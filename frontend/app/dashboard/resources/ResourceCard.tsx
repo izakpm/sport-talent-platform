@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import InlineVideo from "./InlineVideo";
 import { Resource, topics, formats, actionLabel, durationLabel } from "./api";
 import s from "./resources.module.css";
 export function Artwork({
@@ -59,18 +60,22 @@ export default function ResourceCard({
           <span>{topics[r.topic]}</span>
         </div>
       </div>
-      <Link
-        href={href}
-        className={s.posterLink}
-        aria-label={`${admin ? "Manage" : actionLabel(r)}: ${r.title}`}
-      >
-        <Artwork resource={r} />
-        {r.format === "video" && (
-          <span className={s.playBadge} aria-hidden="true">
-            ▶
-          </span>
-        )}
-      </Link>
+      {!admin && r.format === "video" ? (
+        <InlineVideo resource={r} />
+      ) : (
+        <Link
+          href={href}
+          className={s.posterLink}
+          aria-label={`${admin ? "Manage" : actionLabel(r)}: ${r.title}`}
+        >
+          <Artwork resource={r} />
+          {r.format === "video" && (
+            <span className={s.playBadge} aria-hidden="true">
+              ▶
+            </span>
+          )}
+        </Link>
+      )}
       <div className={s.cardBody}>
         <div className={s.meta}>
           <span className={s.tag}>{formats[r.format]}</span>
@@ -83,12 +88,18 @@ export default function ResourceCard({
           )}
         </div>
         <h3>
-          <Link href={href}>{r.title}</Link>
+          {!admin && r.format === "video" ? (
+            r.title
+          ) : (
+            <Link href={href}>{r.title}</Link>
+          )}
         </h3>
         <p>{r.summary || "Add a description before publishing."}</p>
-        <Link className={s.cta} href={href}>
-          {admin ? "Manage resource" : actionLabel(r)} ↗
-        </Link>
+        {(admin || r.format !== "video") && (
+          <Link className={s.cta} href={href}>
+            {admin ? "Manage resource" : actionLabel(r)} ↗
+          </Link>
+        )}
       </div>
     </article>
   );
