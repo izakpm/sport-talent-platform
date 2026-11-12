@@ -164,3 +164,36 @@ it("sends weekly recurrence and keeps the form open on a conflict", async () => 
   );
   expect(JSON.parse(call![1].body).repeat.until).toBe("2026-11-30");
 });
+it("keeps repeat defaults aligned with a changed date but preserves explicit choices", async () => {
+  render(<CoachWorkspace mode="schedule" />);
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "Add session" })).toBeEnabled(),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Add session" }));
+  const dialog = within(screen.getByRole("dialog"));
+  fireEvent.change(dialog.getByLabelText("Date"), {
+    target: { value: "2026-12-07" },
+  });
+  fireEvent.click(dialog.getByLabelText(/Repeat weekly/));
+  expect(dialog.getByRole("button", { name: "Mon" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  expect(dialog.getByLabelText("Repeat until")).toHaveValue("2026-12-31");
+  fireEvent.click(dialog.getByRole("button", { name: "Wed" }));
+  fireEvent.change(dialog.getByLabelText("Repeat until"), {
+    target: { value: "2027-01-20" },
+  });
+  fireEvent.change(dialog.getByLabelText("Start date"), {
+    target: { value: "2027-01-05" },
+  });
+  expect(dialog.getByRole("button", { name: "Mon" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  expect(dialog.getByRole("button", { name: "Wed" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  expect(dialog.getByLabelText("Repeat until")).toHaveValue("2027-01-20");
+});

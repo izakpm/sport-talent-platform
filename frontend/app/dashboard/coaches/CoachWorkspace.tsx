@@ -872,12 +872,22 @@ function SessionEditor({
     new Date(`${initial.date}T12:00:00Z`).getUTCDay(),
   ]);
   const [until, setUntil] = useState(monthBounds(initial.date.slice(0, 7)).to);
+  const [customWeekdays, setCustomWeekdays] = useState(false);
+  const [customUntil, setCustomUntil] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const count = repeat ? recurrenceCount(form.date, until, weekdays) : 1;
-  const change = (key: keyof typeof form, value: string) =>
+  const change = (key: keyof typeof form, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
+    if (key === "date" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const date = new Date(`${value}T12:00:00Z`);
+      if (!Number.isNaN(date.getTime())) {
+        if (!customWeekdays) setWeekdays([date.getUTCDay()]);
+        if (!customUntil) setUntil(monthBounds(value.slice(0, 7)).to);
+      }
+    }
+  };
   function chooseType(kind: string) {
     const type = typeOf(kind);
     const start =
@@ -1080,13 +1090,14 @@ function SessionEditor({
                         type="button"
                         key={d.day}
                         aria-pressed={weekdays.includes(d.day)}
-                        onClick={() =>
+                        onClick={() => {
+                          setCustomWeekdays(true);
                           setWeekdays((days) =>
                             days.includes(d.day)
                               ? days.filter((day) => day !== d.day)
                               : [...days, d.day],
-                          )
-                        }
+                          );
+                        }}
                       >
                         {d.label}
                       </button>
@@ -1100,7 +1111,10 @@ function SessionEditor({
                       min={form.date}
                       max="2100-12-31"
                       value={until}
-                      onChange={(e) => setUntil(e.target.value)}
+                      onChange={(e) => {
+                        setCustomUntil(true);
+                        setUntil(e.target.value);
+                      }}
                     />
                   </label>
                   <p className={styles.repeatPreview}>
