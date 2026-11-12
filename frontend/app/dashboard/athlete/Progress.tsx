@@ -9,6 +9,8 @@ import {
   monday,
   shiftDay,
   weekDays,
+  monthStart,
+  monthWeeks,
   metricGroups,
   type Training,
   type Result,
@@ -34,6 +36,7 @@ export default function Progress() {
     [busy, setBusy] = useState(true),
     [retry, setRetry] = useState(0),
     [now, setNow] = useState(0);
+  const [period, setPeriod] = useState<"week" | "month">("week");
   const [offset, setOffset] = useState(0),
     [measure, setMeasure] = useState<"minutes" | "sessions">("minutes"),
     [day, setDay] = useState(""),
@@ -66,14 +69,20 @@ export default function Progress() {
     };
   }, [retry]);
   const today = localDay(now || Date.now()),
-    start = shiftDay(monday(today), offset * 7),
-    days = weekDays(training || [], start, now),
+    start =
+      period === "week"
+        ? shiftDay(monday(today), offset * 7)
+        : monthStart(today, offset),
+    days =
+      period === "week"
+        ? weekDays(training || [], start, now)
+        : monthWeeks(training || [], start, now),
     entries = days.flatMap((d) => d.entries);
   const minutes = days.reduce((sum, d) => sum + d.minutes, 0),
     verified = entries.filter((e) => e.status === "verified").length;
   const selected =
     days.find((d) => d.date === day) ||
-    days.find((d) => d.date === today) ||
+    days.find((d) => d.date <= today && d.end >= today) ||
     days[0];
   const maximum = Math.max(
     1,
@@ -120,16 +129,39 @@ export default function Progress() {
         </div>
       )}
       {busy && <p role="status">Loading your progress…</p>}
+      <div className={s.periodToggle} role="group" aria-label="Training period">
+        {(["week", "month"] as const).map((value) => (
+          <button
+            key={value}
+            aria-pressed={period === value}
+            onClick={() => {
+              setPeriod(value);
+              setOffset(0);
+              setDay("");
+            }}
+          >
+            {value === "week" ? "Weekly" : "Monthly"}
+          </button>
+        ))}
+      </div>
       <div className={s.weekNav}>
         <strong>
-          {offset === 0
-            ? "This week"
-            : `${shortDate(start)} – ${shortDate(shiftDay(start, 6))}`}{" "}
-          <small>Mon–Sun · SAST</small>
+          {period === "month"
+            ? new Date(start + "T12:00:00Z").toLocaleDateString("en-ZA", {
+                month: "long",
+                year: "numeric",
+                timeZone: "UTC",
+              })
+            : offset === 0
+              ? "This week"
+              : `${shortDate(start)} – ${shortDate(shiftDay(start, 6))}`}{" "}
+          <small>
+            {period === "week" ? "Mon–Sun · SAST" : "Calendar month · SAST"}
+          </small>
         </strong>
         <div>
           <button
-            aria-label="Previous week"
+            aria-label={`Previous ${period}`}
             onClick={() => {
               setOffset((n) => n - 1);
               setDay("");
@@ -138,10 +170,10 @@ export default function Progress() {
             ←
           </button>
           <button disabled={offset === 0} onClick={() => setOffset(0)}>
-            This week
+            {period === "week" ? "This week" : "This month"}
           </button>
           <button
-            aria-label="Next week"
+            aria-label={`Next ${period}`}
             disabled={offset === 0}
             onClick={() => {
               setOffset((n) => Math.min(0, n + 1));
@@ -155,7 +187,11 @@ export default function Progress() {
       <div className={s.summaries}>
         {[
           ["Training hours", num(minutes / 60), "Completed activity log"],
-          ["Sessions logged", String(entries.length), "Completed this week"],
+          [
+            "Sessions logged",
+            String(entries.length),
+            `Completed this ${period}`,
+          ],
           ["Coach-verified", String(verified), "Of these logged sessions"],
         ].map(([label, value, note]) => (
           <article key={label}>
@@ -163,7 +199,7 @@ export default function Progress() {
             <strong>{training === null ? "—" : value}</strong>
             <small>
               {label === "Sessions logged" && offset !== 0
-                ? "Completed in selected week"
+                ? `Completed in selected ${period}`
                 : note}
             </small>
           </article>
@@ -172,7 +208,7 @@ export default function Progress() {
       <div className={s.charts}>
         <article className={s.card}>
           <div className={s.heading}>
-            <h3>Your training week</h3>
+            <h3>Your training {period}</h3>
             <div className={s.toggle} aria-label="Chart measure">
               <button
                 aria-pressed={measure === "minutes"}
@@ -192,6 +228,12 @@ export default function Progress() {
             Completed activity-log entries only. Scheduled sessions and team
             attendance aren’t added again.
           </p>
+          {period === "month" && (
+            <p className={s.note}>
+              Each bar totals a calendar week within this month. Weeks at the
+              edges include only this month’s dates.
+            </p>
+          )}
           {training !== null ? (
             <>
               <div className={s.axis}>
@@ -200,7 +242,12 @@ export default function Progress() {
                   : "Sessions completed"}{" "}
                 · peak {num(maximum === 1 && !entries.length ? 0 : maximum)}
               </div>
-              <div className={s.bars}>
+              <div
+                className={s.bars}
+                style={{
+                  gridTemplateColumns: `repeat(${days.length},minmax(0,1fr))`,
+                }}
+              >
                 {days.map((d) => {
                   const future = d.date > today;
                   const total =
@@ -210,7 +257,7 @@ export default function Progress() {
                       key={d.date}
                       className={s.day}
                       aria-pressed={selected.date === d.date}
-                      aria-label={`${shortDate(d.date)}: ${d.entries.length} sessions, ${d.minutes} minutes${future ? ", future day" : ""}`}
+                      aria-label={`${shortDate(d.date)}${period === "month" ? ` – ${shortDate(d.end)}` : ""}: ${d.entries.length} sessions, ${d.minutes} minutes${future ? ", future day" : ""}`}
                       onClick={() => setDay(d.date)}
                     >
                       <span className={s.amount}>
@@ -237,10 +284,14 @@ export default function Progress() {
                         })}
                       </span>
                       <span>
-                        {new Date(d.date + "T12:00:00Z").toLocaleDateString(
-                          "en-ZA",
-                          { weekday: "short", timeZone: "UTC" },
-                        )}
+                        {period === "month"
+                          ? d.date === d.end
+                            ? Number(d.date.slice(-2))
+                            : `${Number(d.date.slice(-2))}–${Number(d.end.slice(-2))}`
+                          : new Date(d.date + "T12:00:00Z").toLocaleDateString(
+                              "en-ZA",
+                              { weekday: "short", timeZone: "UTC" },
+                            )}
                       </span>
                     </button>
                   );
@@ -260,14 +311,17 @@ export default function Progress() {
               </div>
               {!entries.length && (
                 <p className={s.empty}>
-                  No completed training logged for this week.{" "}
+                  No completed training logged for this {period}.{" "}
                   <Link href="/dashboard/athlete/activities#training">
                     Add an activity ↗
                   </Link>
                 </p>
               )}
               <div className={s.detail} aria-live="polite">
-                <strong>{shortDate(selected.date)}</strong>
+                <strong>
+                  {shortDate(selected.date)}
+                  {period === "month" ? ` – ${shortDate(selected.end)}` : ""}
+                </strong>
                 {selected.entries.length ? (
                   <ul>
                     {selected.entries.map((e) => (
@@ -275,6 +329,7 @@ export default function Progress() {
                         <span>
                           {e.title}
                           <small>
+                            {period === "month" && `${shortDate(e.date)} · `}
                             {e.training_kind} ·{" "}
                             {e.status === "verified"
                               ? "Coach-verified"
@@ -294,7 +349,9 @@ export default function Progress() {
                 ) : (
                   <p>
                     {selected.date > today
-                      ? "This day is still ahead."
+                      ? period === "week"
+                        ? "This day is still ahead."
+                        : "This week is still ahead."
                       : "No completed activity logged."}
                   </p>
                 )}

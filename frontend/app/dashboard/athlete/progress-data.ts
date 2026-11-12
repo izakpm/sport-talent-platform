@@ -65,6 +65,7 @@ export function weekDays(rows: Training[], start: string, now: number) {
       entries = valid.filter((r) => r.date === date);
     return {
       date,
+      end: date,
       entries,
       minutes: entries.reduce((sum, r) => sum + Number(r.duration_minutes), 0),
       groups: categories.map((kind) =>
@@ -72,6 +73,35 @@ export function weekDays(rows: Training[], start: string, now: number) {
       ),
     };
   });
+}
+export function monthStart(today: string, offset: number) {
+  const [year, month] = today.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1 + offset, 1, 12))
+    .toISOString()
+    .slice(0, 10);
+}
+// Calendar weeks clipped to the month: each activity belongs to exactly one bar.
+export function monthWeeks(rows: Training[], start: string, now: number) {
+  const end = shiftDay(monthStart(start, 1), -1);
+  const valid = completed(rows, now);
+  const buckets: ReturnType<typeof weekDays> = [];
+  let date = start;
+  while (date <= end) {
+    const last = shiftDay(monday(date), 6);
+    const stop = last < end ? last : end;
+    const entries = valid.filter((r) => r.date >= date && r.date <= stop);
+    buckets.push({
+      date,
+      end: stop,
+      entries,
+      minutes: entries.reduce((sum, r) => sum + Number(r.duration_minutes), 0),
+      groups: categories.map((kind) =>
+        entries.filter((r) => category(r.training_kind) === kind),
+      ),
+    });
+    date = shiftDay(stop, 1);
+  }
+  return buckets;
 }
 export function metricGroups(rows: Result[], today: string) {
   const groups = new Map<string, Result[]>();

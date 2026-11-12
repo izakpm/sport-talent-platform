@@ -330,3 +330,23 @@
     margin: 24px 0;
   }
 }
+.periodToggle {
+  display: flex;
+  gap: 6px;
+  margin-top: 20px;
+}
+.periodToggle button {
+  font: inherit;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid #d7e1e7;
+  border-radius: 7px;
+  background: white;
+  cursor: pointer;
+}
+.periodToggle button[aria-pressed="true"] {
+  background: #0b1f2e;
+  border-color: #0b1f2e;
+  color: #ffca05;
+  font-weight: 700;
+}

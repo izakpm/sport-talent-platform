@@ -87,3 +87,34 @@ it("keeps the latest twelve measurements without merging equal-date results", ()
   expect(g.values).toHaveLength(12);
   expect(g.values[0].date).toBe("2026-10-03");
 });
+import { monthStart, monthWeeks } from "./progress-data";
+it("clips monthly week totals at both month boundaries without duplicates", () => {
+  const rows = [
+    "2026-10-31",
+    "2026-11-01",
+    "2026-11-02",
+    "2026-11-30",
+    "2026-12-01",
+  ].map((date, i) => ({ ...a, id: String(i), date }));
+  const buckets = monthWeeks(
+    rows,
+    "2026-11-01",
+    Date.parse("2026-12-02T12:00:00Z"),
+  );
+  expect(buckets).toHaveLength(6);
+  expect(buckets[0].date).toBe("2026-11-01");
+  expect(buckets[0].end).toBe("2026-11-01");
+  expect(buckets[5].end).toBe("2026-11-30");
+  expect(buckets.flatMap((b) => b.entries).map((r) => r.date)).toEqual([
+    "2026-11-01",
+    "2026-11-02",
+    "2026-11-30",
+  ]);
+  expect(buckets.reduce((n, b) => n + b.minutes, 0)).toBe(180);
+});
+it("handles leap February and month/year navigation", () => {
+  expect(monthStart("2026-01-31", -1)).toBe("2025-12-01");
+  expect(monthStart("2026-12-31", 1)).toBe("2027-01-01");
+  const buckets = monthWeeks([], "2024-02-01", now);
+  expect(buckets.at(-1)!.end).toBe("2024-02-29");
+});

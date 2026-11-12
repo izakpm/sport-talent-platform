@@ -92,3 +92,67 @@ it("keeps training available if performance fails and supports retry", async () 
   fireEvent.click(screen.getByRole("button", { name: "Retry progress" }));
   await waitFor(() => expect(request).toHaveBeenCalledTimes(4));
 });
+it("switches monthly totals and navigation while retaining the selected measure", async () => {
+  request.mockImplementation(
+    async (path) =>
+      ({
+        ok: true,
+        json: async () =>
+          path === "/activities"
+            ? [
+                {
+                  id: "a",
+                  date: "2026-11-02",
+                  time: "16:00",
+                  duration_minutes: 60,
+                  title: "Earlier training",
+                  training_kind: "Practice",
+                  status: "verified",
+                },
+                {
+                  id: "b",
+                  date: "2026-11-09",
+                  time: "16:00",
+                  duration_minutes: 30,
+                  title: "Recent training",
+                  training_kind: "Practice",
+                  status: "self_reported",
+                },
+              ]
+            : { entries: [] },
+      }) as Response,
+  );
+  render(<Progress />);
+  await screen.findByText("Start with your first benchmark.");
+  fireEvent.click(
+    screen.getByRole("button", { name: "Sessions", exact: true }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Monthly", exact: true }));
+  expect(screen.getByText("November 2026")).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: "Your training month" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      new Intl.NumberFormat("en-ZA", { maximumFractionDigits: 1 }).format(1.5),
+    ),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Sessions", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  fireEvent.click(
+    screen.getByRole("button", { name: /02 Nov – 08 Nov: 1 sessions/ }),
+  );
+  expect(screen.getByText("Earlier training")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Previous month" }));
+  expect(screen.getByText("October 2026")).toBeInTheDocument();
+  expect(
+    screen.getByText(/No completed training logged for this month/),
+  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "This month" }));
+  expect(screen.getByRole("button", { name: "Next month" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Weekly" }));
+  expect(
+    screen.getByRole("heading", { name: "Your training week" }),
+  ).toBeInTheDocument();
+});
