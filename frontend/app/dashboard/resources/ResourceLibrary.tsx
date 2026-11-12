@@ -14,8 +14,10 @@ import s from "./resources.module.css";
 import w from "../coaches/workspace.module.css";
 export default function ResourceLibrary({
   admin = false,
+  basePath = "/dashboard/athlete/resources",
 }: {
   admin?: boolean;
+  basePath?: string;
 }) {
   const [search, setSearch] = useState(""),
     [topic, setTopic] = useState(""),
@@ -121,10 +123,7 @@ export default function ResourceLibrary({
               {featured.author} · {durationLabel(featured)}
             </p>
             {featured.format !== "video" && (
-              <Link
-                className={w.primary}
-                href={`/dashboard/athlete/resources/${featured.id}`}
-              >
+              <Link className={w.primary} href={`${basePath}/${featured.id}`}>
                 {actionLabel(featured)} ↗
               </Link>
             )}
@@ -214,7 +213,12 @@ export default function ResourceLibrary({
             {data.items.length ? (
               <div className={s.grid}>
                 {data.items.map((r) => (
-                  <ResourceCard key={r.id} resource={r} admin={admin} />
+                  <ResourceCard
+                    key={r.id}
+                    resource={r}
+                    admin={admin}
+                    basePath={basePath}
+                  />
                 ))}
               </div>
             ) : (

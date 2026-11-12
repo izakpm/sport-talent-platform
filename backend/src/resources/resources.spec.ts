@@ -105,6 +105,17 @@ describe('resource permissions and publishing', () => {
       ForbiddenException,
     );
   });
+  it('lets parents read published resources without granting publishing permission', async () => {
+    db.query.mockResolvedValue([
+      { role: 'GUARDIAN', publisher: false, status: 'ACTIVE' },
+    ]);
+    await expect(service.access('parent')).resolves.toMatchObject({
+      role: 'GUARDIAN',
+    });
+    await expect(service.access('parent', true)).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
+  });
   it('denies suspended publishers', async () => {
     db.query.mockResolvedValue([
       { role: 'COACH', publisher: true, status: 'SUSPENDED' },

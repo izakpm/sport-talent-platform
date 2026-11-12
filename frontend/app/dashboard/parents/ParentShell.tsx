@@ -75,10 +75,7 @@ export default function ParentShell({
       clearInterval(timer);
     };
   }, [path, inside, router]);
-  const items =
-    child?.mode === "managed"
-      ? getDashboardRoleConfig("ATHLETE").navGroups[0].items
-      : [];
+  const items = getDashboardRoleConfig("GUARDIAN").navGroups[0].items;
   return (
     <div className={s.shell}>
       <a href="#coach-content" className={s.skip}>
@@ -94,14 +91,10 @@ export default function ParentShell({
           />
         </Link>
         <p className={s.label}>PARENT WORKSPACE</p>
-        <nav className={s.nav} aria-label="Parent navigation">
-          <Link
-            href="/dashboard/parents"
-            aria-current={!inside ? "page" : undefined}
-          >
-            <span>◇</span>
-            <span>My children</span>
-          </Link>
+        <nav
+          className={`${s.nav} ${p.parentNav}`}
+          aria-label="Parent navigation"
+        >
           {items.map((item) => (
             <Link
               key={item.href}
@@ -145,7 +138,9 @@ export default function ParentShell({
                   : "Read-only access approved by this athlete"}
               </span>
             </div>
-            <Link href="/dashboard/parents">Switch child ↗</Link>
+            <Link href="/dashboard/parents/profile">
+              Back to family profiles ↗
+            </Link>
           </div>
         )}
         {error ? (

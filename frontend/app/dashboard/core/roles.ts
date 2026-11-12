@@ -32,7 +32,17 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
     navGroups: [
       {
         label: "Family workspace",
-        items: [{ name: "My children", href: "/dashboard/parents" }],
+        items: [
+          { name: "Dashboard", href: "/dashboard/parents" },
+          { name: "Profile", href: "/dashboard/parents/profile" },
+          { name: "Activities", href: "/dashboard/parents/activities" },
+          { name: "Matches", href: "/dashboard/parents/matches" },
+          { name: "Calendar", href: "/dashboard/parents/calendar" },
+          { name: "Team Feed", href: "/dashboard/parents/feed" },
+          { name: "Connections", href: "/dashboard/parents/connections" },
+          { name: "Resources", href: "/dashboard/parents/resources" },
+          { name: "My children", href: "/dashboard/parents/children" },
+        ],
       },
     ],
   },

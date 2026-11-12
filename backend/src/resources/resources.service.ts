@@ -41,12 +41,14 @@ export class ResourcesService {
     if (
       !user ||
       user.status === 'SUSPENDED' ||
-      (admin ? !user.publisher : user.role !== 'ATHLETE' && !user.publisher)
+      (admin
+        ? !user.publisher
+        : !['ATHLETE', 'GUARDIAN'].includes(user.role) && !user.publisher)
     )
       throw new ForbiddenException(
         admin
           ? 'Resource publishing access is required.'
-          : 'An athlete account is required.',
+          : 'An athlete or parent account is required.',
       );
     return user;
   }

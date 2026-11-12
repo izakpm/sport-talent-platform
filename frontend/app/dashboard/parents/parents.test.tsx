@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import Parents from "./page";
+import Parents from "./ChildrenManager";
 import GuardianRequests from "./GuardianRequests";
 import { fetchWithAuth } from "../../lib/api";
 import { childContext, selectChild } from "../../lib/guardian-context";
@@ -67,9 +67,7 @@ it("creates a child without an email and with guardian confirmation", async () =
     target: { value: "2016-03-12" },
   });
   fireEvent.click(screen.getByLabelText(/I am this child/));
-  fireEvent.click(
-    screen.getByRole("button", { name: "Add child", exact: true }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Add child" }));
   await waitFor(() =>
     expect(api).toHaveBeenCalledWith(
       "/guardian/children",

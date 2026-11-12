@@ -6,7 +6,9 @@ import { resources, Resource, ResourceList } from "./api";
 import ResourceViewer from "./ResourceViewer";
 import ResourceCard from "./ResourceCard";
 import s from "./resources.module.css";
-export default function ResourceDetail() {
+export default function ResourceDetail({
+  basePath = "/dashboard/athlete/resources",
+}: { basePath?: string } = {}) {
   const { id } = useParams<{ id: string }>();
   const [item, setItem] = useState<Resource | null>(null),
     [related, setRelated] = useState<Resource[]>([]),
@@ -35,7 +37,7 @@ export default function ResourceDetail() {
   }, [id, retry]);
   return (
     <div className={s.page}>
-      <Link href="/dashboard/athlete/resources" className={s.back}>
+      <Link href={basePath} className={s.back}>
         ← Back to resources
       </Link>
       {error ? (
@@ -52,7 +54,7 @@ export default function ResourceDetail() {
           <h2>Keep exploring</h2>
           <div className={s.grid}>
             {related.map((r) => (
-              <ResourceCard key={r.id} resource={r} />
+              <ResourceCard key={r.id} resource={r} basePath={basePath} />
             ))}
           </div>
         </section>

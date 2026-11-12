@@ -9,6 +9,28 @@ const req = (method = 'GET', path = '/athlete-profile') => ({
   headers: { 'x-athlete-id': child },
 });
 describe('guardian authorization boundaries', () => {
+  it('allows parent library reads without child context but denies publishing', async () => {
+    for (const path of ['/resources', '/resources/' + child]) {
+      expect(
+        (
+          await guardianContext(
+            {} as any,
+            { headers: {}, method: 'GET', path },
+            payload,
+          )
+        ).userId,
+      ).toBe(parent);
+    }
+    for (const [method, path] of [
+      ['GET', '/resources/admin'],
+      ['POST', '/resources'],
+      ['PATCH', '/resources/admin/' + child],
+    ]) {
+      await expect(
+        guardianContext({} as any, { headers: {}, method, path }, payload),
+      ).rejects.toThrow();
+    }
+  });
   it('keeps ordinary sessions unchanged', async () => {
     expect(
       await guardianContext(

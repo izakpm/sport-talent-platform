@@ -10,7 +10,8 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
       !path.startsWith('/guardian/') &&
       path !== '/auth/me' &&
       path !== `/users/${payload.sub}` &&
-      path !== '/resources/capabilities'
+      path !== '/resources/capabilities' &&
+      !(req.method === 'GET' && /^\/resources(?:\/[0-9a-f-]{36})?$/.test(path))
     )
       throw new ForbiddenException(
         'Select a linked child before opening athlete features.',

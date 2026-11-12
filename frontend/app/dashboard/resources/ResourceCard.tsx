@@ -37,13 +37,15 @@ export function Artwork({
 export default function ResourceCard({
   resource: r,
   admin = false,
+  basePath = "/dashboard/athlete/resources",
 }: {
   resource: Resource;
   admin?: boolean;
+  basePath?: string;
 }) {
   const href = admin
     ? `/dashboard/resources-admin/${r.id}`
-    : `/dashboard/athlete/resources/${r.id}`;
+    : `${basePath}/${r.id}`;
   return (
     <article className={s.card}>
       <div className={s.postAuthor}>
