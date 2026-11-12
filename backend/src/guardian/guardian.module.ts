@@ -11,11 +11,53 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { TeamInvitationsService } from './team-invitations.service';
 import { GuardianService } from './guardian.service';
 @Controller('guardian')
 @UseGuards(JwtAuthGuard)
 export class GuardianController {
-  constructor(private readonly service: GuardianService) {}
+  constructor(
+    private readonly service: GuardianService,
+    private readonly invites: TeamInvitationsService,
+  ) {}
+  @Post('team-invites/teams/:team') createInvite(
+    @Req() r: any,
+    @Param('team', ParseUUIDPipe) team: string,
+  ) {
+    return this.invites.create(r.user.userId, team);
+  }
+  @Get('team-invites/teams/:team')
+  @Header('Cache-Control', 'private, no-store')
+  teamInvites(@Req() r: any, @Param('team', ParseUUIDPipe) team: string) {
+    return this.invites.coachList(r.user.userId, team);
+  }
+  @Post('team-invites/teams/:team/:id') decideInvite(
+    @Req() r: any,
+    @Param('team', ParseUUIDPipe) team: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
+  ) {
+    return this.invites.decide(r.user.userId, team, id, body);
+  }
+  @Get('team-invites')
+  @Header('Cache-Control', 'private, no-store')
+  parentInvites(@Req() r: any) {
+    return this.invites.parentList(r.user.userId);
+  }
+  @Post('team-invites/preview')
+  @Header('Cache-Control', 'private, no-store')
+  previewInvite(@Req() r: any, @Body() body: any) {
+    return this.invites.preview(r.user.userId, body?.token);
+  }
+  @Post('team-invites/accept') acceptInvite(@Req() r: any, @Body() body: any) {
+    return this.invites.accept(r.user.userId, body);
+  }
+  @Post('team-invites/:id/withdraw') withdrawInvite(
+    @Req() r: any,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.invites.withdraw(r.user.userId, id);
+  }
   @Get('children') @Header('Cache-Control', 'private, no-store') children(
     @Req() r: any,
   ) {
@@ -52,5 +94,8 @@ export class GuardianController {
     return this.service.code(r.user.userId, id);
   }
 }
-@Module({ controllers: [GuardianController], providers: [GuardianService] })
+@Module({
+  controllers: [GuardianController],
+  providers: [GuardianService, TeamInvitationsService],
+})
 export class GuardianModule {}

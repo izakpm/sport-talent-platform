@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import AuthModal from "./AuthModal";
 import styles from "./auth.module.css";
 import Link from "next/link";
+import { teamInviteReturn } from "./lib/team-invite-return";
 import { checkInReturn } from "./lib/check-in-return";
 import { API_URL } from "./lib/api";
 
@@ -58,7 +59,7 @@ export default function LoginPage() {
             role: user.role,
           }),
         );
-        router.replace(checkInReturn() || "/dashboard");
+        router.replace(teamInviteReturn() || checkInReturn() || "/dashboard");
       } catch (err) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -117,7 +118,7 @@ export default function LoginPage() {
       // ✅ Go to dashboard (send SCHOOL users to the schools dashboard)
       const destination =
         data.user?.role === "SCHOOL" ? "/dashboard/schools" : "/dashboard";
-      router.push(checkInReturn() || destination);
+      router.push(teamInviteReturn() || checkInReturn() || destination);
     } catch (err: any) {
       console.error("Login request error", err);
       setError("We could not connect. Please try again.");

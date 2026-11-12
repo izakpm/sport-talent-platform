@@ -204,3 +204,13 @@ Apply `docs/sql/coach-session-updates.sql` before deployment. This expands the e
 Session updates select a team and month, then load that coach's scheduled sessions for the month. Cancelled sessions are excluded. The API checks coach ownership, selected-team/session consistency and cancellation under a row lock, then stores the event link and a snapshot of its title, date, time, timezone and venue in the message. Posting does not modify or cancel a session. Existing schedule and verification controls remain responsible for those actions; cancellation notices are still generated automatically and cannot be manually removed. Athletes see Session updates as a filterable category and in recent highlights.
 
 After building the API, `RUN_FEED_CHECK=1 node backend/test/coach-feed-db-check.cjs` verifies posting, linked athlete delivery, ownership, snapshot context and protected cancellations with rollback-only fixtures. `APPLY_FEED_MIGRATION=1` intentionally commits the category migration first.
+
+### Parent-approved team invitations
+
+Apply `docs/sql/team-invitations.sql` before deploying the API. The additive table has RLS enabled and denies direct browser access. No WhatsApp API credentials are needed: coaches choose a recipient and send the generated message in WhatsApp themselves.
+
+Coach team rosters generate single-use, seven-day invitation links. Only token hashes are stored. `/join-team` carries the token in the URL fragment, removes it after loading and retains it in session storage through login/registration. An authenticated parent previews only the coach/team identity and explicitly accepts for an accepted managed child; read-only athlete links cannot enrol players. Parent Connections lists invitation status and supports withdrawing a pending request.
+
+Acceptance creates no membership. The owning coach must confirm before a roster account link is inserted, either for a new player or an existing active, unlinked entry without another athlete's attendance history. Transactions lock invitations and relevant guardian/player records, recheck current authority, and reject reused, expired, revoked or withdrawn invitations. Existing manual account-linking workflows remain available; this change does not certify coach identities or introduce public athlete search.
+
+Validation: backend guardian tests, frontend JoinTeam/TeamInvitations/TeamRoster/parent tests, and both production builds. The test accounts were also exercised against Supabase for parent acceptance, no access before confirmation, coach approval, existing/new roster entries, withdrawal, expiry, revocation, read-only restrictions and concurrent acceptance.

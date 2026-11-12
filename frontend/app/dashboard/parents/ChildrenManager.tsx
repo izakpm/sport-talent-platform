@@ -5,8 +5,11 @@ import { type GuardianChild } from "../../lib/guardian-context";
 import { Modal } from "../coaches/CoachWorkspace";
 import s from "../coaches/workspace.module.css";
 import p from "./parents.module.css";
+import { teamInviteReturn } from "../../lib/team-invite-return";
 import { family } from "./family-api";
 export default function Parents() {
+  const [pendingInvite, setPendingInvite] = useState<string | null>(null);
+  useEffect(() => setPendingInvite(teamInviteReturn()), []);
   const [rows, setRows] = useState<GuardianChild[]>([]),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
@@ -118,6 +121,12 @@ export default function Parents() {
           </button>
         </div>
       </header>
+      {pendingInvite && (
+        <p className={s.notice}>
+          Your team invitation is saved. After adding your child,{" "}
+          <Link href={pendingInvite}>continue the invitation →</Link>.
+        </p>
+      )}
       <section className={p.hero}>
         <span className={p.eyebrow}>Behind every young athlete</span>
         <h2>Help them build their sporting story.</h2>

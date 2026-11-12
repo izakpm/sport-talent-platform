@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import TeamRoster from "./TeamRoster";
 import { fetchWithAuth } from "../../lib/api";
+jest.mock("../parents/TeamInvitations", () => () => null);
 jest.mock("../../lib/api", () => ({ fetchWithAuth: jest.fn() }));
 const request = jest.mocked(fetchWithAuth);
 const team = { id: "team", name: "First XV", age_group: "U18" };

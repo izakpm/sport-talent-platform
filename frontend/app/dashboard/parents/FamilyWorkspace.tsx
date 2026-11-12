@@ -12,6 +12,7 @@ import {
   PersonalEditor,
   CancelPersonal,
 } from "../athlete/calendar/PersonalEditor";
+import TeamInvitations from "./TeamInvitations";
 import { family } from "./family-api";
 import { selectChild, type GuardianChild } from "../../lib/guardian-context";
 import {
@@ -885,6 +886,9 @@ export function FamilyContent({ section }: { section: Section }) {
                   ),
                 )}
               </>
+            )}
+            {section === "connections" && (
+              <TeamInvitations childId={filter || undefined} />
             )}
             {section === "connections" && (
               <div className={p.grid}>

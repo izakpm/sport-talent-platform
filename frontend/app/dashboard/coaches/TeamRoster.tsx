@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Modal } from "./CoachWorkspace";
 import { planningRequest, type Team } from "./planning";
 import styles from "./workspace.module.css";
+import TeamInvitations from "../parents/TeamInvitations";
 import PlayerAccount from "../team-hub/PlayerAccount";
 import roster from "./roster.module.css";
 
@@ -137,6 +138,12 @@ export default function TeamRoster({ teamId }: { teamId: string }) {
                 </button>
               </div>
             </header>
+            <TeamInvitations
+              teamId={teamId}
+              teamName={team.name}
+              players={players}
+              onConfirmed={() => setRetry((v) => v + 1)}
+            />
             {notice && (
               <div role="status" className={styles.notice}>
                 {notice}
