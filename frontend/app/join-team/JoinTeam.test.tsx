@@ -11,10 +11,58 @@ beforeEach(() => {
   sessionStorage.clear();
   window.history.replaceState({}, "", "/join-team#invite=" + token);
 });
+it("lets an under-18 athlete accept only for their own account and explains parent approval", async () => {
+  localStorage.setItem("token", "test");
+  localStorage.setItem("user", JSON.stringify({ role: "ATHLETE" }));
+  api.mockImplementation(async (path: string) => ({
+    ok: true,
+    json: async () =>
+      path.endsWith("/preview")
+        ? {
+            role: "ATHLETE",
+            date_of_birth: "2010-01-01",
+            parent_required: true,
+            team_name: "U18",
+            coach_name: "Leonard",
+            expires_at: "2026-12-01",
+          }
+        : { status: "awaiting_parent" },
+  }));
+  render(<JoinTeam />);
+  await screen.findByRole("button", { name: "Accept invitation" });
+  expect(screen.queryByLabelText("Choose your child")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("checkbox"));
+  fireEvent.click(screen.getByRole("button", { name: "Accept invitation" }));
+  await screen.findByText("Request sent. Waiting for parent approval.");
+  expect(api).toHaveBeenCalledWith(
+    "/guardian/team-invites/athlete/accept",
+    expect.objectContaining({ body: JSON.stringify({ token, consent: true }) }),
+  );
+  expect(
+    screen.getByRole("link", { name: "View invitations" }),
+  ).toHaveAttribute("href", "/dashboard/athlete/connections");
+});
+it("asks for a missing date of birth before an athlete accepts", async () => {
+  localStorage.setItem("token", "test");
+  localStorage.setItem("user", JSON.stringify({ role: "ATHLETE" }));
+  api.mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      role: "ATHLETE",
+      date_of_birth: null,
+      team_name: "Club XV",
+      coach_name: "Leonard",
+      expires_at: "2026-12-01",
+    }),
+  });
+  render(<JoinTeam />);
+  expect(await screen.findByLabelText(/Date of birth/)).toBeRequired();
+  expect(api.mock.calls.some(([path]) => path.endsWith("/accept"))).toBe(false);
+});
 it("preserves an invite across parent registration and login without exposing it in the URL", async () => {
   render(<JoinTeam />);
   expect(
-    await screen.findByRole("link", { name: "Log in as a parent" }),
+    await screen.findByRole("link", { name: "Log in to accept" }),
   ).toHaveAttribute("href", "/login");
   expect(pendingTeamInvite()).toBe(token);
   expect(window.location.hash).toBe("");

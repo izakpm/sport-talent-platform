@@ -87,7 +87,7 @@ it('cannot confirm before parent acceptance or after expiry', async () => {
   const open = setup({ status: 'open' });
   await expect(
     open.service.decide('coach', 'team', 'invite', { status: 'confirmed' }),
-  ).rejects.toThrow('parent must accept');
+  ).rejects.toThrow('required parent approval');
   const expired = setup({ expires_at: new Date(0) });
   await expect(
     expired.service.decide('coach', 'team', 'invite', { status: 'confirmed' }),

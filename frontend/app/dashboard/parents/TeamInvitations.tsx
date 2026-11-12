@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { family } from "./family-api";
 import { teamInviteReturn } from "../../lib/team-invite-return";
+import { childContext } from "../../lib/guardian-context";
 import { Modal } from "../coaches/CoachWorkspace";
 import type { Player } from "../coaches/TeamRoster";
 import s from "../coaches/workspace.module.css";
@@ -15,11 +16,16 @@ type Invitation = {
   parent_name: string;
   child_name: string;
   status: string;
+  acceptance_mode?: string;
+  parent_required?: boolean;
+  parent_approved_at?: string;
   expires_at: string;
   created_at: string;
 };
 const labels: Record<string, string> = {
-  open: "Waiting for parent",
+  open: "Waiting for acceptance",
+  awaiting_parent: "Awaiting parent approval",
+  approval_invalid: "Parent approval no longer valid",
   pending: "Awaiting coach confirmation",
   confirmed: "Confirmed",
   declined: "Declined",
@@ -33,13 +39,16 @@ export default function TeamInvitations({
   players = [],
   onConfirmed,
   childId,
+  athlete = false,
 }: {
   teamId?: string;
   childId?: string;
+  athlete?: boolean;
   teamName?: string;
   players?: Player[];
   onConfirmed?: () => void;
 }) {
+  const delegated = athlete && !!childContext();
   const [items, setItems] = useState<Invitation[]>([]),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(true),
@@ -50,10 +59,16 @@ export default function TeamInvitations({
       expires_at: string;
     } | null>(null),
     [review, setReview] = useState<Invitation | null>(null);
+  const [parentReview, setParentReview] = useState<Invitation | null>(null);
   const [pending, setPending] = useState<string | null>(null),
     [retry, setRetry] = useState(0);
-  const path = teamId ? `/team-invites/teams/${teamId}` : "/team-invites";
+  const path = teamId
+    ? `/team-invites/teams/${teamId}`
+    : athlete
+      ? "/team-invites/athlete"
+      : "/team-invites";
   useEffect(() => {
+    if (delegated) return;
     let live = true;
     setLoading(true);
     if (!teamId) setPending(teamInviteReturn());
@@ -77,7 +92,7 @@ export default function TeamInvitations({
       live = false;
       clearInterval(timer);
     };
-  }, [path, retry, teamId]);
+  }, [path, retry, teamId, delegated]);
   async function create() {
     setBusy(true);
     setError("");
@@ -94,15 +109,32 @@ export default function TeamInvitations({
       setBusy(false);
     }
   }
-  async function decide(i: Invitation, status: string, player_id?: string) {
+  async function decide(
+    i: Invitation,
+    status: string,
+    player_id?: string,
+    guardian_confirmed?: boolean,
+  ) {
     setBusy(true);
     setError("");
     try {
       await family(
-        teamId ? `${path}/${i.id}` : `${path}/${i.id}/withdraw`,
-        teamId ? { status, player_id } : {},
+        teamId
+          ? `${path}/${i.id}`
+          : status === "approved" || status === "parent_declined"
+            ? `/team-invites/${i.id}/parent-approval`
+            : `${path}/${i.id}/withdraw`,
+        teamId
+          ? { status, player_id }
+          : status === "approved" || status === "parent_declined"
+            ? {
+                status: status === "approved" ? "approved" : "declined",
+                guardian_confirmed,
+              }
+            : {},
       );
       setReview(null);
+      setParentReview(null);
       setNotice(
         status === "confirmed"
           ? `${i.child_name} is now linked to ${i.team_name}.`
@@ -119,13 +151,18 @@ export default function TeamInvitations({
   const visibleItems = childId
     ? items.filter((i) => i.child_id === childId)
     : items;
+  if (delegated) return null;
   return (
     <section className={p.card} aria-label="Team invitations">
       <div className={p.sectionHeading}>
         <h2>
           Team invitations
-          {visibleItems.some((i) => i.status === "pending")
-            ? ` (${visibleItems.filter((i) => i.status === "pending").length} pending)`
+          {visibleItems.some((i) =>
+            ["pending", "awaiting_parent", "approval_invalid"].includes(
+              i.status,
+            ),
+          )
+            ? ` (${visibleItems.filter((i) => ["pending", "awaiting_parent", "approval_invalid"].includes(i.status)).length} pending)`
             : ""}
         </h2>
         <div className={p.actions}>
@@ -145,8 +182,10 @@ export default function TeamInvitations({
       </div>
       <p>
         {teamId
-          ? "Share a private invitation with a parent. They choose their child, then you confirm the player before team access starts."
-          : "Track invitations you accepted for your children. They join the team only when the coach confirms."}
+          ? "Share an invitation with an athlete or parent. Under-18 athletes need parent approval before you can confirm them."
+          : athlete
+            ? "Accept a team invitation to join. If you are under 18, a linked parent approves before your coach confirms."
+            : "Review your children’s team invitations. Under-18 athletes need your approval before coach confirmation."}
       </p>
       {pending && (
         <p>
@@ -156,7 +195,7 @@ export default function TeamInvitations({
         </p>
       )}
       {loading && <p role="status">Loading invitations…</p>}
-      {error && !review && (
+      {error && !review && !parentReview && (
         <p role="alert" className={s.formError}>
           {error}
         </p>
@@ -179,10 +218,37 @@ export default function TeamInvitations({
               : `Coach: ${i.coach_name}`}{" "}
             · Created {new Date(i.created_at).toLocaleDateString("en-ZA")}
           </p>
-          {["open", "pending"].includes(i.status) && (
+          {["open", "pending", "awaiting_parent", "approval_invalid"].includes(
+            i.status,
+          ) && (
             <p>Expires {new Date(i.expires_at).toLocaleDateString("en-ZA")}</p>
           )}
+          {i.status === "approval_invalid" && (
+            <p>
+              The parent link changed after approval. Withdraw this request and
+              ask the coach for a new invitation.
+            </p>
+          )}
           <div className={p.actions}>
+            {!teamId && !athlete && i.status === "awaiting_parent" && (
+              <button
+                className={s.primary}
+                disabled={busy}
+                onClick={() => {
+                  setError("");
+                  setParentReview(i);
+                }}
+              >
+                Review team invitation
+              </button>
+            )}
+            {athlete && i.status === "awaiting_parent" && (
+              <p>
+                Ask your linked parent to approve in Connections. If no parent
+                is linked, ask them to request a link from My children, then
+                approve it below under Parents & guardians.
+              </p>
+            )}
             {teamId && i.status === "pending" && (
               <button
                 className={s.primary}
@@ -195,36 +261,44 @@ export default function TeamInvitations({
                 Review player
               </button>
             )}
-            {teamId && ["open", "pending"].includes(i.status) && (
-              <button
-                className={s.secondary}
-                disabled={busy}
-                onClick={() => decide(i, "revoked")}
-              >
-                Revoke invitation
-              </button>
-            )}
-            {!teamId && i.status === "pending" && (
-              <button
-                className={s.secondary}
-                disabled={busy}
-                onClick={() => decide(i, "withdrawn")}
-              >
-                Withdraw request
-              </button>
-            )}
+            {teamId &&
+              [
+                "open",
+                "pending",
+                "awaiting_parent",
+                "approval_invalid",
+              ].includes(i.status) && (
+                <button
+                  className={s.secondary}
+                  disabled={busy}
+                  onClick={() => decide(i, "revoked")}
+                >
+                  Revoke invitation
+                </button>
+              )}
+            {!teamId &&
+              (["pending", "approval_invalid"].includes(i.status) ||
+                (athlete && i.status === "awaiting_parent")) && (
+                <button
+                  className={s.secondary}
+                  disabled={busy}
+                  onClick={() => decide(i, "withdrawn")}
+                >
+                  Withdraw request
+                </button>
+              )}
           </div>
         </article>
       ))}
       {share && (
         <Modal
-          title="Invite a parent"
-          description="One invitation, one child. Valid for seven days."
+          title="Invite an athlete or parent"
+          description="One invitation, one athlete. Valid for seven days."
           close={() => setShare(null)}
         >
           <p>
-            Share this link privately with the parent of the player joining{" "}
-            {teamName}. A forwarded link can be accepted by another parent, so
+            Share this link privately with the athlete or their parent joining{" "}
+            {teamName}. A forwarded link can be accepted by someone else, so
             confirm their identity before approving.
           </p>
           <label>
@@ -236,7 +310,7 @@ export default function TeamInvitations({
               className={s.primary}
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://wa.me/?text=${encodeURIComponent(`You’re invited to join ${teamName} on PlayVerified. Please sign in as a parent and choose your child. I will confirm their place before team access starts. ${share.url}`)}`}
+              href={`https://wa.me/?text=${encodeURIComponent(`You’re invited to join ${teamName} on PlayVerified. Please sign in as an athlete, or as a parent for a child you manage. Under-18 athletes need parent approval before I confirm their place. ${share.url}`)}`}
             >
               Share via WhatsApp
             </a>
@@ -261,6 +335,57 @@ export default function TeamInvitations({
           {notice && <p role="status">{notice}</p>}
         </Modal>
       )}
+      {parentReview && (
+        <Modal
+          title="Approve team participation"
+          description={`${parentReview.child_name} · ${parentReview.team_name}`}
+          close={() => {
+            if (!busy) setParentReview(null);
+          }}
+        >
+          <p>
+            {parentReview.child_name} accepted an invitation from{" "}
+            {parentReview.coach_name}. Approval lets the coach confirm the
+            athlete onto the team roster, where they receive team schedules and
+            announcements, record attendance and request training verification.
+          </p>
+          <p>
+            Approve only if you recognise this coach and team. This does not
+            verify the coach’s identity or qualifications.
+          </p>
+          <form
+            className={s.form}
+            onSubmit={(e) => {
+              e.preventDefault();
+              void decide(parentReview, "approved", undefined, true);
+            }}
+          >
+            <label className={s.checkboxLabel}>
+              <input type="checkbox" required disabled={busy} /> I am this
+              athlete’s parent or legal guardian and approve their participation
+              in this team.
+            </label>
+            {error && (
+              <p role="alert" className={s.formError}>
+                {error}
+              </p>
+            )}
+            <div className={p.actions}>
+              <button className={s.primary} disabled={busy}>
+                Approve for coach review
+              </button>
+              <button
+                type="button"
+                className={s.secondary}
+                disabled={busy}
+                onClick={() => decide(parentReview, "parent_declined")}
+              >
+                Decline invitation
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
       {review && (
         <Modal
           title="Confirm this player"
@@ -270,9 +395,11 @@ export default function TeamInvitations({
           }}
         >
           <p>
-            {review.parent_name} accepted this invitation. Confirm that you
-            recognise the parent and child before granting access to your team’s
-            schedule and feed.
+            {review.acceptance_mode === "athlete"
+              ? review.parent_required
+                ? `The athlete accepted; ${review.parent_name} approved. Confirm you recognise the athlete and parent before linking.`
+                : "This adult athlete accepted the invitation. Confirm you recognise the athlete before linking."
+              : `${review.parent_name} accepted for this child. Confirm you recognise the parent and child before linking.`}
           </p>
           <form
             className={s.form}
@@ -299,12 +426,12 @@ export default function TeamInvitations({
             </label>
             <p>
               Select an existing unlinked roster entry if you already added this
-              child. Linked entries or another athlete’s history cannot be
+              athlete. Linked entries or another athlete’s history cannot be
               reassigned.
             </p>
             <label className={s.checkboxLabel}>
-              <input type="checkbox" required disabled={busy} /> I recognise
-              this parent and child and confirm this is the correct player.
+              <input type="checkbox" required disabled={busy} /> I recognise the
+              athlete and confirm this is the correct player.
             </label>
             {error && (
               <p role="alert" className={s.formError}>

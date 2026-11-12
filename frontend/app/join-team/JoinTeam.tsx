@@ -11,12 +11,17 @@ import {
 import s from "../dashboard/coaches/workspace.module.css";
 import h from "../dashboard/team-hub/hub.module.css";
 type Preview = {
+  role?: "ATHLETE" | "GUARDIAN";
+  date_of_birth?: string | null;
+  parent_required?: boolean;
   team_name: string;
   coach_name: string;
   age_group: string;
   expires_at: string;
 };
 export default function JoinTeam() {
+  const [role, setRole] = useState("");
+  const [resultStatus, setResultStatus] = useState("");
   const [token, setToken] = useState("");
   const [preview, setPreview] = useState<Preview | null>(null);
   const [children, setChildren] = useState<GuardianChild[]>([]);
@@ -36,7 +41,7 @@ export default function JoinTeam() {
     rememberTeamInvite(value);
     window.history.replaceState({}, "", window.location.pathname);
     if (!/^[A-Za-z0-9_-]{43}$/.test(value)) {
-      setError("Open the invitation link shared by your child's coach.");
+      setError("Open the invitation link shared by the coach.");
       setLoading(false);
       return;
     }
@@ -46,16 +51,19 @@ export default function JoinTeam() {
       return;
     }
     const user = JSON.parse(localStorage.getItem("user") || "null");
-    if (user?.role !== "GUARDIAN") {
+    if (!["GUARDIAN", "ATHLETE"].includes(user?.role)) {
       setWrongRole(true);
       setLoading(false);
       return;
     }
+    setRole(user.role);
     setError("");
     setLoading(true);
     Promise.all([
       family<Preview>("/team-invites/preview", { token: value }),
-      family<GuardianChild[]>("/children"),
+      user.role === "GUARDIAN"
+        ? family<GuardianChild[]>("/children")
+        : Promise.resolve([]),
     ])
       .then(([p, c]) => {
         if (active) {
@@ -81,11 +89,21 @@ export default function JoinTeam() {
     setBusy(true);
     setError("");
     try {
-      await family("/team-invites/accept", {
-        token,
-        child_id: f.get("child"),
-        consent: f.get("consent") === "on",
-      });
+      const result = await family<{ status: string }>(
+        role === "ATHLETE"
+          ? "/team-invites/athlete/accept"
+          : "/team-invites/accept",
+        {
+          token,
+          ...(role === "ATHLETE"
+            ? !preview?.date_of_birth
+              ? { date_of_birth: f.get("date_of_birth") }
+              : {}
+            : { child_id: f.get("child") }),
+          consent: f.get("consent") === "on",
+        },
+      );
+      setResultStatus(result.status);
       clearTeamInvite();
       setDone(true);
     } catch (e) {
@@ -102,43 +120,62 @@ export default function JoinTeam() {
           alt="PlayVerified"
           className={h.publicLogo}
         />
-        <h1>Join your child's team</h1>
+        <h1>
+          {role === "GUARDIAN"
+            ? "Join your child's team"
+            : "Your team invitation"}
+        </h1>
         {loading ? (
           <p role="status">Checking invitation…</p>
         ) : login ? (
           <>
             <p>
-              Sign in as a parent to choose your child. We’ll bring you back to
-              this invitation.
+              Sign in as an athlete to join for yourself, or as a parent to
+              choose a child you manage. We’ll bring you back to this
+              invitation.
             </p>
             <Link className={s.primary} href="/login">
-              Log in as a parent
+              Log in to accept
             </Link>
             <p>
               New here?{" "}
               <Link href="/register?role=GUARDIAN">
                 Create a parent account
+              </Link>{" "}
+              or{" "}
+              <Link href="/register?role=ATHLETE">
+                Create an athlete account
               </Link>
             </p>
           </>
         ) : wrongRole ? (
           <>
             <p>
-              This invitation must be accepted from a parent account. Your
-              current account cannot enrol a child.
+              Sign in with an athlete or parent account to accept this
+              invitation.
             </p>
             <Link href="/dashboard">Return to your dashboard to log out</Link>
           </>
         ) : done ? (
           <>
             <p className={s.notice} role="status">
-              Request sent. Waiting for the coach to confirm.
+              {resultStatus === "awaiting_parent"
+                ? "Request sent. Waiting for parent approval."
+                : "Request sent. Waiting for the coach to confirm."}
             </p>
             <p>
-              Your child will receive team access only after the coach confirms
-              the player.
+              {resultStatus === "awaiting_parent"
+                ? "Your linked parent must approve in their Connections page before the coach can confirm. If no parent is linked yet, ask your parent to request a link from My children, then approve that request in your Connections page."
+                : "Team access starts only after the coach confirms the player."}
             </p>
-            <Link className={s.primary} href="/dashboard/parents/connections">
+            <Link
+              className={s.primary}
+              href={
+                role === "ATHLETE"
+                  ? "/dashboard/athlete/connections"
+                  : "/dashboard/parents/connections"
+              }
+            >
               View invitations
             </Link>
           </>
@@ -153,17 +190,62 @@ export default function JoinTeam() {
               does not certify the coach's identity or qualifications.
             </p>
             <p>
-              Once confirmed, your child joins the roster and receives team
-              schedules and announcements. The coach can identify your child on
+              Once confirmed, the athlete joins the roster and receives team
+              schedules and announcements. The coach can identify the athlete on
               the roster, record attendance and review training verification
-              requests. Your name and your child's name are shared with the
-              coach when you accept.
+              requests. The athlete’s name is shared with the coach on
+              acceptance. Athletes under 18 need a linked parent’s approval
+              before coach confirmation.
             </p>
             <p>
               Expires {new Date(preview.expires_at).toLocaleDateString("en-ZA")}
-              . One invitation is for one child.
+              . One invitation is for one athlete.
             </p>
-            {children.length ? (
+            {role === "ATHLETE" ? (
+              <form className={s.form} onSubmit={accept}>
+                {preview.date_of_birth ? (
+                  <p>
+                    Date of birth: {preview.date_of_birth}.{" "}
+                    {preview.parent_required
+                      ? "Parent approval is required."
+                      : "You can request coach confirmation directly."}{" "}
+                    Contact support if this date needs correcting.
+                  </p>
+                ) : (
+                  <label>
+                    Date of birth
+                    <input
+                      name="date_of_birth"
+                      type="date"
+                      required
+                      min="1900-01-01"
+                      max={new Date().toLocaleDateString("en-CA", {
+                        timeZone: "Africa/Johannesburg",
+                      })}
+                      disabled={busy}
+                    />
+                    <small>
+                      We use this to determine whether parent approval is
+                      required. Once recorded here, it cannot be changed through
+                      invitations.
+                    </small>
+                  </label>
+                )}
+                <label className={s.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="consent"
+                    required
+                    disabled={busy}
+                  />{" "}
+                  I want to join this team and agree to the team access
+                  described above.
+                </label>
+                <button className={s.primary} disabled={busy}>
+                  {busy ? "Sending…" : "Accept invitation"}
+                </button>
+              </form>
+            ) : children.length ? (
               <form className={s.form} onSubmit={accept}>
                 <label>
                   Choose your child
@@ -216,7 +298,13 @@ export default function JoinTeam() {
         )}
         {!loading && !done && !login && !wrongRole && (
           <p>
-            <Link href="/dashboard/parents/connections">
+            <Link
+              href={
+                role === "ATHLETE"
+                  ? "/dashboard/athlete/connections"
+                  : "/dashboard/parents/connections"
+              }
+            >
               Back to Connections
             </Link>
           </p>

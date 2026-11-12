@@ -240,7 +240,7 @@ export default function Parents() {
           description={
             modal === "add"
               ? "For a child under 18 who does not have their own athlete account."
-              : "The athlete must approve this request in Connections. You will be able to view their sporting profile, calendar, matches and team feed."
+              : "The athlete must approve this request in Connections. You will be able to view their sporting profile, calendar, matches and team feed. For athletes under 18, you can also review team invitations as their parent or legal guardian."
           }
           close={() => !busy && setModal(null)}
         >

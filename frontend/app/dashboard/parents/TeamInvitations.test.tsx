@@ -17,8 +17,85 @@ beforeEach(() => {
   api.mockReset();
   sessionStorage.clear();
 });
+it("keeps coach confirmation unavailable while parent approval is pending", async () => {
+  api.mockResolvedValue({
+    ok: true,
+    json: async () => [
+      {
+        ...pending,
+        status: "awaiting_parent",
+        acceptance_mode: "athlete",
+        parent_required: true,
+      },
+    ],
+  });
+  render(<TeamInvitations teamId="team" />);
+  await screen.findByText(/Awaiting parent approval/);
+  expect(
+    screen.queryByRole("button", { name: "Review player" }),
+  ).not.toBeInTheDocument();
+});
+it("lets a parent explicitly approve an athlete request for coach review", async () => {
+  api.mockImplementation(async (_path: string, opts: any) => ({
+    ok: true,
+    json: async () =>
+      opts?.method
+        ? { status: "pending" }
+        : [
+            {
+              ...pending,
+              status: "awaiting_parent",
+              acceptance_mode: "athlete",
+              parent_required: true,
+            },
+          ],
+  }));
+  render(<TeamInvitations />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Review team invitation" }),
+  );
+  const modal = screen.getByRole("dialog");
+  expect(within(modal).getByRole("checkbox")).toBeRequired();
+  fireEvent.click(within(modal).getByRole("checkbox"));
+  fireEvent.click(
+    within(modal).getByRole("button", { name: "Approve for coach review" }),
+  );
+  await screen.findByText("Invitation updated.");
+  expect(api).toHaveBeenCalledWith(
+    "/guardian/team-invites/invite/parent-approval",
+    expect.objectContaining({
+      body: JSON.stringify({ status: "approved", guardian_confirmed: true }),
+    }),
+  );
+});
+it("gives athletes withdrawal rather than parent or coach approval controls", async () => {
+  api.mockResolvedValue({
+    ok: true,
+    json: async () => [
+      { ...pending, status: "awaiting_parent", acceptance_mode: "athlete" },
+    ],
+  });
+  render(<TeamInvitations athlete />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Withdraw request" }),
+  );
+  await screen.findByText("Invitation updated.");
+  expect(
+    screen.queryByRole("button", { name: "Review team invitation" }),
+  ).not.toBeInTheDocument();
+  expect(api).toHaveBeenCalledWith(
+    "/guardian/team-invites/athlete/invite/withdraw",
+    expect.objectContaining({ method: "POST" }),
+  );
+});
 it("filters parent invitations to the selected child", async () => {
-  api.mockResolvedValue({ok:true,json:async()=>[{...pending,child_id:"one"},{...pending,id:"other",child_id:"two",child_name:"Other Child"}]});
+  api.mockResolvedValue({
+    ok: true,
+    json: async () => [
+      { ...pending, child_id: "one" },
+      { ...pending, id: "other", child_id: "two", child_name: "Other Child" },
+    ],
+  });
   render(<TeamInvitations childId="one" />);
   await screen.findByText("Junior Test");
   expect(screen.queryByText("Other Child")).not.toBeInTheDocument();

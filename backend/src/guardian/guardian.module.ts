@@ -61,6 +61,30 @@ export class GuardianController {
   @Post('team-invites/accept') acceptInvite(@Req() r: any, @Body() body: any) {
     return this.invites.accept(r.user.userId, body);
   }
+  @Get('team-invites/athlete')
+  @Header('Cache-Control', 'private, no-store')
+  athleteInvites(@Req() r: any) {
+    return this.invites.athleteList(r.user.userId);
+  }
+  @Post('team-invites/athlete/accept') acceptAthleteInvite(
+    @Req() r: any,
+    @Body() body: any,
+  ) {
+    return this.invites.acceptAthlete(r.user.userId, body);
+  }
+  @Post('team-invites/:id/parent-approval') approveAthleteInvite(
+    @Req() r: any,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
+  ) {
+    return this.invites.approveParent(r.user.userId, id, body);
+  }
+  @Post('team-invites/athlete/:id/withdraw') withdrawAthleteInvite(
+    @Req() r: any,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.invites.withdrawAthlete(r.user.userId, id);
+  }
   @Post('team-invites/:id/withdraw') withdrawInvite(
     @Req() r: any,
     @Param('id', ParseUUIDPipe) id: string,

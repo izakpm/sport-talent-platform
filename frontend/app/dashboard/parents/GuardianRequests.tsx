@@ -56,7 +56,9 @@ export default function GuardianRequests() {
       <p>
         Approve people you know to give them read-only access to your sporting
         profile, achievements, performance metrics, calendar, matches and team
-        feed. They cannot edit your records. You can remove access at any time.
+        feed. They cannot edit your records. If you are under 18, a linked
+        parent can also approve your team invitations. You can remove access at
+        any time; this invalidates their pending team approvals.
       </p>
       {error && (
         <p role="alert" className={s.error}>

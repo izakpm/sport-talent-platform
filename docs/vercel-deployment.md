@@ -220,3 +220,13 @@ Validation: backend guardian tests, frontend JoinTeam/TeamInvitations/TeamRoster
 `/dashboard/parents/profile` edits the signed-in parent's name, phone and profile photo through `GET/PATCH /guardian/profile`. Email is displayed read-only. The server derives the account from the JWT, allows only those personal fields, validates photo type/size and rechecks the active guardian role before saving. It does not accept an account or child ID. No migration is required.
 
 Children's sporting profiles remain at `/dashboard/parents/children/profiles`, with the existing all-children filter and in-place editors. My children links to this view, including a child-specific filter from each child card. Saving the parent's own profile refreshes their sidebar identity/photo without switching to child context.
+
+### Invitations for athletes with their own accounts
+
+Apply `docs/sql/athlete-team-invitations.sql` after the original invitation migration and before deploying the API. Athletes can now accept the same single-use invitation themselves. A recorded birth date is required: adults move to coach review; under-18 athletes move to `awaiting_parent`. No membership or team access is created at either stage.
+
+An accepted linked parent reviews the request in Connections and explicitly confirms parental/legal-guardian authority. Approval moves it to coach review. Coach confirmation rechecks the athlete's age, active accounts and the exact parent link used for approval. Revoking and reaccepting that link invalidates the old approval; the athlete must withdraw and use a fresh invitation. Parents can decline, athletes can withdraw, and coaches can revoke invitations. Existing managed-child invitations remain supported.
+
+Athletes without a linked parent can accept and wait while their parent requests a link through My children and the athlete approves it in Connections. Age uses the recorded/self-reported birth date; this does not verify identity or guardianship documents. Existing dates cannot be changed through invitation acceptance. Direct coach email-linking is blocked for minors and missing birth dates so it cannot bypass the invitation approval process. Existing memberships are unchanged.
+
+Validation includes guardian and team-hub unit tests, invitation UI tests, production builds and real Supabase/API checks for adult acceptance, minor access restrictions, unrelated parents, revoked approval, withdrawal, decline, invalid birth dates and the email-link bypass.

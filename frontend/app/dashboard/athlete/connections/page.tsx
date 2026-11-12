@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import TeamInvitations from "../../parents/TeamInvitations";
 import GuardianRequests from "../../parents/GuardianRequests";
 import { useEffect, useState } from "react";
 import { hub } from "../../team-hub/api";
@@ -74,6 +75,7 @@ export default function Connections() {
     teammates = data?.people.filter((p) => p.role === "teammate").length || 0;
   return (
     <div className={s.workspace}>
+      <TeamInvitations athlete />
       <GuardianRequests />
       <header className={s.header}>
         <div>
@@ -136,9 +138,9 @@ export default function Connections() {
             <section className={c.empty}>
               <h2>Your team network starts here.</h2>
               <p>
-                Ask your coach to add you to their team and link your player
-                record using the email you registered with. Your coach and
-                linked teammates will then appear here.
+                Ask your coach for a team invitation. Accept it here; if you are
+                under 18, your linked parent approves before your coach
+                confirms. Your coach and linked teammates will then appear here.
               </p>
               <Link href="/dashboard/profile" className={s.secondary}>
                 View my profile ↗

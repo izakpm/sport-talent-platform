@@ -1,0 +1,10 @@
+BEGIN;
+ALTER TABLE public.team_invitations ADD COLUMN IF NOT EXISTS acceptance_mode text NOT NULL DEFAULT 'managed' CHECK(acceptance_mode IN ('managed','athlete'));
+ALTER TABLE public.team_invitations ADD COLUMN IF NOT EXISTS parent_required boolean NOT NULL DEFAULT false;
+ALTER TABLE public.team_invitations ADD COLUMN IF NOT EXISTS parent_approved_at timestamptz;
+ALTER TABLE public.team_invitations ADD COLUMN IF NOT EXISTS guardian_link_id uuid REFERENCES public.guardian_links(id);
+ALTER TABLE public.team_invitations DROP CONSTRAINT IF EXISTS team_invitations_status_check;
+ALTER TABLE public.team_invitations ADD CONSTRAINT team_invitations_status_check CHECK(status IN ('open','awaiting_parent','pending','confirmed','declined','revoked','withdrawn'));
+ALTER TABLE public.team_invitations DROP CONSTRAINT IF EXISTS team_invitations_check;
+CREATE INDEX IF NOT EXISTS team_invites_athlete_idx ON public.team_invitations(child_id,created_at DESC);
+COMMIT;

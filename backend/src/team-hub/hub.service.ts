@@ -1,4 +1,5 @@
 import { codeHash } from '../guardian/guardian.service';
+import { requiresParent } from '../guardian/invitation-age';
 import { PERSONAL_EVENT } from './personal-calendar.service';
 import {
   BadRequestException,
@@ -118,12 +119,19 @@ export class HubService {
             [codeHash(email)],
           )
         : await tx.query(
-            "SELECT id FROM users WHERE lower(email)=$1 AND role='ATHLETE' AND status IS DISTINCT FROM 'SUSPENDED'",
+            "SELECT id,date_of_birth::text FROM users WHERE lower(email)=$1 AND role='ATHLETE' AND status IS DISTINCT FROM 'SUSPENDED'",
             [email],
           );
       if (!athlete)
         throw new BadRequestException(
           'No active athlete matches that email or sharing code. Check the email, or ask the parent for a fresh code.',
+        );
+      if (
+        !/^pv-[0-9a-f]{24}$/i.test(email) &&
+        requiresParent(athlete.date_of_birth)
+      )
+        throw new ForbiddenException(
+          'Use a team invitation for athletes under 18 or without a recorded date of birth. Parent approval must be completed before linking.',
         );
       const [current] = await tx.query(
         'SELECT user_id FROM coach_player_accounts WHERE player_id=$1',
