@@ -9,6 +9,7 @@ import {
   type HubTeam,
 } from "../team-hub/api";
 import s from "./overview.module.css";
+import Progress from "./Progress";
 type Post = {
   id: string;
   title: string;
@@ -17,7 +18,11 @@ type Post = {
   category: string;
   created_at: string;
 };
-type User = { first_name?: string; last_name?: string; profile_image?: string | null };
+type User = {
+  first_name?: string;
+  last_name?: string;
+  profile_image?: string | null;
+};
 const attendance = "/dashboard/athlete/activities#attendance";
 const date = (value: string) =>
   new Date(value).toLocaleDateString("en-ZA", {
@@ -122,6 +127,7 @@ export default function AthleteOverview() {
           </Link>
         </div>
       </section>
+      <Progress />
       <div className={s.stats} aria-label="Your team summary">
         <Metric
           label="My teams"
@@ -152,9 +158,9 @@ export default function AthleteOverview() {
               <div>
                 <h2>Your team journey starts here.</h2>
                 <p>
-                  Ask your coach to add you to their roster and link the email
-                  you used to register. Your sessions and team messages will
-                  then appear here.
+                  Ask your coach for a team invitation. If you are under 18,
+                  your linked parent approves before the coach confirms. Your
+                  sessions and team messages will then appear here.
                 </p>
               </div>
               <Link className={s.outline} href="/dashboard/profile">

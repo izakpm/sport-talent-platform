@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import Overview from "./page";
 import { hub } from "../team-hub/api";
+jest.mock("./Progress", () => () => null);
 jest.mock("../team-hub/api", () => ({
   hub: jest.fn(),
   attendanceLabel: (status: string) =>
