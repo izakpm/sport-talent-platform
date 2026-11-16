@@ -24,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
 import { DiscoveryModule } from './discovery/discovery.module';
 import { HealthController } from './health.controller';
 import { PlanningModule } from './coach-planning/planning.module';
+import { SchoolsModule } from './schools/schools.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { PlanningModule } from './coach-planning/planning.module';
 
     AuthModule,
     PlanningModule,
+    SchoolsModule,
     PortfolioModule,
     CoachProfileModule,
     HubModule,

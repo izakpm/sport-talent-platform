@@ -91,20 +91,14 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
     dashboardPath: "/dashboard/schools",
     navGroups: [
       {
-        label: "School",
-        items: [{ name: "My Profile", href: "/dashboard/profile" }],
-      },
-      {
-        label: "Dashboards",
-        items: [{ name: "My Dashboard", href: "/dashboard/schools" }],
-      },
-      {
-        label: "Pages",
+        label: "School workspace",
         items: [
+          { name: "Dashboard", href: "/dashboard/schools" },
+          { name: "Profile", href: "/dashboard/profile" },
           { name: "Coaches", href: "/dashboard/schools/coaches" },
           { name: "Teams", href: "/dashboard/schools/teams" },
           { name: "Fixtures", href: "/dashboard/schools/fixtures" },
-          { name: "Logs", href: "/dashboard/schools/logs" },
+          { name: "Season record", href: "/dashboard/schools/logs" },
           { name: "Achievements", href: "/dashboard/schools/achievements" },
         ],
       },

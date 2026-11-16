@@ -154,7 +154,7 @@ export default function DashboardLayout({
       </ParentShell>
     );
 
-  if (userRole === "COACH" || userRole === "ATHLETE")
+  if (userRole === "COACH" || userRole === "ATHLETE" || userRole === "SCHOOL")
     return (
       <div className={coach.shell}>
         <a href="#coach-content" className={coach.skip}>
@@ -170,32 +170,38 @@ export default function DashboardLayout({
             />
           </Link>
           <p className={coach.label}>
-            {userRole === "COACH" ? "COACH WORKSPACE" : "ATHLETE WORKSPACE"}
+            {userRole === "SCHOOL"
+              ? "SCHOOL WORKSPACE"
+              : userRole === "COACH"
+                ? "COACH WORKSPACE"
+                : "ATHLETE WORKSPACE"}
           </p>
           <nav
             className={coach.nav}
             aria-label={`${roleConfig.roleLabel} navigation`}
           >
-            {roleConfig.navGroups[0].items.map((item, index) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={
-                  pathname === item.href ||
-                  (index !== 0 && pathname.startsWith(`${item.href}/`))
-                    ? "page"
-                    : undefined
-                }
-              >
-                <span aria-hidden="true">{dashboardNavIcons[item.name]}</span>
-                <span>
-                  {item.name}
-                  {item.name === "Verification" && pendingCount > 0
-                    ? ` (${pendingCount})`
-                    : ""}
-                </span>
-              </Link>
-            ))}
+            {roleConfig.navGroups
+              .flatMap((group) => group.items)
+              .map((item, index) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={
+                    pathname === item.href ||
+                    (index !== 0 && pathname.startsWith(`${item.href}/`))
+                      ? "page"
+                      : undefined
+                  }
+                >
+                  <span aria-hidden="true">{dashboardNavIcons[item.name]}</span>
+                  <span>
+                    {item.name}
+                    {item.name === "Verification" && pendingCount > 0
+                      ? ` (${pendingCount})`
+                      : ""}
+                  </span>
+                </Link>
+              ))}
             {canPublish && (
               <Link
                 href="/dashboard/resources-admin"

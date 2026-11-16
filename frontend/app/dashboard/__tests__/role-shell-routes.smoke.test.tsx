@@ -1,44 +1,57 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import AthleteDashboardPage from '../athlete/page';
-import CoachDashboardPage from '../coaches/page';
-import SchoolDashboardPage from '../schools/page';
+import { render, screen, waitFor } from "@testing-library/react";
+import AthleteDashboardPage from "../athlete/page";
+import CoachDashboardPage from "../coaches/page";
+import SchoolDashboardPage from "../schools/page";
 
 const pushMock = jest.fn();
 const routerMock = {
   push: pushMock,
 };
 
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: () => routerMock,
 }));
 
-jest.mock('../../lib/api', () => ({
+jest.mock("../../lib/api", () => ({
   fetchWithAuth: jest.fn(async (path: string) => {
-    if (path.startsWith('/athletes/user/')) {
+    if (path.startsWith("/athletes/user/")) {
       return {
         ok: true,
-        text: async () => JSON.stringify({ id: 'athlete-1' }),
+        text: async () => JSON.stringify({ id: "athlete-1" }),
       };
     }
 
-    if (path.startsWith('/athlete-sports/')) {
+    if (path.startsWith("/athlete-sports/")) {
       return {
         ok: true,
-        json: async () => [
-          { sport_id: 'soccer' },
-          { sport_id: 'rugby' },
-        ],
+        json: async () => [{ sport_id: "soccer" }, { sport_id: "rugby" }],
       };
     }
 
-    if (path === '/activities') {
+    if (path === "/athlete-profile")
+      return { ok: true, json: async () => ({ entries: [] }) };
+    if (path === "/schools/workspace")
+      return {
+        ok: true,
+        json: async () => ({
+          school: {
+            id: "school",
+            name: "Montana",
+            division: "plaat",
+            is_demo: true,
+          },
+          teams: [],
+          fixtures: [],
+        }),
+      };
+    if (path === "/activities") {
       return {
         ok: true,
         json: async () => [{ id: 1 }, { id: 2 }, { id: 3 }],
       };
     }
 
-    if (path === '/verification') {
+    if (path === "/verification") {
       return {
         ok: true,
         json: async () => [{ id: 1 }, { id: 2 }],
@@ -48,59 +61,67 @@ jest.mock('../../lib/api', () => ({
     return {
       ok: true,
       json: async () => [],
-      text: async () => '',
+      text: async () => "",
     };
   }),
 }));
 
-function seedAuthStorage(role: 'ATHLETE' | 'COACH' | 'SCHOOL') {
-  localStorage.setItem('token', 'test-token');
+function seedAuthStorage(role: "ATHLETE" | "COACH" | "SCHOOL") {
+  localStorage.setItem("token", "test-token");
   localStorage.setItem(
-    'user',
+    "user",
     JSON.stringify({
-      id: 'user-1',
-      first_name: 'Test',
+      id: "user-1",
+      first_name: "Test",
       role,
     }),
   );
 }
 
-describe('T018 role shell route smoke tests', () => {
+describe("T018 role shell route smoke tests", () => {
   beforeEach(() => {
     localStorage.clear();
     pushMock.mockReset();
   });
 
-  it('renders athlete dashboard shell route', async () => {
-    seedAuthStorage('ATHLETE');
+  it("renders athlete dashboard shell route", async () => {
+    seedAuthStorage("ATHLETE");
     render(<AthleteDashboardPage />);
 
     expect(
-      await screen.findByRole('heading', { name: 'Welcome back, Test.' }),
+      await screen.findByRole("heading", { name: "Welcome back, Test." }),
     ).toBeInTheDocument();
-    expect(await screen.findByText('Your team journey starts here.')).toBeInTheDocument();
+    expect(
+      await screen.findByText("Your team journey starts here."),
+    ).toBeInTheDocument();
     await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
   });
 
-  it('renders coach dashboard shell route', async () => {
-    seedAuthStorage('COACH');
+  it("renders coach dashboard shell route", async () => {
+    seedAuthStorage("COACH");
     render(<CoachDashboardPage />);
 
     expect(
-      await screen.findByRole('heading', { name: 'Your next great month, Test.' }),
+      await screen.findByRole("heading", {
+        name: "Your next great month, Test.",
+      }),
     ).toBeInTheDocument();
-    expect(await screen.findByText('The month at a glance')).toBeInTheDocument();
+    expect(
+      await screen.findByText("The month at a glance"),
+    ).toBeInTheDocument();
     await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
   });
 
-  it('renders school dashboard shell route', async () => {
-    seedAuthStorage('SCHOOL');
+  it("renders school dashboard shell route", async () => {
+    seedAuthStorage("SCHOOL");
     render(<SchoolDashboardPage />);
 
     expect(
-      await screen.findByRole('heading', { name: 'My Dashboard' }),
+      await screen.findByRole("heading", { name: "Montana" }),
     ).toBeInTheDocument();
-    expect(screen.getByText('School Dashboard')).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Montana" }),
+    ).toBeInTheDocument();
     await waitFor(() => expect(pushMock).not.toHaveBeenCalled());
   });
 });
