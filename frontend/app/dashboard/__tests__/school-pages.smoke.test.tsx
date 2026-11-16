@@ -65,7 +65,7 @@ beforeEach(() => {
   } as any);
 });
 it("filters year without counting unknown scores", async () => {
-  render(<SchoolWorkspace view="fixtures" />);
+  render(<SchoolWorkspace view="logs" />);
   expect(
     await screen.findByRole("heading", { name: "Montana" }),
   ).toBeInTheDocument();
@@ -78,7 +78,7 @@ it("filters year without counting unknown scores", async () => {
   expect(screen.getByText("0 / 1 / 0")).toBeInTheDocument();
 });
 it("filters opponents and preserves source details", async () => {
-  render(<SchoolWorkspace view="fixtures" />);
+  render(<SchoolWorkspace view="logs" />);
   await screen.findByRole("heading", { name: "Montana" });
   expect(screen.getByText("Conflicting sources")).toBeInTheDocument();
   expect(
@@ -156,4 +156,51 @@ it("makes the overview school-wide and counts linked coaches and sports", async 
   expect(overview).toHaveTextContent("Teams1");
   expect(screen.getByText("Hockey")).toBeInTheDocument();
   expect(screen.queryByText("Netball")).not.toBeInTheDocument();
+});
+
+it("keeps Teams free of fixture lists and results", async () => {
+  render(<SchoolWorkspace view="teams" />);
+  await screen.findByRole("heading", { name: "Team directory" });
+  expect(
+    screen.queryByRole("heading", { name: "Match history" }),
+  ).not.toBeInTheDocument();
+  expect(screen.queryByText("U15A vs Nelspruit")).not.toBeInTheDocument();
+  expect(screen.queryByText("Recorded results")).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Log ↗" })).toHaveAttribute(
+    "href",
+    "/dashboard/schools/logs?team=u15&year=2026",
+  );
+});
+it("shows only upcoming fixtures and no recorded scores on Fixtures", async () => {
+  jest
+    .mocked(fetchWithAuth)
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        school,
+        teams: [{ id: "u15", name: "U15A", sport: "Rugby", season: 2099 }],
+        fixtures: [
+          ...fixtures,
+          {
+            ...base,
+            id: "future",
+            match_date: "2099-08-22",
+            home_score: null,
+            away_score: null,
+          },
+          {
+            ...base,
+            id: "scored",
+            match_date: "2099-08-21",
+            home_score: 3,
+            away_score: 0,
+          },
+        ],
+      }),
+    } as any);
+  render(<SchoolWorkspace view="fixtures" />);
+  await screen.findByRole("heading", { name: "Montana" });
+  expect(screen.getAllByText("U15A vs Nelspruit")).toHaveLength(1);
+  expect(screen.queryByText("3 – 0")).not.toBeInTheDocument();
+  expect(screen.queryByText("Recorded results")).not.toBeInTheDocument();
 });

@@ -94,11 +94,11 @@ const roleConfigs: Record<DashboardRole, DashboardRoleConfig> = {
         label: "School workspace",
         items: [
           { name: "Dashboard", href: "/dashboard/schools" },
-          { name: "Profile", href: "/dashboard/profile" },
+          { name: "Profile", href: "/dashboard/schools/profile" },
           { name: "Coaches", href: "/dashboard/schools/coaches" },
           { name: "Teams", href: "/dashboard/schools/teams" },
           { name: "Fixtures", href: "/dashboard/schools/fixtures" },
-          { name: "Season record", href: "/dashboard/schools/logs" },
+          { name: "Log", href: "/dashboard/schools/logs" },
           { name: "Achievements", href: "/dashboard/schools/achievements" },
         ],
       },

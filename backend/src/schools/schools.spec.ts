@@ -1,5 +1,56 @@
 import { SchoolsService } from './schools.service';
 describe('school workspace access', () => {
+  it.each([
+    { organisation_id: 'another' },
+    { is_demo: false },
+    { name: '' },
+    { type: 'ADMIN' },
+    { email: 'invalid' },
+    { website: 'javascript:alert(1)' },
+    { description: 'x'.repeat(2001) },
+  ])('rejects invalid profile input %p', async (body) => {
+    const db = { query: jest.fn() };
+    await expect(
+      new SchoolsService(db as any).saveProfile('user', body),
+    ).rejects.toThrow();
+    expect(db.query).not.toHaveBeenCalled();
+  });
+  it('denies profile edits without organisation edit permission', async () => {
+    const db = { transaction: jest.fn() };
+    const service = new SchoolsService(db as any);
+    jest
+      .spyOn(service, 'workspace')
+      .mockResolvedValue({
+        school: { id: 'other', can_edit_profile: false },
+        teams: [],
+        fixtures: [],
+        coaches: [],
+      } as any);
+    await expect(
+      service.saveProfile('user', { name: 'Changed' }),
+    ).rejects.toThrow('permission');
+    expect(db.transaction).not.toHaveBeenCalled();
+  });
+  it('saves only allowed fields against the authenticated organisation', async () => {
+    const query = jest.fn();
+    const db = { transaction: jest.fn(async (fn) => fn({ query })) };
+    const service = new SchoolsService(db as any);
+    jest
+      .spyOn(service, 'workspace')
+      .mockResolvedValue({
+        school: { id: 'own', can_edit_profile: true },
+        teams: [],
+        fixtures: [],
+        coaches: [],
+      } as any);
+    await service.saveProfile('user', {
+      name: ' Montana ',
+      province: 'Gauteng',
+      phone: '',
+    });
+    expect(query.mock.calls[0][1]).toEqual(['own', 'Montana', null]);
+    expect(query.mock.calls[1][1]).toEqual(['own', 'Gauteng']);
+  });
   it.each(['ATHLETE', 'COACH', 'GUARDIAN', null])(
     'rejects non-school role %s',
     async (role) => {

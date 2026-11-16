@@ -102,9 +102,10 @@ function setViewport(width: number, height: number) {
 }
 
 function assertResponsiveLayoutContracts() {
-  expect(
-    screen.getByRole("link", { name: "View fixtures & results ↗" }),
-  ).toHaveAttribute("href", "/dashboard/schools/fixtures");
+  expect(screen.getByRole("link", { name: "View fixtures ↗" })).toHaveAttribute(
+    "href",
+    "/dashboard/schools/fixtures",
+  );
 }
 
 describe("T019 responsive role layout tests", () => {

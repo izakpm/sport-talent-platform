@@ -6,6 +6,7 @@ export const dashboardNavIcons: Record<string, string> = {
   Coaches: "◇",
   Fixtures: "▤",
   "Season record": "▥",
+  Log: "▥",
   Achievements: "☆",
   Schedule: "◷",
   Activities: "↗",

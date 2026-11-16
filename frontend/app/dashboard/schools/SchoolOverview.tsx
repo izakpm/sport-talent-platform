@@ -192,9 +192,7 @@ export default function SchoolOverview({ data }: { data: Workspace }) {
         <section className={s.card}>
           <div className={s.sectionHeading}>
             <h2>Coming up</h2>
-            <Link href="/dashboard/schools/fixtures">
-              View fixtures & results ↗
-            </Link>
+            <Link href="/dashboard/schools/fixtures">View fixtures ↗</Link>
           </div>
           {upcoming.length ? (
             <ul className={s.previewList}>{upcoming.map(match)}</ul>
@@ -212,13 +210,13 @@ export default function SchoolOverview({ data }: { data: Workspace }) {
         <section className={s.card}>
           <div className={s.sectionHeading}>
             <h2>Latest results</h2>
-            <Link href="/dashboard/schools/logs">Compare team records ↗</Link>
+            <Link href="/dashboard/schools/logs">View log ↗</Link>
           </div>
           {results.length ? (
             <>
               <ul className={s.previewList}>{results.map(match)}</ul>
               <p className={s.muted}>
-                School score first. Open Fixtures for match details and sources.
+                School score first. Open Log for match details and sources.
               </p>
             </>
           ) : (

@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState, type CSSProperties } from "react";
 import { childContext } from "../../lib/guardian-context";
 import CoachProfile from "./CoachProfile";
 import AthleteProfile from "./AthleteProfile";
+import SchoolProfile from "../schools/SchoolProfile";
 import { theme } from "../../styles/theme";
 import { fetchWithAuth } from "../../lib/api";
 import { getDashboardRoleConfig, normalizeDashboardRole } from "../core/roles";
@@ -47,10 +48,6 @@ export default function DashboardProfilePage() {
     if (storedUser) {
       const parsed: UserProfile = JSON.parse(storedUser);
       setUser(parsed);
-      if (normalizeDashboardRole(parsed.role) === "SCHOOL") {
-        loadAthlete(parsed.id);
-        loadUser(parsed.id);
-      }
     }
   }, []);
 
@@ -159,6 +156,7 @@ export default function DashboardProfilePage() {
     : "—";
 
   if (!user) return <p role="status">Loading your profile…</p>;
+  if (normalizedRole === "SCHOOL") return <SchoolProfile />;
   if (normalizedRole === "COACH") return <CoachProfile />;
   if (normalizedRole === "GUARDIAN")
     return childContext()?.mode === "managed" ? (
