@@ -12,6 +12,7 @@ import {
 import { notifyAttendance } from "../../team-hub/api";
 import s from "../../coaches/workspace.module.css";
 import a from "./activities.module.css";
+import TrainingSummary from "./TrainingSummary";
 type Action = {
   kind: "request" | "withdraw" | "delete";
   activity: TrainingActivity;
@@ -75,16 +76,6 @@ export default function AthleteActivities() {
           .toLowerCase()
           .includes(query.toLowerCase())),
   );
-  const today = new Date().toLocaleDateString("en-CA", {
-    timeZone: "Africa/Johannesburg",
-  });
-  const cutoff = new Date(Date.now() - 29 * 86400000).toLocaleDateString(
-    "en-CA",
-    { timeZone: "Africa/Johannesburg" },
-  );
-  const recent = (data || []).filter(
-    (v) => v.date >= cutoff && v.date <= today,
-  );
   return (
     <div className={s.workspace}>
       <header className={s.header}>
@@ -114,48 +105,6 @@ export default function AthleteActivities() {
           {notice}
         </p>
       )}
-      <section className={a.summary}>
-        <div>
-          <span>LAST 30 DAYS</span>
-          <strong>
-            {data ? recent.length : "—"} <small>sessions logged</small>
-          </strong>
-        </div>
-        <div>
-          <span>TRAINING TIME · LAST 30 DAYS</span>
-          <strong>
-            {data
-              ? Math.round(
-                  (recent.reduce((n, v) => n + (v.duration_minutes || 0), 0) /
-                    60) *
-                    10,
-                ) / 10
-              : "—"}{" "}
-            <small>hours</small>
-          </strong>
-        </div>
-        <div>
-          <span>AWAITING YOUR COACH</span>
-          <strong>
-            {data ? data.filter((v) => v.status === "pending").length : "—"}{" "}
-            <small>
-              {data?.filter((v) => v.status === "pending").length === 1
-                ? "request"
-                : "requests"}
-            </small>
-          </strong>
-        </div>
-      </section>
-      <aside className={a.tip}>
-        <div>
-          <strong>Attended a scheduled team session?</strong>
-          <p>
-            Use your team attendance record to request confirmation or scan your
-            coach’s QR code at training. No separate log is needed.
-          </p>
-        </div>
-        <a href="#attendance">Team attendance ↗</a>
-      </aside>
       <div className={a.filters}>
         <label>
           Search
@@ -239,6 +188,23 @@ export default function AthleteActivities() {
           </button>
         </div>
       )}
+      <TrainingSummary
+        rows={visible}
+        loaded={data !== null}
+        filtered={Boolean(query || sport || kind || status || from || to)}
+        from={from}
+        to={to}
+      />
+      <aside className={a.tip}>
+        <div>
+          <strong>Attended a scheduled team session?</strong>
+          <p>
+            Use your team attendance record to request confirmation or scan your
+            coach’s QR code at training. No separate log is needed.
+          </p>
+        </div>
+        <a href="#attendance">Team attendance ↗</a>
+      </aside>
       {!data && !error ? (
         <p role="status">Loading your training log…</p>
       ) : data && !visible.length ? (
