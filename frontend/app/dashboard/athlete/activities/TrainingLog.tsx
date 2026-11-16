@@ -23,6 +23,7 @@ export default function AthleteActivities() {
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
     [retry, setRetry] = useState(0),
+    [selectedId, setSelectedId] = useState<string | null>(null),
     [editor, setEditor] = useState<TrainingActivity | "new" | null>(null),
     [action, setAction] = useState<Action | null>(null),
     [status, setStatus] = useState(""),
@@ -61,6 +62,7 @@ export default function AthleteActivities() {
     setError("");
     setEditor(null);
     setAction(null);
+    setSelectedId(null);
     notifyAttendance();
   }
   const visible = (data || []).filter(
@@ -228,96 +230,147 @@ export default function AthleteActivities() {
       ) : (
         <div className={a.list}>
           {visible.map((v) => {
-            const locked = ["pending", "verified", "legacy_verified"].includes(
-              v.status,
-            );
+            const verified = ["verified", "legacy_verified"].includes(v.status);
             return (
-              <article className={a.card} key={v.id}>
-                <div className={a.cardHead}>
-                  <div>
-                    <p className={a.meta}>
-                      {trainingDate(v.date)}
-                      {v.time ? ` · ${v.time} SAST` : ""} ·{" "}
-                      {v.sport || "Sport not recorded"}
-                    </p>
-                    <h2>{v.title || "Training session"}</h2>
-                  </div>
-                  <span
-                    className={`${a.badge} ${v.status === "verified" ? a.verified : ""}`}
-                  >
-                    {trainingStatus(v.status)}
-                  </span>
-                </div>
-                <div className={a.facts}>
-                  <span>{v.training_kind}</span>
-                  {v.duration_minutes != null && (
-                    <span>{v.duration_minutes} min</span>
-                  )}
-                  {v.effort != null && <span>Effort {v.effort}/10</span>}
-                  {v.location && <span>{v.location}</span>}
-                </div>
-                {v.description && <p className={a.notes}>{v.description}</p>}
-                {v.coach_name && (
-                  <p className={a.coach}>Coach: {v.coach_name}</p>
-                )}
-                {v.review_note && (
-                  <p className={a.feedback}>
-                    <strong>Coach feedback:</strong> {v.review_note}
-                  </p>
-                )}
-                <footer className={a.footer}>
-                  <div className={a.actions}>
-                    {!locked && (
-                      <>
-                        <button
-                          className={s.primary}
-                          onClick={() =>
-                            setAction({ kind: "request", activity: v })
-                          }
-                        >
-                          {v.status === "declined"
-                            ? "Request again"
-                            : "Request verification"}
-                        </button>
-                        <button
-                          className={s.secondary}
-                          onClick={() => setEditor(v)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className={s.textButton}
-                          onClick={() =>
-                            setAction({ kind: "delete", activity: v })
-                          }
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                    {v.status === "pending" && (
-                      <button
-                        className={s.secondary}
-                        onClick={() =>
-                          setAction({ kind: "withdraw", activity: v })
-                        }
-                      >
-                        Withdraw request
-                      </button>
-                    )}
-                  </div>
+              <button
+                type="button"
+                key={v.id}
+                className={a.activityRow}
+                onClick={() => setSelectedId(v.id)}
+                aria-haspopup="dialog"
+              >
+                <span className={a.rowDate}>
+                  {trainingDate(v.date)}
                   <small>
-                    {v.status === "pending"
-                      ? "Withdraw before editing."
-                      : locked
-                        ? "Confirmed record · editing locked."
-                        : "Self-reported until a coach confirms it."}
+                    {v.time ? `${v.time} SAST` : "Time not recorded"}
                   </small>
-                </footer>
-              </article>
+                </span>
+                <span className={a.rowMain}>
+                  <strong>{v.title || "Training session"}</strong>
+                  <span>
+                    {v.training_kind} ·{" "}
+                    {v.duration_minutes != null
+                      ? `${v.duration_minutes} min`
+                      : "Duration not recorded"}
+                    {v.sport ? ` · ${v.sport}` : ""}
+                  </span>
+                </span>
+                <span className={a.rowStatus}>
+                  <span
+                    className={`${a.statusPill} ${verified ? a.statusVerified : a.statusUnverified}`}
+                  >
+                    <span aria-hidden="true">{verified ? "✓" : "○"}</span>{" "}
+                    {verified ? "Verified" : "Unverified"}
+                  </span>
+                  {v.status === "pending" && <small>Awaiting coach</small>}
+                  {v.status === "declined" && <small>Changes requested</small>}
+                </span>
+                <span className={a.rowChevron} aria-hidden="true">
+                  ›
+                </span>
+              </button>
             );
           })}
         </div>
+      )}
+      {selectedId && !editor && !action && (
+        <>
+          {(data || [])
+            .filter((v) => v.id === selectedId)
+            .map((v) => {
+              const locked = [
+                "pending",
+                "verified",
+                "legacy_verified",
+              ].includes(v.status);
+              return (
+                <Modal
+                  key={v.id}
+                  title={v.title || "Training session"}
+                  description={`${trainingDate(v.date)}${v.time ? ` · ${v.time} SAST` : ""} · ${v.sport || "Sport not recorded"}`}
+                  close={() => setSelectedId(null)}
+                >
+                  <article className={a.detail}>
+                    <span
+                      className={`${a.badge} ${["verified", "legacy_verified"].includes(v.status) ? a.verified : ""}`}
+                    >
+                      {trainingStatus(v.status)}
+                    </span>
+                    <div className={a.facts}>
+                      <span>{v.training_kind}</span>
+                      {v.duration_minutes != null && (
+                        <span>{v.duration_minutes} min</span>
+                      )}
+                      {v.effort != null && <span>Effort {v.effort}/10</span>}
+                      {v.location && <span>{v.location}</span>}
+                    </div>
+                    {v.description && (
+                      <p className={a.notes}>
+                        {v.description.replace(/^\[WA-U15-2026\][^\n]*\n/, "")}
+                      </p>
+                    )}
+                    {v.coach_name && (
+                      <p className={a.coach}>Coach: {v.coach_name}</p>
+                    )}
+                    {v.review_note && (
+                      <p className={a.feedback}>
+                        <strong>Coach feedback:</strong> {v.review_note}
+                      </p>
+                    )}
+                    <footer className={a.footer}>
+                      <div className={a.actions}>
+                        {!locked && (
+                          <>
+                            <button
+                              className={s.primary}
+                              onClick={() =>
+                                setAction({ kind: "request", activity: v })
+                              }
+                            >
+                              {v.status === "declined"
+                                ? "Request again"
+                                : "Request verification"}
+                            </button>
+                            <button
+                              className={s.secondary}
+                              onClick={() => setEditor(v)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className={s.textButton}
+                              onClick={() =>
+                                setAction({ kind: "delete", activity: v })
+                              }
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                        {v.status === "pending" && (
+                          <button
+                            className={s.secondary}
+                            onClick={() =>
+                              setAction({ kind: "withdraw", activity: v })
+                            }
+                          >
+                            Withdraw request
+                          </button>
+                        )}
+                      </div>
+                      <small>
+                        {v.status === "pending"
+                          ? "Withdraw before editing."
+                          : locked
+                            ? "Confirmed record · editing locked."
+                            : "Self-reported until a coach confirms it."}
+                      </small>
+                    </footer>
+                  </article>
+                </Modal>
+              );
+            })}
+        </>
       )}
       {editor && options && (
         <TrainingEditor
@@ -325,10 +378,7 @@ export default function AthleteActivities() {
           options={options}
           close={() => setEditor(null)}
           saved={(rows) =>
-            saved(
-              rows,
-              "Session saved. You can now request verification from its card.",
-            )
+            saved(rows, "Session saved. Open it to request verification.")
           }
         />
       )}

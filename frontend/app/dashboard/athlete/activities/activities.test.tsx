@@ -30,6 +30,49 @@ const activity = {
   location: "School gym",
   status: "self_reported",
 };
+it("opens compact rows without exposing notes or actions in the list", async () => {
+  api.mockImplementation(async (path: string) =>
+    ok(
+      path.endsWith("/options")
+        ? options
+        : [
+            {
+              ...activity,
+              description:
+                "[WA-U15-2026] internal-reference\nSource: Training announcement",
+            },
+            {
+              ...activity,
+              id: "legacy",
+              title: "Earlier confirmed session",
+              status: "legacy_verified",
+            },
+          ],
+    ),
+  );
+  render(<Activities />);
+  const row = await screen.findByRole("button", {
+    name: /Gym session.*Unverified/,
+  });
+  expect(
+    screen.getByRole("button", { name: /Earlier confirmed session.*Verified/ }),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByText(/Source: Training announcement/),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "Request verification" }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(row);
+  expect(
+    within(screen.getByRole("dialog")).getByText(
+      "Source: Training announcement",
+    ),
+  ).toBeInTheDocument();
+  expect(screen.queryByText(/internal-reference/)).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+});
 beforeEach(() => {
   api.mockReset();
   HTMLDialogElement.prototype.showModal = function () {
@@ -75,6 +118,7 @@ it("logs completed training with duration and no client-provided ownership", asy
 });
 it("sends a request to a selected linked coach", async () => {
   render(<Activities />);
+  fireEvent.click(await screen.findByRole("button", { name: /Gym session/ }));
   fireEvent.click(
     await screen.findByRole("button", { name: "Request verification" }),
   );
@@ -97,7 +141,7 @@ it("sends a request to a selected linked coach", async () => {
 });
 it("keeps a failed training draft", async () => {
   render(<Activities />);
-  await screen.findByText("Gym session");
+  fireEvent.click(await screen.findByRole("button", { name: /Gym session/ }));
   fireEvent.click(screen.getByRole("button", { name: "Edit", exact: true }));
   fireEvent.change(screen.getByLabelText("Session title"), {
     target: { value: "Updated practice" },
@@ -132,6 +176,7 @@ it("protects pending and verified logs from editing", async () => {
   );
   render(<Activities />);
   await screen.findByText("Confirmed session");
+  fireEvent.click(screen.getByRole("button", { name: /Gym session/ }));
   expect(
     screen.queryByRole("button", { name: "Edit", exact: true }),
   ).not.toBeInTheDocument();
@@ -147,6 +192,7 @@ it("explains missing coach links without preventing logging", async () => {
     ok(path.endsWith("/options") ? { ...options, coaches: [] } : [activity]),
   );
   render(<Activities />);
+  fireEvent.click(await screen.findByRole("button", { name: /Gym session/ }));
   fireEvent.click(
     await screen.findByRole("button", { name: "Request verification" }),
   );
@@ -236,9 +282,7 @@ it("uses the same combined filters for the summary and activity list", async () 
   expect(
     within(summary).getByText("50% of selected sessions"),
   ).toBeInTheDocument();
-  expect(
-    within(summary).getByText(/Missing duration: 1/),
-  ).toBeInTheDocument();
+  expect(within(summary).getByText(/Missing duration: 1/)).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("From"), {
     target: { value: "2025-01-01" },
   });
