@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "./HomeLanding";
 import Privacy from "./privacy/page";
 import Register from "./RegisterForm";
@@ -126,4 +126,31 @@ it("preselects the coach role from a landing-page link without starting registra
     "/privacy",
   );
   window.history.replaceState({}, "", "/");
+});
+it("shows parents after schools and lets families explore filtered examples", () => {
+  render(<Home />);
+  const parents = screen.getByRole("region", {
+    name: /Their ambition/,
+  });
+  expect(
+    document.getElementById("schools-clubs")!.compareDocumentPosition(parents) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("link", { name: "Create your parent account" }),
+  ).toHaveAttribute("href", "/register?role=GUARDIAN");
+  fireEvent.change(screen.getByLabelText("Parent example child"), {
+    target: { value: "Jamie" },
+  });
+  expect(within(parents).getByText("Strength & conditioning")).toBeVisible();
+  expect(
+    within(parents).queryByText("Rugby practice", { exact: true }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Team updates", exact: true }),
+  );
+  expect(within(parents).getByText("Thursday’s gym session")).toBeVisible();
+  expect(
+    within(parents).queryByText("Ready for Saturday?"),
+  ).not.toBeInTheDocument();
 });

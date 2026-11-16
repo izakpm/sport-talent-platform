@@ -5,6 +5,7 @@ import PublicFooter from "./PublicFooter";
 import CoachShowcase from "./CoachShowcase";
 import OrganisationShowcase from "./OrganisationShowcase";
 import AthleteShowcase from "./AthleteShowcase";
+import ParentPreview from "./ParentPreview";
 import audience from "./audience.module.css";
 import styles from "./home.module.css";
 
@@ -59,12 +60,12 @@ export default function Home() {
                 And the coaches who help them get there.
               </h2>
               <p className={styles.heroDescription}>
-                Talent and dedication deserve to be seen. Our mission is to
-                help committed athletes build a sporting portfolio that tells
-                their story and brings them into view of universities and
-                sporting clubs, locally and abroad. Too much potential goes
-                unnoticed through a lack of visibility and opportunity.
-                We’re here to help change that.
+                Talent and dedication deserve to be seen. Our mission is to help
+                committed athletes build a sporting portfolio that tells their
+                story and brings them into view of universities and sporting
+                clubs, locally and abroad. Too much potential goes unnoticed
+                through a lack of visibility and opportunity. We’re here to help
+                change that.
               </p>
               <div className={styles.heroActions}>
                 <Link
@@ -250,6 +251,64 @@ export default function Home() {
             <OrganisationShowcase />
           </div>
         </section>
+        <div className={styles.coachBand}>
+          <section
+            id="parents"
+            className={styles.coaching}
+            aria-labelledby="parents-title"
+          >
+            <div className={`${styles.coachCopy} ${audience.darkCopy}`}>
+              <h2 id="parents-title">
+                Their ambition.
+                <br />
+                Your support.
+              </h2>
+              <p className={audience.intro}>
+                You’re there for the early starts, the lifts to practice and the
+                moments that make it all worthwhile. PlayVerified helps parents
+                stay close to their children’s sporting journey, with their
+                schedules, progress and team updates in one place.
+              </p>
+              <ul className={audience.benefits}>
+                <li>
+                  <h3>Give their journey a strong start</h3>
+                  <p>
+                    Create a profile for a younger child without an email
+                    address. Add achievements, record training and build their
+                    sporting story as they grow.
+                  </p>
+                </li>
+                <li>
+                  <h3>One family. A clearer week.</h3>
+                  <p>
+                    See your children’s schedules, matches and coach
+                    announcements together. Filter by child when you need to
+                    focus on one player.
+                  </p>
+                </li>
+                <li>
+                  <h3>Stay involved as they find their feet</h3>
+                  <p>
+                    Link to an older child’s account with their approval to
+                    follow their progress. For athletes under 18, a linked
+                    parent approves team invitations before the coach confirms
+                    their place.
+                  </p>
+                </li>
+              </ul>
+              <Link
+                scroll={false}
+                className={styles.primary}
+                href="/register?role=GUARDIAN"
+              >
+                Create your parent account
+              </Link>
+            </div>
+            <div className={styles.demo}>
+              <ParentPreview />
+            </div>
+          </section>
+        </div>
         <section
           id="questions"
           className={styles.faq}
