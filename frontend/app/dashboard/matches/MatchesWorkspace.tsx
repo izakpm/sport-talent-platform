@@ -71,6 +71,7 @@ export default function MatchesWorkspace({
     [notice, setNotice] = useState(""),
     [retry, setRetry] = useState(0),
     [team, setTeam] = useState(""),
+    [year, setYear] = useState(""),
     [view, setView] = useState("all"),
     [editing, setEditing] = useState<Match | null>(null),
     [selectedId, setSelectedId] = useState<string | null>(null),
@@ -96,7 +97,13 @@ export default function MatchesWorkspace({
       clearInterval(timer);
     };
   }, [retry]);
-  const filtered = (rows || []).filter((e) => !team || e.team_id === team);
+  const years = Array.from(new Set((rows || []).map((e) => e.date.slice(0, 4))))
+    .sort()
+    .reverse();
+  const filtered = (rows || []).filter(
+    (e) =>
+      (!team || e.team_id === team) && (!year || e.date.startsWith(year + "-")),
+  );
   const upcoming = filtered
     .filter((e) => !e.cancelled && !e.result && Date.parse(e.ends_at) >= now)
     .sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at));
@@ -105,6 +112,33 @@ export default function MatchesWorkspace({
     .sort((a, b) => Date.parse(b.starts_at) - Date.parse(a.starts_at));
   const cancelled = filtered.filter((e) => e.cancelled);
   const results = past.filter((e) => e.result);
+  const shownResults = view === "all" || view === "results" ? results : [];
+  const wins = shownResults.filter((e) => outcome(e.result!) === "Win").length;
+  const losses = shownResults.filter(
+    (e) => outcome(e.result!) === "Loss",
+  ).length;
+  const draws = shownResults.length - wins - losses;
+  const pointsFor = shownResults.reduce((n, e) => n + e.result!.team_score, 0);
+  const pointsAgainst = shownResults.reduce(
+    (n, e) => n + e.result!.opponent_score,
+    0,
+  );
+  const difference = pointsFor - pointsAgainst;
+  const next = view === "all" || view === "upcoming" ? upcoming[0] : undefined;
+  const pendingResults =
+    view === "all" || view === "results" ? past.length - results.length : 0;
+  const scope = [
+    year || "All years",
+    team ? rows?.find((e) => e.team_id === team)?.team_name : "All teams",
+    {
+      all: "Results & upcoming",
+      results: "Previous matches",
+      upcoming: "Upcoming matches",
+      cancelled: "Cancelled matches",
+    }[view],
+  ]
+    .filter(Boolean)
+    .join(" · ");
   function saved(e: Match) {
     setRows((v) => v?.map((x) => (x.id === e.id ? e : x)) || [e]);
     setEditing(null);
@@ -388,6 +422,17 @@ export default function MatchesWorkspace({
       )}
       <section className={m.toolbar} aria-label="Match filters">
         <label>
+          Year
+          <select value={year} onChange={(e) => setYear(e.target.value)}>
+            <option value="">All years</option>
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
           Team
           <select value={team} onChange={(e) => setTeam(e.target.value)}>
             <option value="">All teams</option>
@@ -419,30 +464,103 @@ export default function MatchesWorkspace({
       )}
       {rows && (
         <>
-          <section className={m.hero}>
-            <div>
-              <p className={m.kicker}>NEXT MATCH</p>
-              <h2>{upcoming[0]?.title || "Ready for your next match."}</h2>
-              <p>
-                {upcoming[0]
-                  ? `${upcoming[0].team_name} · ${dayLabel(upcoming[0].date)} · ${upcoming[0].start_time} (${upcoming[0].timezone})`
-                  : "Your upcoming team fixtures will appear here."}
-              </p>
-              {upcoming[0] && (
-                <p>{upcoming[0].venue || "Venue to be confirmed"}</p>
-              )}
-            </div>
-            <div className={m.summary}>
-              <strong>{results.length}</strong>
-              <span>
-                recorded {results.length === 1 ? "result" : "results"}
-                <br />
-                {results.filter((e) => outcome(e.result!) === "Win").length} W ·{" "}
-                {results.filter((e) => outcome(e.result!) === "Loss").length} L
-                · {results.filter((e) => outcome(e.result!) === "Draw").length}{" "}
-                D
+          <section className={m.seasonHero} aria-label="Filtered match summary">
+            <div className={m.seasonHeading}>
+              <div>
+                <p className={m.kicker}>THE SEASON IN NUMBERS</p>
+                <h2>Match summary</h2>
+                <p className={m.scope}>{scope}</p>
+              </div>
+              <span className={m.fixtureCount}>
+                {view === "cancelled"
+                  ? cancelled.length
+                  : view === "upcoming"
+                    ? upcoming.length
+                    : view === "results"
+                      ? past.length
+                      : past.length + upcoming.length}{" "}
+                fixtures
               </span>
             </div>
+            <dl className={m.seasonStats}>
+              <div>
+                <dt>Recorded results</dt>
+                <dd>{shownResults.length}</dd>
+              </div>
+              <div>
+                <dt>Wins · Draws · Losses</dt>
+                <dd className={m.record}>
+                  {wins}
+                  <span> / </span>
+                  {draws}
+                  <span> / </span>
+                  {losses}
+                </dd>
+              </div>
+              <div>
+                <dt>Win rate</dt>
+                <dd>
+                  {shownResults.length
+                    ? Math.round((wins / shownResults.length) * 100) + "%"
+                    : "—"}
+                </dd>
+              </div>
+              <div>
+                <dt>Points scored</dt>
+                <dd>{shownResults.length ? pointsFor : "—"}</dd>
+              </div>
+              <div>
+                <dt>Points conceded</dt>
+                <dd>{shownResults.length ? pointsAgainst : "—"}</dd>
+              </div>
+              <div>
+                <dt>Points difference</dt>
+                <dd>
+                  {shownResults.length
+                    ? (difference > 0 ? "+" : "") + difference
+                    : "—"}
+                </dd>
+              </div>
+            </dl>
+            <p className={m.statsNote}>
+              Team results, not individual appearances.{" "}
+              {shownResults.length
+                ? "Win rate and points use recorded results only."
+                : "No recorded results in this view."}
+              {pendingResults > 0
+                ? ` ${pendingResults} completed fixture${pendingResults === 1 ? "" : "s"} awaiting a result.`
+                : ""}
+            </p>
+            {(view === "all" || view === "upcoming") && (
+              <div className={m.nextFixture}>
+                <div>
+                  <p className={m.kicker}>
+                    NEXT MATCH
+                    {upcoming.length > 0
+                      ? ` · ${upcoming.length} UPCOMING`
+                      : ""}
+                  </p>
+                  <h3>
+                    {next?.title || "No upcoming matches in this selection"}
+                  </h3>
+                  {next && (
+                    <p>
+                      {dayLabel(next.date)} · {next.start_time} ({next.timezone}
+                      ) · {next.venue || "Venue to be confirmed"}
+                    </p>
+                  )}
+                </div>
+                {next && (
+                  <button
+                    type="button"
+                    className={m.nextButton}
+                    onClick={() => setSelectedId(next.id)}
+                  >
+                    Match details ↗
+                  </button>
+                )}
+              </div>
+            )}
           </section>
           {(view === "all" || view === "results") && (
             <section>

@@ -59,6 +59,78 @@ async function openMatch() {
     }),
   );
 }
+it("updates summary totals and rows for year, team and result-view filters", async () => {
+  (hub as jest.Mock).mockResolvedValue([
+    match,
+    {
+      ...match,
+      id: "tie",
+      result: {
+        ...match.result!,
+        team_score: 10,
+        opponent_score: 10,
+        outcome_override: "Win",
+      },
+    },
+    {
+      ...match,
+      id: "loss",
+      result: { ...match.result!, team_score: 0, opponent_score: 12 },
+    },
+    { ...match, id: "missing", result: null },
+    { ...match, id: "cancelled", cancelled: true },
+    { ...match, id: "other-team", team_id: "t2", team_name: "Second XV" },
+    { ...match, id: "older", date: "2024-05-14" },
+  ]);
+  render(<Matches />);
+  await screen.findByRole("region", { name: "Filtered match summary" });
+  fireEvent.change(screen.getByLabelText("Year"), {
+    target: { value: "2025" },
+  });
+  fireEvent.change(screen.getByLabelText("Team"), { target: { value: "t1" } });
+  const summary = screen.getByRole("region", {
+    name: "Filtered match summary",
+  });
+  const stat = (label: string) =>
+    within(summary).getByText(label).parentElement!;
+  expect(stat("Recorded results")).toHaveTextContent("3");
+  expect(stat("Win rate")).toHaveTextContent("67%");
+  expect(stat("Points scored")).toHaveTextContent("38");
+  expect(stat("Points conceded")).toHaveTextContent("46");
+  expect(stat("Points difference")).toHaveTextContent("-8");
+  expect(summary).toHaveTextContent("1 completed fixture awaiting a result");
+  expect(screen.getAllByRole("button", { name: /View match:/ })).toHaveLength(
+    4,
+  );
+  fireEvent.change(screen.getByLabelText("Show"), {
+    target: { value: "cancelled" },
+  });
+  expect(stat("Recorded results")).toHaveTextContent("0");
+  expect(stat("Win rate")).toHaveTextContent("—");
+  expect(stat("Points scored")).toHaveTextContent("—");
+  expect(screen.getAllByRole("button", { name: /View match:/ })).toHaveLength(
+    1,
+  );
+});
+it("filters the next fixture by year and opens its details", async () => {
+  render(<Matches />);
+  await screen.findByText("Match summary");
+  fireEvent.change(screen.getByLabelText("Year"), {
+    target: { value: "2025" },
+  });
+  expect(
+    screen.getByText("No upcoming matches in this selection"),
+  ).toBeInTheDocument();
+  expect(screen.queryByText("Future derby")).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Year"), {
+    target: { value: "2099" },
+  });
+  expect(
+    screen.getByRole("region", { name: "Filtered match summary" }),
+  ).toHaveTextContent("No recorded results in this view");
+  fireEvent.click(screen.getByRole("button", { name: "Match details ↗" }));
+  expect(screen.getByRole("dialog")).toHaveTextContent("Future derby");
+});
 it("saves athlete-owned stats with zero distinct from blank, and displays a video link", async () => {
   render(<Matches />);
   await openMatch();
