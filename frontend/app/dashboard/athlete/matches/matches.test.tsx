@@ -148,3 +148,51 @@ it("shows a recoverable loading error", async () => {
     await screen.findByText("No previous matches yet"),
   ).toBeInTheDocument();
 });
+it("shows competition branding and published provenance without implying coach verification", async () => {
+  (hub as jest.Mock).mockResolvedValue([
+    {
+      ...match,
+      competition_code: "virseker-noordvaal-2026",
+      competition_label: "Virseker Noordvaal Cup — Plaat final",
+      result: {
+        ...match.result!,
+        source_label: "Check-e-Log",
+        source_url: "https://www.checkelog.co.za/match",
+      },
+    },
+  ]);
+  render(<Matches />);
+  expect(
+    await screen.findByRole("img", { name: "Virseker Noordvaal Cup 2026" }),
+  ).toBeInTheDocument();
+  expect(screen.getByText("Published result")).toBeInTheDocument();
+  expect(screen.queryByText("Coach-recorded result")).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Check-e-Log ↗" })).toHaveAttribute(
+    "href",
+    "https://www.checkelog.co.za/match",
+  );
+});
+it("counts an equal-score knockout decision as a win and explains it", async () => {
+  const result = {
+    ...match.result!,
+    team_score: 10,
+    opponent_score: 10,
+    outcome_override: "Win" as const,
+    decision_note: "Montana advanced on most tries scored.",
+  };
+  (hub as jest.Mock).mockResolvedValue([
+    {
+      ...match,
+      competition_code: "nwu-prestige-2026",
+      competition_label: "NWU Prestige Sportreeks",
+      result,
+    },
+  ]);
+  render(<Matches />);
+  expect(await screen.findByText("10 – 10")).toBeInTheDocument();
+  expect(screen.getByText(result.decision_note)).toBeInTheDocument();
+  expect(outcome(result)).toBe("Win");
+  expect(
+    screen.queryByRole("img", { name: "Virseker Noordvaal Cup 2026" }),
+  ).not.toBeInTheDocument();
+});

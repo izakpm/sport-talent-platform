@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState, type FormEvent } from "react";
 import { hub } from "../team-hub/api";
 import { Modal } from "../coaches/CoachWorkspace";
@@ -31,19 +32,26 @@ export type Match = {
   timezone: string;
   sport: string;
   cancelled: boolean;
+  competition_code?: string | null;
+  competition_label?: string | null;
   result: {
     opponent: string;
     team_score: number;
     opponent_score: number;
+    source_label?: string | null;
+    source_url?: string | null;
+    outcome_override?: "Win" | "Loss" | null;
+    decision_note?: string | null;
   } | null;
   stats: Stats | null;
 };
 export const outcome = (r: NonNullable<Match["result"]>) =>
-  r.team_score > r.opponent_score
+  r.outcome_override ||
+  (r.team_score > r.opponent_score
     ? "Win"
     : r.team_score < r.opponent_score
       ? "Loss"
-      : "Draw";
+      : "Draw");
 const metrics = [
   ["minutes", "Minutes played", 180],
   ["tries", "Tries", 50],
@@ -129,12 +137,27 @@ export default function MatchesWorkspace({
               {e.cancelled
                 ? "Cancelled"
                 : e.result
-                  ? "Coach-recorded result"
+                  ? e.result.source_label
+                    ? "Published result"
+                    : "Coach-recorded result"
                   : Date.parse(e.ends_at) < now
                     ? "Awaiting result"
                     : "Upcoming"}
             </span>
           </div>
+          {e.competition_label && (
+            <div className={m.competition}>
+              {e.competition_code === "virseker-noordvaal-2026" && (
+                <Image
+                  src="/competitions/virseker-noordvaal.png"
+                  alt="Virseker Noordvaal Cup 2026"
+                  width={76}
+                  height={76}
+                />
+              )}
+              <span>{e.competition_label}</span>
+            </div>
+          )}
           <h3>
             {e.result ? `${e.team_name} vs ${e.result.opponent}` : e.title}
           </h3>
@@ -150,8 +173,28 @@ export default function MatchesWorkspace({
               <span>
                 {outcome(e.result)}
                 <small>{e.team_name} score first</small>
+                {e.result.decision_note && (
+                  <small>{e.result.decision_note}</small>
+                )}
               </span>
             </div>
+          )}
+          {e.result?.source_label && (
+            <p className={m.resultSource}>
+              Source:{" "}
+              {e.result.source_url &&
+              /^https:\/\//.test(e.result.source_url) ? (
+                <a
+                  href={e.result.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {e.result.source_label} ↗
+                </a>
+              ) : (
+                e.result.source_label
+              )}
+            </p>
           )}
           {e.notes && (
             <details className={m.notes}>
@@ -402,8 +445,9 @@ export default function MatchesWorkspace({
           )}
           {!coach && (
             <p className={m.footnote}>
-              Team results are recorded by the coach. Personal stats and video
-              links are self-reported and do not verify attendance.
+              Team results are recorded by your coach or attributed to a
+              published source. Personal stats and video links are self-reported
+              and do not verify attendance.
             </p>
           )}
         </>

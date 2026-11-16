@@ -140,6 +140,29 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.competition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+  color: #304f63;
+  font-size: 12px;
+  font-weight: 700;
+}
+.competition img {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.resultSource {
+  color: #617887;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.resultSource a {
+  color: #304f63;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .cardTop {
   display: flex;
   align-items: center;
