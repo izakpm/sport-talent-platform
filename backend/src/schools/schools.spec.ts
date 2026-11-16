@@ -34,6 +34,8 @@ describe('school workspace access', () => {
     expect(db.query.mock.calls[1][1]).toEqual(['user']);
     expect(db.query.mock.calls[2][1]).toEqual(['own-school']);
     expect(db.query.mock.calls[3][1]).toEqual(['own-school']);
+    expect(db.query.mock.calls[4][1]).toEqual(['own-school']);
+    expect(db.query.mock.calls[4][0]).toContain("u.role='COACH'");
     expect(db.query.mock.calls[3][0]).toContain(
       'WHERE h.organisation_id=$1 OR a.organisation_id=$1',
     );

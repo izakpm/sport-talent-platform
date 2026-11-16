@@ -3,6 +3,224 @@
   gap: 24px;
   color: #0b2130;
 }
+.overviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.season {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.season select {
+  padding: 12px 24px 12px 14px;
+  border: 1px solid #d5e0e8;
+  border-radius: 8px;
+  background: white;
+  color: #0b2130;
+  font: inherit;
+}
+.schoolHero {
+  padding: 36px;
+  background:
+    radial-gradient(ellipse at top right, #213f50, transparent 65%), #0b2130;
+}
+.schoolHero .identity img {
+  width: 90px;
+  height: 100px;
+}
+.schoolHero .identity h2 {
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 750;
+}
+.schoolMonogram {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 90px;
+  border: 1px solid #ffcc00;
+  border-radius: 12px;
+  font-size: 42px;
+  color: #ffcc00;
+}
+.schoolHero .schoolStats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #36505e;
+  padding-top: 26px;
+}
+.schoolStats a {
+  text-decoration: none;
+  color: inherit;
+  border-left: 1px solid #36505e;
+  padding-left: 20px;
+}
+.schoolStats a:first-child {
+  border: 0;
+  padding-left: 0;
+}
+.schoolStats strong {
+  display: block;
+  font-size: 42px;
+  line-height: 1.2;
+}
+.schoolStats span {
+  display: block;
+  font-size: 12px;
+  color: #c0d2df;
+  margin-top: 8px;
+}
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.sectionHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.sectionHeading h2 {
+  font-size: 21px;
+  margin: 0;
+}
+.sectionHeading a {
+  color: #295267;
+  font-weight: 650;
+  font-size: 12px;
+  text-decoration: none;
+}
+.sportPreview + .sportPreview {
+  border-top: 1px solid #d5e0e8;
+  margin-top: 18px;
+  padding-top: 18px;
+}
+.sportTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.sportTitle strong {
+  font-size: 23px;
+}
+.sportTitle span {
+  font-size: 12px;
+  color: #60798b;
+}
+.teamChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.teamChips span {
+  border: 1px solid #d5e0e8;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: #f5f7f8;
+}
+.previewList {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.previewMatch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e4ebef;
+}
+.previewMatch:last-child {
+  border: 0;
+}
+.previewMatch small {
+  display: block;
+  color: #60798b;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.previewMatch strong {
+  font-size: 14px;
+}
+.previewMatch b {
+  white-space: nowrap;
+  font-size: 22px;
+}
+.previewMatch > span {
+  font-size: 12px;
+  color: #60798b;
+}
+.emptyPreview {
+  padding: 12px 0;
+}
+.emptyPreview > span {
+  font-size: 28px;
+  color: #9a7a00;
+}
+.emptyPreview h3 {
+  font-size: 19px;
+  margin: 14px 0 6px;
+}
+.emptyPreview p {
+  margin: 0;
+  max-width: 400px;
+  font-size: 14px;
+}
+.coachPreview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0;
+}
+.coachPreview img,
+.coachPreview > span {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #eef3f5;
+  display: grid;
+  place-items: center;
+}
+@media (max-width: 850px) {
+  .overviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 500px) {
+  .schoolHero {
+    padding: 22px;
+  }
+  .schoolHero .identity img {
+    width: 65px;
+    height: 75px;
+  }
+  .schoolStats {
+    gap: 10px;
+  }
+  .schoolStats a {
+    padding-left: 10px;
+  }
+  .schoolStats strong {
+    font-size: 32px;
+  }
+  .schoolStats span {
+    font-size: 11px;
+  }
+  .schoolStats small {
+    font-size: 12px;
+  }
+}
 .page h1 {
   font-size: clamp(30px, 4vw, 44px);
   letter-spacing: -1.5px;

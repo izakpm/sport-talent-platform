@@ -111,16 +111,49 @@ it("renders failure without sample records", async () => {
   expect(screen.queryByText("Montana")).not.toBeInTheDocument();
 });
 it("handles no school membership", async () => {
-  jest
-    .mocked(fetchWithAuth)
-    .mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ school: null, teams: [], fixtures: [] }),
-    } as any);
+  jest.mocked(fetchWithAuth).mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ school: null, teams: [], fixtures: [] }),
+  } as any);
   render(<SchoolWorkspace />);
   expect(
     await screen.findByText(
       "Your school has not been connected to this account yet.",
     ),
   ).toBeInTheDocument();
+});
+
+it("makes the overview school-wide and counts linked coaches and sports", async () => {
+  jest.mocked(fetchWithAuth).mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({
+      school,
+      coaches: [{ id: "c1", first_name: "Leonard", last_name: "Nortje" }],
+      teams: [
+        { id: "u15", name: "U15A", sport: "Rugby", season: 2026 },
+        { id: "netball", name: "First team", sport: "Netball", season: 2026 },
+        { id: "old", name: "First team", sport: "Hockey", season: 2025 },
+      ],
+      fixtures,
+    }),
+  } as any);
+  render(<SchoolWorkspace />);
+  const overview = await screen.findByRole("region", {
+    name: "School overview",
+  });
+  expect(overview).toHaveTextContent("Coaches1");
+  expect(overview).toHaveTextContent("Sports2");
+  expect(overview).toHaveTextContent("Teams2");
+  expect(screen.queryByText(/Virseker Noordvaal Cup/)).not.toBeInTheDocument();
+  expect(screen.getByText("Leonard Nortje")).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: "Coming up" }),
+  ).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Season"), {
+    target: { value: "2025" },
+  });
+  expect(overview).toHaveTextContent("Sports1");
+  expect(overview).toHaveTextContent("Teams1");
+  expect(screen.getByText("Hockey")).toBeInTheDocument();
+  expect(screen.queryByText("Netball")).not.toBeInTheDocument();
 });

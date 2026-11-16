@@ -34,6 +34,13 @@ export class SchoolsService {
       WHERE h.organisation_id=$1 OR a.organisation_id=$1 ORDER BY f.match_date DESC,h.name,f.id`,
       [school.id],
     );
-    return { school, teams, fixtures };
+    const coaches = await this.db.query(
+      `SELECT DISTINCT u.id,u.first_name,u.last_name,u.profile_image
+       FROM organisation_users m JOIN users u ON u.id=m.user_id
+       WHERE m.organisation_id=$1 AND u.role='COACH'
+       ORDER BY u.first_name,u.last_name,u.id`,
+      [school.id],
+    );
+    return { school, teams, fixtures, coaches };
   }
 }

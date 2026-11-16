@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchWithAuth } from "../../lib/api";
 import s from "./schools.module.css";
+import SchoolOverview from "./SchoolOverview";
 
 type Team = { id: string; name: string; season: number; sport: string };
-type Fixture = {
+export type Fixture = {
   id: string;
   match_date: string;
   home_team_id: string;
@@ -27,7 +28,7 @@ type Fixture = {
   source_label: string;
   additional_sources: { label: string; url: string }[];
 };
-type Workspace = {
+export type Workspace = {
   school: {
     id: string;
     name: string;
@@ -40,6 +41,12 @@ type Workspace = {
   } | null;
   teams: Team[];
   fixtures: Fixture[];
+  coaches?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    profile_image: string | null;
+  }[];
 };
 export const divisionName: Record<string, string> = {
   beker: "Cup",
@@ -133,6 +140,7 @@ export default function SchoolWorkspace({
       </div>
     );
   const school = data.school;
+  if (view === "overview") return <SchoolOverview data={data} />;
   const fixtures = data.fixtures.filter(
     (f) =>
       (!year || f.match_date.startsWith(year)) &&
@@ -254,15 +262,6 @@ export default function SchoolWorkspace({
       )}
       {!["coaches", "achievements"].includes(view) && filters}
       {summary}
-      {view === "overview" && (
-        <div className={s.links}>
-          <Link href="/dashboard/schools/teams">Explore teams ↗</Link>
-          <Link href="/dashboard/schools/fixtures">
-            View fixtures & results ↗
-          </Link>
-          <Link href="/dashboard/schools/logs">Compare team records ↗</Link>
-        </div>
-      )}
       {(view === "teams" || view === "logs") && (
         <section>
           <h2>{view === "teams" ? "Rugby teams" : "Team season records"}</h2>
@@ -315,11 +314,11 @@ export default function SchoolWorkspace({
       {["overview", "fixtures", "teams", "logs"].includes(view) && (
         <section>
           <h2>
-            {view === "overview" ? "Latest results" : "Fixtures & results"}{" "}
+            Fixtures &amp; results{" "}
             <small className={s.count}>{fixtures.length} fixtures</small>
           </h2>
           <div className={s.list}>
-            {fixtures.slice(0, view === "overview" ? 6 : limit).map((f) => {
+            {fixtures.slice(0, limit).map((f) => {
               const home = f.home_school_id === school.id;
               const own = home ? f.home_score : f.away_score,
                 opp = home ? f.away_score : f.home_score;
@@ -383,7 +382,7 @@ export default function SchoolWorkspace({
               </p>
             )}
           </div>
-          {view !== "overview" && fixtures.length > limit && (
+          {fixtures.length > limit && (
             <button className={s.more} onClick={() => setLimit(limit + 30)}>
               Show more matches
             </button>
