@@ -73,6 +73,7 @@ export default function MatchesWorkspace({
     [team, setTeam] = useState(""),
     [view, setView] = useState("all"),
     [editing, setEditing] = useState<Match | null>(null),
+    [selectedId, setSelectedId] = useState<string | null>(null),
     [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     let active = true;
@@ -113,10 +114,11 @@ export default function MatchesWorkspace({
         : "Your performance details have been saved.",
     );
   }
-  function card(e: Match) {
+  const selected = rows?.find((e) => e.id === selectedId);
+  function matchDetails(e: Match) {
     return (
       <article
-        className={`${m.card} ${e.cancelled ? m.cancelled : ""}`}
+        className={`${m.detailCard} ${e.cancelled ? m.cancelled : ""}`}
         key={e.id}
       >
         <div className={m.dateTile}>
@@ -272,6 +274,68 @@ export default function MatchesWorkspace({
             )}
         </div>
       </article>
+    );
+  }
+  function card(e: Match) {
+    const status = e.cancelled
+      ? "Cancelled"
+      : e.result
+        ? outcome(e.result)
+        : Date.parse(e.ends_at) < now
+          ? "Awaiting result"
+          : e.start_time;
+    return (
+      <button
+        type="button"
+        className={m.matchRow}
+        key={e.id}
+        aria-label={`View match: ${e.result ? e.team_name + " vs " + e.result.opponent : e.title} — ${dayLabel(e.date)}`}
+        aria-haspopup="dialog"
+        onClick={() => setSelectedId(e.id)}
+      >
+        <span className={m.rowDate}>
+          <span>
+            {new Date(e.date + "T12:00:00Z").toLocaleDateString("en-ZA", {
+              month: "short",
+              timeZone: "UTC",
+            })}
+          </span>
+          <strong>{Number(e.date.slice(8))}</strong>
+          <small>{e.date.slice(0, 4)}</small>
+        </span>
+        <span className={m.rowInfo}>
+          <span className={m.rowTeam}>{e.team_name}</span>
+          <strong className={m.rowTitle}>
+            {e.result ? `vs ${e.result.opponent}` : e.title}
+          </strong>
+          <span className={m.rowMeta}>
+            {e.competition_code === "virseker-noordvaal-2026" && (
+              <Image
+                src="/competitions/virseker-noordvaal.png"
+                alt="Virseker Noordvaal Cup 2026"
+                width={36}
+                height={36}
+              />
+            )}
+            <span>{e.competition_label || e.venue || e.sport}</span>
+          </span>
+        </span>
+        <span className={m.rowResult} data-outcome={status}>
+          {e.result && (
+            <strong>
+              {e.result.team_score} – {e.result.opponent_score}
+            </strong>
+          )}
+          <span>
+            {status}
+            {e.result?.decision_note ? "*" : ""}
+          </span>
+          {e.result && <small>Team score first</small>}
+        </span>
+        <span className={m.rowArrow} aria-hidden="true">
+          ›
+        </span>
+      </button>
     );
   }
   return (
@@ -451,6 +515,19 @@ export default function MatchesWorkspace({
             </p>
           )}
         </>
+      )}
+      {selected && !editing && (
+        <Modal
+          title="Match details"
+          description={
+            coach
+              ? "Results and team notes."
+              : "Results, team notes and your performance."
+          }
+          close={() => setSelectedId(null)}
+        >
+          {matchDetails(selected)}
+        </Modal>
       )}
       {editing && (
         <MatchEditor

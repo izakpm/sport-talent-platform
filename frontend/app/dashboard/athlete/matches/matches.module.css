@@ -102,7 +102,150 @@
 }
 .list {
   display: grid;
-  gap: 16px;
+  gap: 10px;
+}
+.matchRow {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto 16px;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid #d6dfe4;
+  border-radius: 12px;
+  background: #fff;
+  color: #0b1f2e;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.matchRow:hover {
+  border-color: #b9922b;
+  box-shadow: 0 3px 12px #0b1f2e0a;
+}
+.matchRow:focus-visible {
+  outline: 3px solid #ffca05;
+  outline-offset: 3px;
+}
+.rowDate {
+  display: grid;
+  text-align: center;
+  background: #f4f6f7;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.rowDate > span {
+  background: #0b1f2e;
+  color: #ffca05;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 750;
+  padding: 4px;
+}
+.rowDate strong {
+  font-size: 24px;
+  line-height: 1.2;
+  padding-top: 3px;
+}
+.rowDate small {
+  font-size: 10px;
+  color: #617887;
+  padding-bottom: 4px;
+}
+.rowInfo {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.rowTeam {
+  color: #617887;
+  font-size: 11px;
+}
+.rowTitle {
+  font-size: 16px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.rowMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #617887;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.rowMeta img {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.rowResult {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+  max-width: 110px;
+  font-size: 11px;
+  font-weight: 650;
+}
+.rowResult strong {
+  font-size: 24px;
+  white-space: nowrap;
+  color: #0b1f2e;
+}
+.rowResult small {
+  font-size: 9px;
+  font-weight: 400;
+  color: #617887;
+}
+.rowResult[data-outcome="Win"] {
+  color: #27834b;
+}
+.rowResult[data-outcome="Loss"],
+.rowResult[data-outcome="Cancelled"] {
+  color: #a44c3a;
+}
+.rowArrow {
+  color: #617887;
+  font-size: 24px;
+}
+.detailCard {
+  color: #0b1f2e;
+}
+.detailCard > .dateTile {
+  display: none;
+}
+.detailCard .team {
+  color: #617887;
+  font-size: 12px;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .matchRow {
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    padding: 12px;
+    gap: 10px;
+  }
+  .rowArrow {
+    display: none;
+  }
+  .rowTitle {
+    font-size: 14px;
+  }
+  .rowResult {
+    max-width: 76px;
+  }
+  .rowResult strong {
+    font-size: 20px;
+  }
+  .rowMeta img {
+    width: 28px;
+    height: 28px;
+  }
+  .rowTeam {
+    font-size: 10px;
+  }
 }
 .card {
   display: flex;

@@ -52,8 +52,16 @@ it("shows historical scores alongside upcoming fixtures without a month restrict
   expect(outcome({ ...match.result!, team_score: 24 })).toBe("Draw");
   expect(outcome({ ...match.result!, team_score: 0 })).toBe("Loss");
 });
+async function openMatch() {
+  fireEvent.click(
+    await screen.findByRole("button", {
+      name: /View match: First XV vs North/,
+    }),
+  );
+}
 it("saves athlete-owned stats with zero distinct from blank, and displays a video link", async () => {
   render(<Matches />);
+  await openMatch();
   fireEvent.click(
     await screen.findByRole("button", { name: "Add my performance" }),
   );
@@ -90,6 +98,7 @@ it("saves athlete-owned stats with zero distinct from blank, and displays a vide
 });
 it("allows coaches to edit scores but not athlete performance", async () => {
   render(<Matches coach />);
+  await openMatch();
   fireEvent.click(await screen.findByRole("button", { name: "Edit result" }));
   const d = screen.getByRole("dialog");
   expect(within(d).getByLabelText("First XV score")).toHaveValue(28);
@@ -104,10 +113,15 @@ it("allows coaches to edit scores but not athlete performance", async () => {
     target: { value: "30" },
   });
   fireEvent.click(within(d).getByRole("button", { name: "Save result" }));
-  expect(await screen.findByText("30 – 24")).toBeInTheDocument();
+  expect(
+    await within(
+      await screen.findByRole("dialog", { name: "Match details" }),
+    ).findByText("30 – 24"),
+  ).toBeInTheDocument();
 });
 it("retains the edit when saving fails", async () => {
   render(<Matches coach />);
+  await openMatch();
   fireEvent.click(await screen.findByRole("button", { name: "Edit result" }));
   (hub as jest.Mock).mockRejectedValue(new Error("Cannot save"));
   fireEvent.click(screen.getByRole("button", { name: "Save result" }));
@@ -165,6 +179,7 @@ it("shows competition branding and published provenance without implying coach v
   expect(
     await screen.findByRole("img", { name: "Virseker Noordvaal Cup 2026" }),
   ).toBeInTheDocument();
+  await openMatch();
   expect(screen.getByText("Published result")).toBeInTheDocument();
   expect(screen.queryByText("Coach-recorded result")).not.toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Check-e-Log ↗" })).toHaveAttribute(
@@ -190,9 +205,28 @@ it("counts an equal-score knockout decision as a win and explains it", async () 
   ]);
   render(<Matches />);
   expect(await screen.findByText("10 – 10")).toBeInTheDocument();
+  await openMatch();
   expect(screen.getByText(result.decision_note)).toBeInTheDocument();
   expect(outcome(result)).toBe("Win");
   expect(
     screen.queryByRole("img", { name: "Virseker Noordvaal Cup 2026" }),
   ).not.toBeInTheDocument();
+});
+
+it("keeps details out of the list and closes the popup without losing filters", async () => {
+  render(<Matches readOnly />);
+  await screen.findByText("28 – 24");
+  expect(screen.queryByText("Match kit")).not.toBeInTheDocument();
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Show"), {
+    target: { value: "results" },
+  });
+  await openMatch();
+  expect(screen.getByRole("dialog")).toHaveTextContent("Match kit");
+  expect(
+    screen.queryByRole("button", { name: "Add my performance" }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Show")).toHaveValue("results");
 });
