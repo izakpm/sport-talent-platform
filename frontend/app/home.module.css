@@ -317,6 +317,7 @@
 .demo :global(.coach-preview) {
   transform: none;
   border-color: #d0dce3;
+  border-top: 3px solid #ffca05;
   border-radius: 10px;
   box-shadow: 0 28px 55px #0b1f2e15;
   color: #102b3c;
