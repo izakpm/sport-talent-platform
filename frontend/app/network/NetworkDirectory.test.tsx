@@ -5,6 +5,30 @@ import universities from "./universities.json";
 import clubs from "./clubs.json";
 
 describe("institution directory", () => {
+  it("links to visible groups and opens verified school websites in a new tab", () => {
+    render(<NetworkDirectory />);
+    const jumps = within(
+      screen.getByRole("navigation", { name: "Jump to institution group" }),
+    );
+    expect(jumps.getAllByRole("link")).toHaveLength(5);
+    expect(
+      jumps.getByRole("link", { name: "Primary schools" }),
+    ).toHaveAttribute("href", "#group-primary");
+    const website = screen.getByRole("link", {
+      name: "Hoërskool Garsfontein website (opens in a new tab)",
+    });
+    expect(website).toHaveAttribute("href", "https://www.garsies.co.za/n/");
+    expect(website).toHaveAttribute("target", "_blank");
+    expect(website).toHaveAttribute("rel", "noopener noreferrer");
+    fireEvent.change(screen.getByRole("combobox"), {
+      target: { value: "club" },
+    });
+    expect(jumps.getAllByRole("link")).toHaveLength(1);
+    expect(jumps.getByRole("link", { name: "Clubs" })).toHaveAttribute(
+      "href",
+      "#group-club",
+    );
+  });
   it("filters clubs, searches by sport and keeps their logos grey", () => {
     render(<NetworkDirectory />);
     fireEvent.change(screen.getByRole("combobox"), {

@@ -3,6 +3,8 @@ import { useState } from "react";
 import schools from "./schools.json";
 import universities from "./universities.json";
 import clubs from "./clubs.json";
+import websites from "./websites.json";
+const websiteLinks: Record<string, string> = websites;
 const institutions = [
   ...schools.map((s) => ({ ...s, alias: "", typeLabel: "" })),
   ...universities,
@@ -38,6 +40,15 @@ export default function NetworkDirectory() {
       (a, b) =>
         Number(b.partner) - Number(a.partner) || a.name.localeCompare(b.name),
     );
+  const visibleGroups = groups
+    .map((group) => ({
+      ...group,
+      members: rows.filter(
+        (item) =>
+          (item.levels.length === 2 ? "combined" : item.levels[0]) === group.id,
+      ),
+    }))
+    .filter((group) => group.members.length > 0);
   return (
     <section className={s.directory} aria-labelledby="directory-title">
       <div className={s.directoryHeading}>
@@ -51,6 +62,15 @@ export default function NetworkDirectory() {
           Grey crests are directory listings, not partners yet.
         </p>
       </div>
+      <nav className={s.jumpLinks} aria-label="Jump to institution group">
+        <span>Jump to</span>
+        {visibleGroups.map((group) => (
+          <a key={group.id} href={`#group-${group.id}`}>
+            {group.title}
+            <span aria-hidden="true"> ↓</span>
+          </a>
+        ))}
+      </nav>
       <div className={s.controls}>
         <label className={s.search}>
           Find an institution
@@ -102,13 +122,8 @@ export default function NetworkDirectory() {
       <p className={s.resultCount} role="status">
         {rows.length} {rows.length === 1 ? "institution" : "institutions"}
       </p>
-      {groups.map((group) => {
-        const members = rows.filter(
-          (item) =>
-            (item.levels.length === 2 ? "combined" : item.levels[0]) ===
-            group.id,
-        );
-        if (!members.length) return null;
+      {visibleGroups.map((group) => {
+        const members = group.members;
         return (
           <section
             key={group.id}
@@ -135,7 +150,21 @@ export default function NetworkDirectory() {
                       className={school.partner ? s.colour : s.grey}
                     />
                   </div>
-                  <h4>{school.name}</h4>
+                  <h4>
+                    {websiteLinks[school.slug] ? (
+                      <a
+                        className={s.schoolWebsite}
+                        href={websiteLinks[school.slug]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${school.name} website (opens in a new tab)`}
+                      >
+                        {school.name}
+                      </a>
+                    ) : (
+                      school.name
+                    )}
+                  </h4>
                   <p>
                     {school.typeLabel ||
                       (school.levels.length === 2
@@ -154,6 +183,11 @@ export default function NetworkDirectory() {
                       ? "✓ Established partner"
                       : "Directory listing"}
                   </span>
+                  {websiteLinks[school.slug] && (
+                    <span className={s.visitWebsite} aria-hidden="true">
+                      Visit website ↗
+                    </span>
+                  )}
                 </article>
               ))}
             </div>

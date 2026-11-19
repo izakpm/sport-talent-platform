@@ -182,6 +182,7 @@
   gap: 16px;
 }
 .school {
+  position: relative;
   text-align: center;
   padding: 25px 12px 20px;
   background: #fff;
@@ -344,10 +345,63 @@
   flex-shrink: 0;
 }
 .groupHeading h3 {
+  scroll-margin-top: 150px;
   font-size: clamp(20px, 2.2vw, 26px);
   font-weight: 700;
   letter-spacing: -0.025em;
   margin: 0;
+  color: #0b1f2e;
+}
+.jumpLinks {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+.jumpLinks > span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #617887;
+  margin-right: 4px;
+}
+.jumpLinks a {
+  padding: 10px 14px;
+  border: 1px solid #d2dfe6;
+  border-radius: 6px;
+  background: #fff;
+  color: #0b1f2e;
+  font-size: 12px;
+  font-weight: 600;
+}
+.jumpLinks a:hover {
+  background: #ffca05;
+  border-color: #ffca05;
+}
+.schoolWebsite {
+  color: inherit;
+}
+.schoolWebsite::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+}
+.schoolWebsite:focus-visible {
+  outline: none !important;
+}
+.schoolWebsite:focus-visible::after {
+  outline: 3px solid #ffca05;
+  outline-offset: 3px;
+}
+.school:has(.schoolWebsite):hover {
+  border-color: #d2aa00;
+  box-shadow: 0 6px 20px #0b1f2e12;
+}
+.visitWebsite {
+  margin-top: 12px;
+  font-size: 11px;
+  font-weight: 600;
   color: #0b1f2e;
 }
 .groupHeading span {
