@@ -2,9 +2,11 @@
 import { useState } from "react";
 import schools from "./schools.json";
 import universities from "./universities.json";
+import clubs from "./clubs.json";
 const institutions = [
   ...schools.map((s) => ({ ...s, alias: "", typeLabel: "" })),
   ...universities,
+  ...clubs,
 ];
 import s from "./network.module.css";
 const normalise = (value: string) =>
@@ -66,6 +68,7 @@ export default function NetworkDirectory() {
             <option value="primary">Primary schools</option>
             <option value="high">High schools</option>
             <option value="university">Universities</option>
+            <option value="club">Clubs</option>
           </select>
         </label>
         <div className={s.filters} aria-label="Partnership filter">

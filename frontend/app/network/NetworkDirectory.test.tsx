@@ -2,8 +2,25 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import NetworkDirectory from "./NetworkDirectory";
 import schools from "./schools.json";
 import universities from "./universities.json";
+import clubs from "./clubs.json";
 
 describe("institution directory", () => {
+  it("filters clubs, searches by sport and keeps their logos grey", () => {
+    render(<NetworkDirectory />);
+    fireEvent.change(screen.getByRole("combobox"), {
+      target: { value: "club" },
+    });
+    expect(screen.getAllByRole("article")).toHaveLength(clubs.length);
+    expect(screen.queryByText("✓ Established partner")).not.toBeInTheDocument();
+    expect(
+      screen.getAllByRole("img").every((img) => img.className === "grey"),
+    ).toBe(true);
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "tuks cricket" },
+    });
+    expect(screen.getAllByRole("article")).toHaveLength(1);
+    expect(screen.getByRole("article")).toHaveTextContent("Tuks Cricket");
+  });
   it("filters universities and finds institutions by team name", () => {
     render(<NetworkDirectory />);
     fireEvent.change(screen.getByRole("combobox"), {
@@ -21,7 +38,7 @@ describe("institution directory", () => {
   it("shows all schools with the confirmed partner first", () => {
     render(<NetworkDirectory />);
     expect(screen.getAllByRole("article")).toHaveLength(
-      schools.length + universities.length,
+      schools.length + universities.length + clubs.length,
     );
     expect(screen.getAllByRole("article")[0]).toHaveTextContent(
       "Hoërskool Garsfontein",
@@ -48,7 +65,7 @@ describe("institution directory", () => {
     expect(screen.getByText("No institutions found")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(screen.getAllByRole("article")).toHaveLength(
-      schools.length + universities.length,
+      schools.length + universities.length + clubs.length,
     );
   });
   it("supports accent-insensitive searches and has unique school identities", () => {

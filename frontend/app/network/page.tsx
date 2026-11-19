@@ -7,7 +7,7 @@ import s from "./network.module.css";
 export const metadata: Metadata = {
   title: "Our Network | PlayVerified",
   description:
-    "Meet PlayVerified’s partners and explore our school and university directory. Building connections across schools, sporting clubs and universities.",
+    "Meet PlayVerified’s partners and explore our directory of schools, sporting clubs and universities.",
   alternates: { canonical: "/network" },
 };
 export default function NetworkPage() {
