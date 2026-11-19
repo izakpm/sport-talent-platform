@@ -479,5 +479,18 @@
     "typeLabel": "Cricket club",
     "sources": ["https://www.checkelog.co.za/home/clubs"],
     "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Clubs/TUT_Cricket.jpg"
+  },
+  {
+    "slug": "club-360-primal-fitness",
+    "name": "360 Primal Fitness",
+    "alias": "360 Primal Fitness Studio Gym Training",
+    "location": "",
+    "province": "",
+    "logo": "/clubs/360 Primal Fitness Studio.png",
+    "partner": true,
+    "levels": ["club"],
+    "typeLabel": "Fitness studio",
+    "sources": [],
+    "logoSource": ""
   }
 ]

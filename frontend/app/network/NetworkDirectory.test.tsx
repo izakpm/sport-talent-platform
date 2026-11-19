@@ -29,16 +29,19 @@ describe("institution directory", () => {
       "#group-club",
     );
   });
-  it("filters clubs, searches by sport and keeps their logos grey", () => {
+  it("filters clubs, highlights the active fitness partner and searches by sport", () => {
     render(<NetworkDirectory />);
     fireEvent.change(screen.getByRole("combobox"), {
       target: { value: "club" },
     });
     expect(screen.getAllByRole("article")).toHaveLength(clubs.length);
-    expect(screen.queryByText("✓ Established partner")).not.toBeInTheDocument();
+    const partner = screen.getAllByRole("article")[0];
+    expect(partner).toHaveTextContent("360 Primal Fitness");
+    expect(partner).toHaveTextContent("✓ Established partner");
+    expect(within(partner).getByRole("img")).toHaveClass("colour");
     expect(
-      screen.getAllByRole("img").every((img) => img.className === "grey"),
-    ).toBe(true);
+      screen.getAllByRole("img").filter((img) => img.className === "grey"),
+    ).toHaveLength(clubs.length - 1);
     fireEvent.change(screen.getByRole("searchbox"), {
       target: { value: "tuks cricket" },
     });
@@ -69,7 +72,7 @@ describe("institution directory", () => {
         "article",
       )[0],
     ).toHaveTextContent("Hoërskool Garsfontein");
-    expect(screen.getAllByText("✓ Established partner")).toHaveLength(2);
+    expect(screen.getAllByText("✓ Established partner")).toHaveLength(3);
     const grouped = [
       "Primary schools",
       "Primary & high schools",
@@ -79,8 +82,8 @@ describe("institution directory", () => {
     ].flatMap((name) =>
       within(screen.getByRole("region", { name })).getAllByRole("article"),
     );
-    expect(grouped).toHaveLength(253);
-    expect(new Set(grouped).size).toBe(253);
+    expect(grouped).toHaveLength(254);
+    expect(new Set(grouped).size).toBe(254);
     expect(
       screen.queryByRole("button", { name: "Show more schools" }),
     ).not.toBeInTheDocument();
@@ -98,7 +101,7 @@ describe("institution directory", () => {
     expect(screen.getByRole("article")).toHaveTextContent(
       "Laerskool Garsfontein",
     );
-    fireEvent.click(screen.getByRole("button", { name: /Partners 2/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Partners 3/ }));
     expect(screen.getByText("No institutions found")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(screen.getAllByRole("article")).toHaveLength(
