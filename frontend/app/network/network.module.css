@@ -176,25 +176,6 @@
   outline: 3px solid #ffca05;
   outline-offset: 4px;
 }
-.more {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-top: 28px;
-}
-.more button {
-  background: white;
-  color: #0b1f2e;
-  border: 1px solid #d2dfe6;
-  border-radius: 6px;
-  padding: 13px 25px;
-  font-weight: 600;
-}
-.more span {
-  color: #617887;
-  font-size: 12px;
-}
 .grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -259,16 +240,6 @@
 }
 .directoryLabel {
   color: #788993;
-}
-.source {
-  color: #617887;
-  font-size: 12px;
-  line-height: 1.7;
-  margin: 25px 0 0;
-}
-.source a {
-  color: #0b1f2e;
-  text-decoration: underline;
 }
 .invitation {
   max-width: 1246px;

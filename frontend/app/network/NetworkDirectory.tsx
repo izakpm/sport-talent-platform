@@ -11,7 +11,6 @@ export default function NetworkDirectory() {
   const [query, setQuery] = useState("");
   const [partnersOnly, setPartnersOnly] = useState(false);
   const [level, setLevel] = useState("all");
-  const [limit, setLimit] = useState(24);
   const rows = schools
     .filter(
       (school) =>
@@ -47,7 +46,6 @@ export default function NetworkDirectory() {
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
-              setLimit(24);
             }}
           />
         </label>
@@ -57,7 +55,6 @@ export default function NetworkDirectory() {
             value={level}
             onChange={(e) => {
               setLevel(e.target.value);
-              setLimit(24);
             }}
           >
             <option value="all">All school types</option>
@@ -71,7 +68,6 @@ export default function NetworkDirectory() {
             aria-pressed={!partnersOnly}
             onClick={() => {
               setPartnersOnly(false);
-              setLimit(24);
             }}
           >
             All schools <span>{schools.length}</span>
@@ -81,7 +77,6 @@ export default function NetworkDirectory() {
             aria-pressed={partnersOnly}
             onClick={() => {
               setPartnersOnly(true);
-              setLimit(24);
             }}
           >
             Partners <span>{schools.filter((s) => s.partner).length}</span>
@@ -92,7 +87,7 @@ export default function NetworkDirectory() {
         {rows.length} {rows.length === 1 ? "school" : "schools"}
       </p>
       <div className={s.grid}>
-        {rows.slice(0, limit).map((school) => (
+        {rows.map((school) => (
           <article
             key={school.slug}
             className={`${s.school} ${school.partner ? s.partner : ""}`}
@@ -124,16 +119,6 @@ export default function NetworkDirectory() {
           </article>
         ))}
       </div>
-      {rows.length > limit && (
-        <div className={s.more}>
-          <button type="button" onClick={() => setLimit(limit + 24)}>
-            Show more schools
-          </button>
-          <span>
-            Showing {Math.min(limit, rows.length)} of {rows.length}
-          </span>
-        </div>
-      )}
       {!rows.length && (
         <div className={s.empty}>
           <h3>No schools found</h3>
@@ -143,41 +128,12 @@ export default function NetworkDirectory() {
               setQuery("");
               setPartnersOnly(false);
               setLevel("all");
-              setLimit(24);
             }}
           >
             Clear filters
           </button>
         </div>
       )}
-      <p className={s.source}>
-        School directories:{" "}
-        <a
-          href="https://www.virsekernoordvaalcup.co.za/skole"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Virseker Noordvaal Cup ↗
-        </a>
-        ,{" "}
-        <a
-          href="https://www.checkelog.co.za/home/primary-schools"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Check-e-Log primary schools ↗
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://www.checkelog.co.za/home/high-schools"
-          target="_blank"
-          rel="noreferrer"
-        >
-          high schools ↗
-        </a>
-        . Listing a school does not imply its endorsement of PlayVerified. Clubs
-        and universities will be added as partnerships are established.
-      </p>
     </section>
   );
 }
