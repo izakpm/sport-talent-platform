@@ -1,11 +1,28 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import NetworkDirectory from "./NetworkDirectory";
 import schools from "./schools.json";
+import universities from "./universities.json";
 
-describe("school directory", () => {
+describe("institution directory", () => {
+  it("filters universities and finds institutions by team name", () => {
+    render(<NetworkDirectory />);
+    fireEvent.change(screen.getByRole("combobox"), {
+      target: { value: "university" },
+    });
+    expect(screen.getAllByRole("article")).toHaveLength(16);
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "tuks" },
+    });
+    expect(screen.getAllByRole("article")).toHaveLength(1);
+    expect(screen.getByRole("article")).toHaveTextContent(
+      "University of Pretoria",
+    );
+  });
   it("shows all schools with the confirmed partner first", () => {
     render(<NetworkDirectory />);
-    expect(screen.getAllByRole("article")).toHaveLength(schools.length);
+    expect(screen.getAllByRole("article")).toHaveLength(
+      schools.length + universities.length,
+    );
     expect(screen.getAllByRole("article")[0]).toHaveTextContent(
       "Hoërskool Garsfontein",
     );
@@ -28,9 +45,11 @@ describe("school directory", () => {
       "Laerskool Garsfontein",
     );
     fireEvent.click(screen.getByRole("button", { name: /Partners 1/ }));
-    expect(screen.getByText("No schools found")).toBeInTheDocument();
+    expect(screen.getByText("No institutions found")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
-    expect(screen.getAllByRole("article")).toHaveLength(schools.length);
+    expect(screen.getAllByRole("article")).toHaveLength(
+      schools.length + universities.length,
+    );
   });
   it("supports accent-insensitive searches and has unique school identities", () => {
     render(<NetworkDirectory />);
