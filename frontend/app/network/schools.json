@@ -2061,7 +2061,7 @@
     "location": "",
     "province": "",
     "logo": "/schools/laerskool-stephanus-roos.jpg",
-    "partner": false,
+    "partner": true,
     "levels": ["primary"],
     "sources": ["https://www.checkelog.co.za/home/primary-schools"],
     "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Stephanus_Roos.jpg"

@@ -69,7 +69,7 @@ describe("institution directory", () => {
         "article",
       )[0],
     ).toHaveTextContent("Hoërskool Garsfontein");
-    expect(screen.getAllByText("✓ Established partner")).toHaveLength(1);
+    expect(screen.getAllByText("✓ Established partner")).toHaveLength(2);
     const grouped = [
       "Primary schools",
       "Primary & high schools",
@@ -98,7 +98,7 @@ describe("institution directory", () => {
     expect(screen.getByRole("article")).toHaveTextContent(
       "Laerskool Garsfontein",
     );
-    fireEvent.click(screen.getByRole("button", { name: /Partners 1/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Partners 2/ }));
     expect(screen.getByText("No institutions found")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(screen.getAllByRole("article")).toHaveLength(
@@ -114,6 +114,7 @@ describe("institution directory", () => {
     expect(new Set(schools.map((s) => s.slug)).size).toBe(schools.length);
     expect(schools.filter((s) => s.partner).map((s) => s.slug)).toEqual([
       "garsfontein",
+      "laerskool-stephanus-roos",
     ]);
   });
 });
