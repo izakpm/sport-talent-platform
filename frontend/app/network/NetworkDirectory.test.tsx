@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import NetworkDirectory from "./NetworkDirectory";
 import schools from "./schools.json";
 import universities from "./universities.json";
@@ -35,15 +35,28 @@ describe("institution directory", () => {
       "University of Pretoria",
     );
   });
-  it("shows all schools with the confirmed partner first", () => {
+  it("groups every institution once and puts partners first within their group", () => {
     render(<NetworkDirectory />);
     expect(screen.getAllByRole("article")).toHaveLength(
       schools.length + universities.length + clubs.length,
     );
-    expect(screen.getAllByRole("article")[0]).toHaveTextContent(
-      "Hoërskool Garsfontein",
-    );
+    expect(
+      within(screen.getByRole("region", { name: "High schools" })).getAllByRole(
+        "article",
+      )[0],
+    ).toHaveTextContent("Hoërskool Garsfontein");
     expect(screen.getAllByText("✓ Established partner")).toHaveLength(1);
+    const grouped = [
+      "Primary schools",
+      "Primary & high schools",
+      "High schools",
+      "Universities",
+      "Clubs",
+    ].flatMap((name) =>
+      within(screen.getByRole("region", { name })).getAllByRole("article"),
+    );
+    expect(grouped).toHaveLength(253);
+    expect(new Set(grouped).size).toBe(253);
     expect(
       screen.queryByRole("button", { name: "Show more schools" }),
     ).not.toBeInTheDocument();

@@ -8,6 +8,13 @@ const institutions = [
   ...universities,
   ...clubs,
 ];
+const groups = [
+  { id: "primary", title: "Primary schools" },
+  { id: "combined", title: "Primary & high schools" },
+  { id: "high", title: "High schools" },
+  { id: "university", title: "Universities" },
+  { id: "club", title: "Clubs" },
+];
 import s from "./network.module.css";
 const normalise = (value: string) =>
   value
@@ -95,40 +102,64 @@ export default function NetworkDirectory() {
       <p className={s.resultCount} role="status">
         {rows.length} {rows.length === 1 ? "institution" : "institutions"}
       </p>
-      <div className={s.grid}>
-        {rows.map((school) => (
-          <article
-            key={school.slug}
-            className={`${s.school} ${school.partner ? s.partner : ""}`}
+      {groups.map((group) => {
+        const members = rows.filter(
+          (item) =>
+            (item.levels.length === 2 ? "combined" : item.levels[0]) ===
+            group.id,
+        );
+        if (!members.length) return null;
+        return (
+          <section
+            key={group.id}
+            className={s.group}
+            aria-labelledby={`group-${group.id}`}
           >
-            <div className={s.crest}>
-              <img
-                src={school.logo}
-                alt={`${school.name} crest`}
-                width="120"
-                height="120"
-                loading="lazy"
-                className={school.partner ? s.colour : s.grey}
-              />
+            <div className={s.groupHeading}>
+              <h3 id={`group-${group.id}`}>{group.title}</h3>
+              <span>{members.length}</span>
             </div>
-            <h3>{school.name}</h3>
-            <p>
-              {school.typeLabel ||
-                (school.levels.length === 2
-                  ? "Primary & high school"
-                  : school.levels[0] === "primary"
-                    ? "Primary school"
-                    : "High school")}
-              {school.location ? ` · ${school.location}` : ""}
-            </p>
-            <span
-              className={school.partner ? s.partnerLabel : s.directoryLabel}
-            >
-              {school.partner ? "✓ Established partner" : "Directory listing"}
-            </span>
-          </article>
-        ))}
-      </div>
+            <div className={s.grid}>
+              {members.map((school) => (
+                <article
+                  key={school.slug}
+                  className={`${s.school} ${school.partner ? s.partner : ""}`}
+                >
+                  <div className={s.crest}>
+                    <img
+                      src={school.logo}
+                      alt={`${school.name} crest`}
+                      width="120"
+                      height="120"
+                      loading="lazy"
+                      className={school.partner ? s.colour : s.grey}
+                    />
+                  </div>
+                  <h4>{school.name}</h4>
+                  <p>
+                    {school.typeLabel ||
+                      (school.levels.length === 2
+                        ? "Primary & high school"
+                        : school.levels[0] === "primary"
+                          ? "Primary school"
+                          : "High school")}
+                    {school.location ? ` · ${school.location}` : ""}
+                  </p>
+                  <span
+                    className={
+                      school.partner ? s.partnerLabel : s.directoryLabel
+                    }
+                  >
+                    {school.partner
+                      ? "✓ Established partner"
+                      : "Directory listing"}
+                  </span>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })}
       {!rows.length && (
         <div className={s.empty}>
           <h3>No institutions found</h3>

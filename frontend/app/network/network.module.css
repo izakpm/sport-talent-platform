@@ -216,7 +216,7 @@
 .colour {
   filter: none;
 }
-.school h3 {
+.school h4 {
   font-size: 14px;
   line-height: 1.4;
   margin: 0 0 7px;
@@ -309,7 +309,7 @@
   .school {
     padding-inline: 8px;
   }
-  .school h3 {
+  .school h4 {
     font-size: 13px;
   }
   .crest img {
@@ -322,4 +322,39 @@
   .hero h1 {
     font-size: 42px;
   }
+}
+
+.group {
+  margin-top: 40px;
+}
+.groupHeading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid #d2dfe6;
+  padding: 0 0 16px;
+  margin-bottom: 22px;
+}
+.groupHeading::before {
+  content: "";
+  width: 4px;
+  height: 28px;
+  border-radius: 2px;
+  background: #ffca05;
+  flex-shrink: 0;
+}
+.groupHeading h3 {
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: #0b1f2e;
+}
+.groupHeading span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #617887;
+  background: #e8eef1;
+  border-radius: 20px;
+  padding: 4px 10px;
 }
