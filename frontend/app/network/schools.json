@@ -1,0 +1,2289 @@
+[
+  {
+    "slug": "ben-vorster",
+    "name": "Ben Vorster",
+    "location": "Tzaneen",
+    "province": "Limpopo",
+    "logo": "/schools/ben-vorster.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/15ff8333c3d41807a6794f6452851ac9aecf0a3d-147x157.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "bergsig-akademie",
+    "name": "Bergsig Akademie",
+    "location": "Rustenburg",
+    "province": "North West",
+    "logo": "/schools/bergsig-akademie.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/a3120b8a08b3a93d8c75637b0302acfe57d7e0f7-262x259.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "brandwag",
+    "name": "Brandwag",
+    "location": "Benoni",
+    "province": "Gauteng",
+    "logo": "/schools/brandwag.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/87b372c45344ba3eb072be98e7f21a3f250464ec-261x307.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "centurion",
+    "name": "Centurion",
+    "location": "Centurion",
+    "province": "Gauteng",
+    "logo": "/schools/centurion.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/cc846afe3aa1a597a9d1e59428ceed68d0584ba0-243x243.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "die-anker",
+    "name": "Die Anker",
+    "location": "Brakpan",
+    "province": "Gauteng",
+    "logo": "/schools/die-anker.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/bfec0e2e95890f8cdecb9cb73fa99a8997b019be-244x244.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "dinamika",
+    "name": "Dinamika",
+    "location": "Alberton",
+    "province": "Gauteng",
+    "logo": "/schools/dinamika.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/2972e392ea597261852a275df485b0f6ac68e153-245x254.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "dr-eg-jansen",
+    "name": "Dr. EG Jansen",
+    "location": "Boksburg",
+    "province": "Gauteng",
+    "logo": "/schools/dr-eg-jansen.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/1ed39071a87d8be28890823aa3e73b1b87101482-225x225.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "eldoraigne",
+    "name": "Eldoraigne",
+    "location": "Centurion",
+    "province": "Gauteng",
+    "logo": "/schools/eldoraigne.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/26dd4c26de733b0b43886b207b47b9ce8831fb2a-301x333.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "ermelo",
+    "name": "Ermelo",
+    "location": "Ermelo",
+    "province": "Mpumalanga",
+    "logo": "/schools/ermelo.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/40bc30848efa4c2447703f305f2faa38b961aecc-231x231.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "garsfontein",
+    "name": "Hoërskool Garsfontein",
+    "location": "Pretoria East",
+    "province": "Gauteng",
+    "logo": "/schools/garsfontein.png",
+    "partner": true,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/675ac3859a1d2150160af4be7dfc828adecb51c9-1024x1536.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "hts-middelburg",
+    "name": "HTS Middelburg",
+    "location": "Middelburg",
+    "province": "Mpumalanga",
+    "logo": "/schools/hts-middelburg.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/de0c323c68f6eca631ecc9f5f42a9c03f438b369-224x224.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "helpmekaar-kollege",
+    "name": "Helpmekaar Kollege",
+    "location": "Johannesburg",
+    "province": "Gauteng",
+    "logo": "/schools/helpmekaar-kollege.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/39462d9d988d3fb7ebc13213f0f4967e5b35a235-209x188.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "hugenote",
+    "name": "Hugenote",
+    "location": "Springs",
+    "province": "Gauteng",
+    "logo": "/schools/hugenote.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/ba6ec46bbc283650e98b519ee23a5087b3dcf15a-217x268.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "jeugland",
+    "name": "Jeugland",
+    "location": "Middelburg",
+    "province": "Mpumalanga",
+    "logo": "/schools/jeugland.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/ace3ebf210a7089e90d5d9438ed774f31789618e-283x283.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "kempton-park",
+    "name": "Kempton Park",
+    "location": "Kempton Park",
+    "province": "Gauteng",
+    "logo": "/schools/kempton-park.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/c9b722aad3dd1d8c37bbe004fe0c59d37f13d064-139x205.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "klerksdorp",
+    "name": "Klerksdorp",
+    "location": "Klerksdorp",
+    "province": "North West",
+    "logo": "/schools/klerksdorp.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/d022168739d2147a09785386e5f522f973271db5-240x240.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "lichtenburg",
+    "name": "Lichtenburg",
+    "location": "Lichtenburg",
+    "province": "North West",
+    "logo": "/schools/lichtenburg.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/a2775e7b57cef616cb93e0cb8168fd9f12dcefd5-270x227.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "ligbron-akademie",
+    "name": "Ligbron Akademie",
+    "location": "Ermelo",
+    "province": "Mpumalanga",
+    "logo": "/schools/ligbron-akademie.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/4b62e8c9735b9529caf05b378da327f78ce2093f-266x266.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "marais-viljoen",
+    "name": "Marais Viljoen",
+    "location": "Alberton",
+    "province": "Gauteng",
+    "logo": "/schools/marais-viljoen.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/99b1c6382c114166c00b97eb8f6fd9324385188e-177x238.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "menlopark",
+    "name": "Menlopark",
+    "location": "Pretoria",
+    "province": "Gauteng",
+    "logo": "/schools/menlopark.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/b9894a17f8c8f4a197bf407067d5005f673fdc2e-220x220.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "merensky-landbou",
+    "name": "Merensky Landbou",
+    "location": "Tzaneen",
+    "province": "Limpopo",
+    "logo": "/schools/merensky-landbou.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/9355fc0c5efdb5f07cb6e6049873afc37ed74bf5-225x225.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "middelburg",
+    "name": "Middelburg",
+    "location": "Middelburg",
+    "province": "Mpumalanga",
+    "logo": "/schools/middelburg.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/dbc3e5a8bbe8cc513cf3862030ec283d005cd566-214x214.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "midstream-college",
+    "name": "Midstream College",
+    "location": "Centurion",
+    "province": "Gauteng",
+    "logo": "/schools/midstream-college.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/5c96039371d7f5443ac1a64bf72ace241e4e7a90-710x1000.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "montana",
+    "name": "Montana",
+    "location": "Pretoria",
+    "province": "Gauteng",
+    "logo": "/schools/montana.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/1400b7624e5ab4a2a1267bbe37d6c6f135687c28-211x211.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "monument",
+    "name": "Monument",
+    "location": "Krugersdorp",
+    "province": "Gauteng",
+    "logo": "/schools/monument.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/a9c07c7cded59ccff930b3f3e9d613f9a03c18fa-280x280.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "nelspruit",
+    "name": "Nelspruit",
+    "location": "Mbombela",
+    "province": "Mpumalanga",
+    "logo": "/schools/nelspruit.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/a015110dc1efad9498492660ffa797da69e78c9c-198x219.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "noordheuwel",
+    "name": "Noordheuwel",
+    "location": "Krugersdorp",
+    "province": "Gauteng",
+    "logo": "/schools/noordheuwel.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/714ccda7a1194f0160b155af1b8782743ef14d15-177x276.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "oos-moot",
+    "name": "Oos-Moot",
+    "location": "Pretoria",
+    "province": "Gauteng",
+    "logo": "/schools/oos-moot.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://www.oos-moot.co.za/wp-content/uploads/2018/10/homelogo.png"
+  },
+  {
+    "slug": "piet-retief",
+    "name": "Piet Retief",
+    "location": "Mkhondo",
+    "province": "Mpumalanga",
+    "logo": "/schools/piet-retief.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/f449592bd89c0118ab2c1cf70149fc7dd757da76-220x293.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "pietersburg",
+    "name": "Pietersburg",
+    "location": "Polokwane",
+    "province": "Limpopo",
+    "logo": "/schools/pietersburg.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/0f7ae2cf43e7fe07c79823a5f1b3abb8b03a9d69-122x200.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "potch-gimmies",
+    "name": "Potch Gimmies",
+    "location": "Potchefstroom",
+    "province": "North West",
+    "logo": "/schools/potch-gimmies.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/ace3ebf210a7089e90d5d9438ed774f31789618e-283x283.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "potch-volkies",
+    "name": "Potch Volkies",
+    "location": "Potchefstroom",
+    "province": "North West",
+    "logo": "/schools/potch-volkies.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/e646b7a659e0b816273b96c602714a05857f166f-250x250.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "rustenburg",
+    "name": "Rustenburg",
+    "location": "Rustenburg",
+    "province": "North West",
+    "logo": "/schools/rustenburg.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/134ec4a7614714f6b7667d924d7f163c08995c49-239x216.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "secunda",
+    "name": "Secunda",
+    "location": "Secunda",
+    "province": "Mpumalanga",
+    "logo": "/schools/secunda.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/56177bb792d79abb48aa971398887457b8a84bae-181x221.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "transvalia",
+    "name": "Transvalia",
+    "location": "Secunda",
+    "province": "Mpumalanga",
+    "logo": "/schools/transvalia.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://images.squarespace-cdn.com/content/v1/5ddf57d0046bfb2883f37826/dd8af0e0-18bc-49a7-8fe1-557de226e77b/Skool+Wapen+Goud+met+wit+rand.png?format=300w"
+  },
+  {
+    "slug": "volkies-heidelberg",
+    "name": "Volkies Heidelberg",
+    "location": "Heidelberg",
+    "province": "Gauteng",
+    "logo": "/schools/volkies-heidelberg.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/e3977480590c53134889d9d04b80ba64e0faf31c-239x238.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "waterkloof",
+    "name": "Waterkloof",
+    "location": "Pretoria",
+    "province": "Gauteng",
+    "logo": "/schools/waterkloof.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/e51dc8ce14bf941f88ffc3b4005ed3a7d5fbe473-217x217.png?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "wesvalia",
+    "name": "Wesvalia",
+    "location": "Klerksdorp",
+    "province": "North West",
+    "logo": "/schools/wesvalia.webp",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.virsekernoordvaalcup.co.za/skole"],
+    "logoSource": "https://cdn.sanity.io/images/9uw8kydr/production/08451ccbb6a34141cdcc2fa818e26350303d18ac-400x392.webp?w=240&h=240&fit=max"
+  },
+  {
+    "slug": "zwartkop",
+    "name": "Zwartkop",
+    "location": "Centurion",
+    "province": "Gauteng",
+    "logo": "/schools/zwartkop.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": [
+      "https://www.virsekernoordvaalcup.co.za/skole",
+      "https://www.checkelog.co.za/home/high-schools"
+    ],
+    "logoSource": "https://zwarries.co.za/ws/wp-content/uploads/2025/07/WAPEN-1.png"
+  },
+  {
+    "slug": "afrikaanse-hoer-meisieskool-pretoria",
+    "name": "Afrikaanse Hoër Meisieskool Pretoria",
+    "location": "",
+    "province": "",
+    "logo": "/schools/afrikaanse-hoer-meisieskool-pretoria.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Afrikaans_Ho%C3%ABr_Meisies.jpg"
+  },
+  {
+    "slug": "afrikaanse-hoer-seunskool",
+    "name": "Afrikaanse Hoër Seunskool",
+    "location": "",
+    "province": "",
+    "logo": "/schools/afrikaanse-hoer-seunskool.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Afrikaanse_Ho%C3%ABr_Seunskool.jpg"
+  },
+  {
+    "slug": "hoerskool-akasia",
+    "name": "Hoërskool Akasia",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-akasia.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Akasia.jpg"
+  },
+  {
+    "slug": "amandasig-secondary-school",
+    "name": "Amandasig Secondary School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/amandasig-secondary-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Amandasig.jpg"
+  },
+  {
+    "slug": "amberfield-college",
+    "name": "Amberfield College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/amberfield-college.png",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Amberfield_College.png"
+  },
+  {
+    "slug": "cbc-mount-edmund",
+    "name": "CBC Mount Edmund",
+    "location": "",
+    "province": "",
+    "logo": "/schools/cbc-mount-edmund.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/CBC_Mount_Edmund.jpg"
+  },
+  {
+    "slug": "cornerstone-college",
+    "name": "Cornerstone College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/cornerstone-college.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Cornerstone_College.jpg"
+  },
+  {
+    "slug": "cornwall-hill-college",
+    "name": "Cornwall Hill College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/cornwall-hill-college.png",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Cornwall_Hill_College.png"
+  },
+  {
+    "slug": "courtney-college",
+    "name": "Courtney College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/courtney-college.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/Courtney_College-_Front.jpg"
+  },
+  {
+    "slug": "crawford-college",
+    "name": "Crawford College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/crawford-college.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Crawford_College.jpg"
+  },
+  {
+    "slug": "hoerskool-sp-cr-swart",
+    "name": "Hoërskool SP CR Swart",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-sp-cr-swart.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_SP_CR_Swart.jpg"
+  },
+  {
+    "slug": "cullinan-high-school",
+    "name": "Cullinan High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/cullinan-high-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Cullinan.png"
+  },
+  {
+    "slug": "curro-academy-pretoria",
+    "name": "Curro Academy Pretoria",
+    "location": "",
+    "province": "",
+    "logo": "/schools/curro-academy-pretoria.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Curro_Academy.jpg"
+  },
+  {
+    "slug": "curro-hazeldean-college",
+    "name": "Curro Hazeldean College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/curro-hazeldean-college.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Curro_Hazeldean_College.jpg"
+  },
+  {
+    "slug": "curro-roodeplaat",
+    "name": "Curro Roodeplaat",
+    "location": "",
+    "province": "",
+    "logo": "/schools/curro-roodeplaat.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Curro_Roodeplaat.jpg"
+  },
+  {
+    "slug": "curro-thatchfield",
+    "name": "Curro Thatchfield",
+    "location": "",
+    "province": "",
+    "logo": "/schools/curro-thatchfield.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Curro_Thatchfield.jpg"
+  },
+  {
+    "slug": "dirk-postma",
+    "name": "Dirk Postma",
+    "location": "",
+    "province": "",
+    "logo": "/schools/dirk-postma.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Dirk_Postma.jpg"
+  },
+  {
+    "slug": "doxa-deo-edendale",
+    "name": "Doxa Deo Edendale",
+    "location": "",
+    "province": "",
+    "logo": "/schools/doxa-deo-edendale.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Doxa_Deo_Edendale.png"
+  },
+  {
+    "slug": "eduplex",
+    "name": "Eduplex",
+    "location": "",
+    "province": "",
+    "logo": "/schools/eduplex.png",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Eduplex.png"
+  },
+  {
+    "slug": "hoerskool-elandspoort",
+    "name": "Hoërskool Elandspoort",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-elandspoort.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Elandsport.jpg"
+  },
+  {
+    "slug": "elmar-college",
+    "name": "Elmar College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/elmar-college.png",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Elmar-College.png"
+  },
+  {
+    "slug": "hoerskool-erasmus",
+    "name": "Hoërskool Erasmus",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-erasmus.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/Horskool_Erasmus.png"
+  },
+  {
+    "slug": "hoerskool-fh-odendaal",
+    "name": "Hoërskool FH Odendaal",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-fh-odendaal.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_FH_Odendaal.png"
+  },
+  {
+    "slug": "hoerskool-gerrit-maritz",
+    "name": "Hoërskool Gerrit Maritz",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-gerrit-maritz.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Gerrit_Maritz.jpg"
+  },
+  {
+    "slug": "heronbridge-college",
+    "name": "HeronBridge College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/heronbridge-college.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Heron_Bridge_College.jpg"
+  },
+  {
+    "slug": "the-glen-high-school",
+    "name": "The Glen High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/the-glen-high-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/The_Glen_High_School.jpg"
+  },
+  {
+    "slug": "greenwood-college",
+    "name": "Greenwood College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/greenwood-college.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Greenwood_College.jpg"
+  },
+  {
+    "slug": "hoerskool-hercules",
+    "name": "Hoërskool Hercules",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-hercules.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Hercules.jpg"
+  },
+  {
+    "slug": "hillview-high-school",
+    "name": "Hillview High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hillview-high-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Hillview_High_School.png"
+  },
+  {
+    "slug": "hts-john-vorster",
+    "name": "HTS John Vorster",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hts-john-vorster.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/HTS_John_Vorster.png"
+  },
+  {
+    "slug": "hoerskool-langenhoven",
+    "name": "Hoërskool Langenhoven",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-langenhoven.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Horskool_Langenhoven.jpg"
+  },
+  {
+    "slug": "laudium-secondary",
+    "name": "Laudium Secondary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laudium-secondary.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Laudium_Secondary.png"
+  },
+  {
+    "slug": "loreto-convent-school",
+    "name": "Loreto Convent School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/loreto-convent-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Loreto_Convent_School.jpg"
+  },
+  {
+    "slug": "hoerskool-lyttelton",
+    "name": "Hoërskool Lyttelton",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-lyttelton.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/Horskool_Lyttleton.jpg"
+  },
+  {
+    "slug": "lyttelton-manor-high-school",
+    "name": "Lyttelton Manor High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/lyttelton-manor-high-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Lyttleton_Manor_High_School.jpg"
+  },
+  {
+    "slug": "magalies-special-school",
+    "name": "Magalies Special School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/magalies-special-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Magalies_Special_School.png"
+  },
+  {
+    "slug": "maragon-ruimsig",
+    "name": "Maragon Ruimsig",
+    "location": "",
+    "province": "",
+    "logo": "/schools/maragon-ruimsig.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Maragon_Ruimsig.png"
+  },
+  {
+    "slug": "pepps-motheong",
+    "name": "PEPPS Motheong",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pepps-motheong.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/PEPPS_Motheong.png"
+  },
+  {
+    "slug": "prestige-college",
+    "name": "Prestige College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/prestige-college.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Prestige-College.jpg"
+  },
+  {
+    "slug": "pretoria-boys-high-school",
+    "name": "Pretoria Boys High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pretoria-boys-high-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/Pretoria_Boys_High_School_-_New.png"
+  },
+  {
+    "slug": "pretoria-central-high-school",
+    "name": "Pretoria Central High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pretoria-central-high-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Pta_Central_High_School.jpg"
+  },
+  {
+    "slug": "pretoria-chinese-school",
+    "name": "Pretoria Chinese School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pretoria-chinese-school.gif",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Pretoria_Chinese_School.gif"
+  },
+  {
+    "slug": "pretoria-highschool-for-girls",
+    "name": "Pretoria Highschool for Girls",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pretoria-highschool-for-girls.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Pretoria_Highschool_for_Girls.jpg"
+  },
+  {
+    "slug": "hoerskool-pretoria-noord",
+    "name": "Hoërskool Pretoria Noord",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-pretoria-noord.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Pretoria_Noord.jpg"
+  },
+  {
+    "slug": "pretoria-technical-high-school",
+    "name": "Pretoria Technical High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pretoria-technical-high-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Pretoria_Technical_High_School.jpg"
+  },
+  {
+    "slug": "pro-arte-alphen-park",
+    "name": "Pro Arte Alphen Park",
+    "location": "",
+    "province": "",
+    "logo": "/schools/pro-arte-alphen-park.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Pro_Arte_Alphen_Park.jpg"
+  },
+  {
+    "slug": "hoerskool-overkruin",
+    "name": "Hoërskool Overkruin",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-overkruin.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Overkruin.jpg"
+  },
+  {
+    "slug": "hoerskool-rietondale",
+    "name": "Hoërskool Rietondale",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-rietondale.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Hendrik_Verwoerd.jpg"
+  },
+  {
+    "slug": "sa-college-private-school",
+    "name": "SA College Private School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/sa-college-private-school.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/SA_College.jpg"
+  },
+  {
+    "slug": "rosina-sedibane-modiba-sport-school",
+    "name": "Rosina Sedibane Modiba Sport School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/rosina-sedibane-modiba-sport-school.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Rosina_Sedibane_Modiba_Sport_School.jpg"
+  },
+  {
+    "slug": "hoerskool-silverton",
+    "name": "Hoërskool Silverton",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-silverton.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Silverton.jpg"
+  },
+  {
+    "slug": "sonitus-school",
+    "name": "Sonitus School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/sonitus-school.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/Sonitus_-_FE.jpg"
+  },
+  {
+    "slug": "southdowns-college",
+    "name": "Southdowns College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/southdowns-college.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Southdowns-College.jpg"
+  },
+  {
+    "slug": "st-alban-s-college",
+    "name": "St Alban’s College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/st-alban-s-college.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/St_Albans_College.png"
+  },
+  {
+    "slug": "star-college",
+    "name": "Star College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/star-college.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Star_College.png"
+  },
+  {
+    "slug": "st-mary-s-dsg",
+    "name": "St Mary’s DSG",
+    "location": "",
+    "province": "",
+    "logo": "/schools/st-mary-s-dsg.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/St_Marys_DSG.jpg"
+  },
+  {
+    "slug": "suiderberg-school",
+    "name": "Suiderberg School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/suiderberg-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Suiderberg.png"
+  },
+  {
+    "slug": "sutherland-highschool",
+    "name": "Sutherland Highschool",
+    "location": "",
+    "province": "",
+    "logo": "/schools/sutherland-highschool.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Sutherland_Highschool.jpg"
+  },
+  {
+    "slug": "trinity-house-heritage-hill",
+    "name": "Trinity House Heritage Hill",
+    "location": "",
+    "province": "",
+    "logo": "/schools/trinity-house-heritage-hill.jpg",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Trinity-House-Heritage-Hill.jpg"
+  },
+  {
+    "slug": "hoerskool-tuine",
+    "name": "Hoërskool Tuine",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-tuine.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskole_Tuine.jpg"
+  },
+  {
+    "slug": "hts-tuine",
+    "name": "HTS Tuine",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hts-tuine.jpg",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/HTS_Tuine.jpg"
+  },
+  {
+    "slug": "tukssport-high-school",
+    "name": "TuksSport High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/tukssport-high-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Tuks_Rugby.png"
+  },
+  {
+    "slug": "tyger-valley-college",
+    "name": "Tyger Valley College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/tyger-valley-college.png",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Tyger_Valley_College.png"
+  },
+  {
+    "slug": "hoerskool-uitsig",
+    "name": "Hoërskool Uitsig",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-uitsig.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Uitsig.png"
+  },
+  {
+    "slug": "voortrekkerhoogte-high-school",
+    "name": "Voortrekkerhoogte High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/voortrekkerhoogte-high-school.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Voortrekkerhoogte_High_School.png"
+  },
+  {
+    "slug": "hoerskool-die-wilgers",
+    "name": "Hoërskool Die Wilgers",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-die-wilgers.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/GAW_Cricket/Ho%C3%ABrskool_Die_Wilgers.png"
+  },
+  {
+    "slug": "willowridge-high-school",
+    "name": "Willowridge High School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/willowridge-high-school.gif",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Willowridge_High_-_New.gif"
+  },
+  {
+    "slug": "hoerskool-wonderboom",
+    "name": "Hoërskool Wonderboom",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hoerskool-wonderboom.png",
+    "partner": false,
+    "levels": ["high"],
+    "sources": ["https://www.checkelog.co.za/home/high-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Hoerskole/Horskool_Wonderboom.png"
+  },
+  {
+    "slug": "woodhill-college",
+    "name": "Woodhill College",
+    "location": "",
+    "province": "",
+    "logo": "/schools/woodhill-college.png",
+    "partner": false,
+    "levels": ["high", "primary"],
+    "sources": [
+      "https://www.checkelog.co.za/home/high-schools",
+      "https://www.checkelog.co.za/home/primary-schools"
+    ],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/High_Schools/Woodhill-College.png"
+  },
+  {
+    "slug": "laerskool-akasia",
+    "name": "Laerskool Akasia",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-akasia.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Akasia.jpg"
+  },
+  {
+    "slug": "laerskool-anton-van-wouw",
+    "name": "Laerskool Anton van Wouw",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-anton-van-wouw.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Anton-van-Wouw.jpg"
+  },
+  {
+    "slug": "laerskool-bakenkop",
+    "name": "Laerskool Bakenkop",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-bakenkop.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Bakenkop.png"
+  },
+  {
+    "slug": "laerskool-bergsig",
+    "name": "Laerskool Bergsig",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-bergsig.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Bergsig.png"
+  },
+  {
+    "slug": "laerskool-booysens",
+    "name": "Laerskool Booysens",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-booysens.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Booysens.jpg"
+  },
+  {
+    "slug": "laerskool-broederstroom",
+    "name": "Laerskool Broederstroom",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-broederstroom.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Broederstroom.png"
+  },
+  {
+    "slug": "bronberg-akademie",
+    "name": "Bronberg Akademie",
+    "location": "",
+    "province": "",
+    "logo": "/schools/bronberg-akademie.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Bronberg_Akademie.png"
+  },
+  {
+    "slug": "bronkhorstspruit-primary",
+    "name": "Bronkhorstspruit Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/bronkhorstspruit-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Bronkhorstspruit_Primary.jpg"
+  },
+  {
+    "slug": "brooklyn-primary",
+    "name": "Brooklyn Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/brooklyn-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Brooklyn-Primary_New.jpg"
+  },
+  {
+    "slug": "laerskool-boerefort",
+    "name": "Laerskool Boerefort",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-boerefort.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Boerefort_-_FE.png"
+  },
+  {
+    "slug": "burgher-right-primary",
+    "name": "Burgher Right Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/burgher-right-primary.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Burgher_Right_Primary.png"
+  },
+  {
+    "slug": "laerskool-constantiapark",
+    "name": "Laerskool Constantiapark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-constantiapark.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Constantiapark.jpg"
+  },
+  {
+    "slug": "laerskool-cullinan",
+    "name": "Laerskool Cullinan",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-cullinan.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Cullinan.jpg"
+  },
+  {
+    "slug": "laerskool-danie-malan",
+    "name": "Laerskool Danie Malan",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-danie-malan.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Danie-Malan.jpg"
+  },
+  {
+    "slug": "laerskool-derdepoort",
+    "name": "Laerskool Derdepoort",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-derdepoort.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Derdepoort.png"
+  },
+  {
+    "slug": "laerskool-die-poort",
+    "name": "Laerskool Die Poort",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-die-poort.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Die-Poort.jpg"
+  },
+  {
+    "slug": "doornpoort-primary",
+    "name": "Doornpoort Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/doornpoort-primary.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Doornpoort_Primary.png"
+  },
+  {
+    "slug": "laerskool-doringkloof",
+    "name": "Laerskool Doringkloof",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-doringkloof.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Doringkloof_-_New.png"
+  },
+  {
+    "slug": "laerskool-du-preez-van-wyk",
+    "name": "Laerskool Du Preez Van Wyk",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-du-preez-van-wyk.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Du-Preez-Van-Wyk.png"
+  },
+  {
+    "slug": "laerskool-elarduspark",
+    "name": "Laerskool Elarduspark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-elarduspark.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Elarduspark.png"
+  },
+  {
+    "slug": "erasmia-primary",
+    "name": "Erasmia Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/erasmia-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Erasmia-Primary.jpg"
+  },
+  {
+    "slug": "laerskool-fleur",
+    "name": "Laerskool Fleur",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-fleur.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Fleur.jpg"
+  },
+  {
+    "slug": "fred-magardie-primary",
+    "name": "Fred Magardie Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/fred-magardie-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Fred-Magardie-Primary.jpg"
+  },
+  {
+    "slug": "laerskool-garsfontein",
+    "name": "Laerskool Garsfontein",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-garsfontein.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Garsfontein.png"
+  },
+  {
+    "slug": "laerskool-genl-beyers",
+    "name": "Laerskool Genl Beyers",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-genl-beyers.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Genl_Beyers_-_New.png"
+  },
+  {
+    "slug": "laerskool-genl-nic-smit",
+    "name": "Laerskool Genl Nic Smit",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-genl-nic-smit.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Genl-Nic-Smit.png"
+  },
+  {
+    "slug": "glenstantia-primary",
+    "name": "Glenstantia Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/glenstantia-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Glenstantia-Primary.jpg"
+  },
+  {
+    "slug": "laerskool-haakdoorn",
+    "name": "Laerskool Haakdoorn",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-haakdoorn.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Haakdoorn.png"
+  },
+  {
+    "slug": "hatfield-christian-school",
+    "name": "Hatfield Christian School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/hatfield-christian-school.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Hatfield_Christian_School.jpg"
+  },
+  {
+    "slug": "laerskool-hennopspark",
+    "name": "Laerskool Hennopspark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-hennopspark.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Hennopspark.png"
+  },
+  {
+    "slug": "laerskool-hennopsrivier",
+    "name": "Laerskool Hennopsrivier",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-hennopsrivier.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Hennopsrivier.jpg"
+  },
+  {
+    "slug": "laerskool-hermanstad",
+    "name": "Laerskool Hermanstad",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-hermanstad.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Hermanstad.jpg"
+  },
+  {
+    "slug": "irene-primary",
+    "name": "Irene Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/irene-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Irene-Primary.jpg"
+  },
+  {
+    "slug": "jacaranda-international",
+    "name": "Jacaranda International",
+    "location": "",
+    "province": "",
+    "logo": "/schools/jacaranda-international.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Jacaranda_International.jpg"
+  },
+  {
+    "slug": "laerskool-kameeldrift",
+    "name": "Laerskool Kameeldrift",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-kameeldrift.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Kameeldrift.jpg"
+  },
+  {
+    "slug": "laerskool-kameelfontein",
+    "name": "Laerskool Kameelfontein",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-kameelfontein.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Kameelfontein.jpg"
+  },
+  {
+    "slug": "kilnerton-primary",
+    "name": "Kilnerton Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/kilnerton-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Nellie_Swart.jpg"
+  },
+  {
+    "slug": "die-krans",
+    "name": "Die Krans",
+    "location": "",
+    "province": "",
+    "logo": "/schools/die-krans.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Die_Krans.png"
+  },
+  {
+    "slug": "laudium-primary",
+    "name": "Laudium Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laudium-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laudium_Primary.jpg"
+  },
+  {
+    "slug": "laerskool-lindopark",
+    "name": "Laerskool Lindopark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-lindopark.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Lindopark.jpg"
+  },
+  {
+    "slug": "laerskool-louis-leipoldt",
+    "name": "Laerskool Louis Leipoldt",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-louis-leipoldt.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Louis-Leipoldt.png"
+  },
+  {
+    "slug": "laerskool-lynnwood",
+    "name": "Laerskool Lynnwood",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-lynnwood.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Lynnwood.jpg"
+  },
+  {
+    "slug": "lynnwood-ridge-primary",
+    "name": "Lynnwood Ridge Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/lynnwood-ridge-primary.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Lynnwood_Ridge_Primary.png"
+  },
+  {
+    "slug": "lyttelton-primary",
+    "name": "Lyttelton Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/lyttelton-primary.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Lyttelton-Primary.png"
+  },
+  {
+    "slug": "laerskool-magalieskruin",
+    "name": "Laerskool Magalieskruin",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-magalieskruin.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Magalieskruin.png"
+  },
+  {
+    "slug": "maragon-olympus",
+    "name": "Maragon Olympus",
+    "location": "",
+    "province": "",
+    "logo": "/schools/maragon-olympus.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Maragon_Olympus.jpg"
+  },
+  {
+    "slug": "laerskool-mayville",
+    "name": "Laerskool Mayville",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-mayville.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Mayville.jpg"
+  },
+  {
+    "slug": "laerskool-menlopark",
+    "name": "Laerskool Menlopark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-menlopark.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Menlopark.png"
+  },
+  {
+    "slug": "laerskool-meyerspark",
+    "name": "Laerskool Meyerspark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-meyerspark.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Meyerspark.jpg"
+  },
+  {
+    "slug": "midstream-college-primary",
+    "name": "Midstream College Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/midstream-college-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Midstream-College-Primary.jpg"
+  },
+  {
+    "slug": "midstream-ridge-primary",
+    "name": "Midstream Ridge Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/midstream-ridge-primary.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Midstream_Ridge_-_FE.png"
+  },
+  {
+    "slug": "motheong-primary-school",
+    "name": "Motheong Primary School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/motheong-primary-school.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Motheong_Primary_School.png"
+  },
+  {
+    "slug": "laerskool-monumentpark",
+    "name": "Laerskool Monumentpark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-monumentpark.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Laerskool_Monumentpark.png"
+  },
+  {
+    "slug": "nantes-primere-skool",
+    "name": "Nantes Primêre Skool",
+    "location": "",
+    "province": "",
+    "logo": "/schools/nantes-primere-skool.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Nantes_Primre_Skool.png"
+  },
+  {
+    "slug": "laerskool-paratus",
+    "name": "Laerskool Paratus",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-paratus.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Paratus.jpg"
+  },
+  {
+    "slug": "laerskool-pierneef",
+    "name": "Laerskool Pierneef",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-pierneef.gif",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Pierneef.gif"
+  },
+  {
+    "slug": "laerskool-pretoria-oos",
+    "name": "Laerskool Pretoria Oos",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-pretoria-oos.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Pretoria-Oos.png"
+  },
+  {
+    "slug": "laerskool-queenswood",
+    "name": "Laerskool Queenswood",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-queenswood.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Queenswood_FE.png"
+  },
+  {
+    "slug": "laerskool-rachel-de-beer",
+    "name": "Laerskool Rachel de Beer",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-rachel-de-beer.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Rachel-de-Beer.jpg"
+  },
+  {
+    "slug": "laerskool-rayton",
+    "name": "Laerskool Rayton",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-rayton.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Rayton.jpg"
+  },
+  {
+    "slug": "reddford-house",
+    "name": "Reddford House",
+    "location": "",
+    "province": "",
+    "logo": "/schools/reddford-house.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Reddford_House.png"
+  },
+  {
+    "slug": "rietondale-primary",
+    "name": "Rietondale Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/rietondale-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Rientondale-Primary.jpg"
+  },
+  {
+    "slug": "laerskool-rietfontein-noord",
+    "name": "Laerskool Rietfontein Noord",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-rietfontein-noord.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Rietfontein-Noord.jpg"
+  },
+  {
+    "slug": "riviera-primary",
+    "name": "Riviera Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/riviera-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Riviera-Primary.jpg"
+  },
+  {
+    "slug": "laerskool-rooihuiskraal",
+    "name": "Laerskool Rooihuiskraal",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-rooihuiskraal.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Rooihuiskraal.jpg"
+  },
+  {
+    "slug": "laerskool-saamspan",
+    "name": "Laerskool Saamspan",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-saamspan.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Saamspan.png"
+  },
+  {
+    "slug": "sagewood-school",
+    "name": "Sagewood School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/sagewood-school.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Sagewood-School.jpg"
+  },
+  {
+    "slug": "laerskool-silverton",
+    "name": "Laerskool Silverton",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-silverton.jpeg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Silverton.jpeg"
+  },
+  {
+    "slug": "laerskool-simon-bekker",
+    "name": "Laerskool Simon Bekker",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-simon-bekker.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Simon-Bekker.jpg"
+  },
+  {
+    "slug": "laerskool-skuilkrans",
+    "name": "Laerskool Skuilkrans",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-skuilkrans.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Laerskool-Skuilkrans.png"
+  },
+  {
+    "slug": "springvale-primary",
+    "name": "Springvale Primary",
+    "location": "",
+    "province": "",
+    "logo": "/schools/springvale-primary.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Springvale-Primary.jpg"
+  },
+  {
+    "slug": "laerskool-stephanus-roos",
+    "name": "Laerskool Stephanus Roos",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-stephanus-roos.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Stephanus_Roos.jpg"
+  },
+  {
+    "slug": "st-paulus-primary-school",
+    "name": "St Paulus Primary School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/st-paulus-primary-school.gif",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/StPaulus-Primary-School.gif"
+  },
+  {
+    "slug": "laerskool-swartkop",
+    "name": "Laerskool Swartkop",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-swartkop.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Swartkop.png"
+  },
+  {
+    "slug": "laerskool-theresapark",
+    "name": "Laerskool Theresapark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-theresapark.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Theresapark.png"
+  },
+  {
+    "slug": "laerskool-totiusdal",
+    "name": "Laerskool Totiusdal",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-totiusdal.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Totiusdal.png"
+  },
+  {
+    "slug": "laerskool-tuine",
+    "name": "Laerskool Tuine",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-tuine.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Tuine.png"
+  },
+  {
+    "slug": "laerskool-tuinrand",
+    "name": "Laerskool Tuinrand",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-tuinrand.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Tuinrand.png"
+  },
+  {
+    "slug": "laerskool-tygerpoort",
+    "name": "Laerskool Tygerpoort",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-tygerpoort.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Tygerpoort_New.png"
+  },
+  {
+    "slug": "laerskool-uitsig",
+    "name": "Laerskool Uitsig",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-uitsig.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Uitsig.jpg"
+  },
+  {
+    "slug": "laerskool-uniefees",
+    "name": "Laerskool Uniefees",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-uniefees.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool_Uniefees.png"
+  },
+  {
+    "slug": "vhalliespark-primary-school",
+    "name": "Vhalliespark Primary School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/vhalliespark-primary-school.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Vhalliespark_Primary_School.png"
+  },
+  {
+    "slug": "laerskool-villeria",
+    "name": "Laerskool Villeria",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-villeria.gif",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Villeria.gif"
+  },
+  {
+    "slug": "laerskool-vissershoek",
+    "name": "Laerskool Vissershoek",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-vissershoek.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Vissershoek.jpg"
+  },
+  {
+    "slug": "laerskool-voorpos",
+    "name": "Laerskool Voorpos",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-voorpos.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Voorpos_New.jpg"
+  },
+  {
+    "slug": "laerskool-voortrekker-eeufees",
+    "name": "Laerskool Voortrekker Eeufees",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-voortrekker-eeufees.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Voortrekker-Eeufees.jpg"
+  },
+  {
+    "slug": "laerskool-westerlig",
+    "name": "Laerskool Westerlig",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-westerlig.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Westerlig.png"
+  },
+  {
+    "slug": "laerskool-wierdapark",
+    "name": "Laerskool Wierdapark",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-wierdapark.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Wierdapark.png"
+  },
+  {
+    "slug": "laerskool-witpoort",
+    "name": "Laerskool Witpoort",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-witpoort.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Witpoort.jpg"
+  },
+  {
+    "slug": "laerskool-wonderboom",
+    "name": "Laerskool Wonderboom",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-wonderboom.png",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Wonderboom.png"
+  },
+  {
+    "slug": "laerskool-wonderboom-suid",
+    "name": "Laerskool Wonderboom Suid",
+    "location": "",
+    "province": "",
+    "logo": "/schools/laerskool-wonderboom-suid.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Laerskool-Wonderboom-Suid_New.jpg"
+  },
+  {
+    "slug": "zwartkop-christian-school",
+    "name": "Zwartkop Christian School",
+    "location": "",
+    "province": "",
+    "logo": "/schools/zwartkop-christian-school.jpg",
+    "partner": false,
+    "levels": ["primary"],
+    "sources": ["https://www.checkelog.co.za/home/primary-schools"],
+    "logoSource": "https://www.checkelog.co.za/images/Front_Logos/Primary_Schools/Zwartkop_Christian_School.jpg"
+  }
+]

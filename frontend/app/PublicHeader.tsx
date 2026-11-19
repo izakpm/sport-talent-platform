@@ -13,6 +13,9 @@ export default function PublicHeader() {
             height="64"
           />
         </Link>
+        <nav aria-label="Main navigation" className={styles.publicNavigation}>
+          <Link href="/network">Our Network</Link>
+        </nav>
         <div className={styles.navActions}>
           <Link scroll={false} className={styles.loginLink} href="/login">
             Log in

@@ -24,6 +24,7 @@ export default function PublicFooter() {
             Log in
           </Link>
           <Link href="/privacy">Privacy policy</Link>
+          <Link href="/network">Our Network</Link>
           <a href="mailto:info@bulperd.com">Contact us</a>
         </nav>
       </div>

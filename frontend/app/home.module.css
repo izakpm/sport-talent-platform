@@ -110,6 +110,22 @@
   font-size: 14px;
   font-weight: 600;
 }
+.navInner .publicNavigation {
+  display: flex;
+}
+@media (max-width: 760px) {
+  .navInner:has(.publicNavigation) {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+  .navInner .publicNavigation {
+    display: flex;
+    order: 3;
+    flex-basis: 100%;
+    margin: 0;
+    padding-top: 5px;
+  }
+}
 .loginLink,
 .registerLink {
   background: white;
