@@ -34,7 +34,15 @@ export default function NetworkPage() {
               href="mailto:info@bulperd.com?subject=PlayVerified%20partnership"
               className={s.cta}
             >
-              Partner with PlayVerified <span aria-hidden="true">↗</span>
+              Partner with PlayVerified{" "}
+              <img
+                src="/apple-touch-icon_grey.png"
+                alt=""
+                aria-hidden="true"
+                width="28"
+                height="28"
+                className={s.ctaIcon}
+              />
             </a>
           </div>
         </section>
@@ -56,7 +64,15 @@ export default function NetworkPage() {
             href="mailto:info@bulperd.com?subject=PlayVerified%20partnership"
             className={s.cta}
           >
-            Let’s talk <span aria-hidden="true">↗</span>
+            Let’s talk{" "}
+            <img
+              src="/apple-touch-icon_grey.png"
+              alt=""
+              aria-hidden="true"
+              width="28"
+              height="28"
+              className={s.ctaIcon}
+            />
           </a>
         </section>
       </main>

@@ -81,6 +81,12 @@
   font-weight: 700;
   white-space: nowrap;
 }
+.ctaIcon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
 .directory {
   max-width: 1400px;
   margin: auto;
