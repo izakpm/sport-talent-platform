@@ -27,7 +27,7 @@ export class UsersController {
   }
   private account(user: any) {
     if (!user) throw new NotFoundException('Account not found.');
-    const { password_hash, ...safe } = user;
+    const { password_hash, google_subject, session_version, ...safe } = user;
     return safe;
   }
   @Get(':id')

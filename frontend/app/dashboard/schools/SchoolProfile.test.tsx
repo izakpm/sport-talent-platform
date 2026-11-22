@@ -1,3 +1,5 @@
+// Account security has its own API and interaction tests.
+jest.mock("../AccountSecurity", () => ({ __esModule: true, default: () => <section aria-label="Account security" /> }));
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import SchoolProfile from "./SchoolProfile";
 import { fetchWithAuth } from "../../lib/api";

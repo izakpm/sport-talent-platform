@@ -1,4 +1,5 @@
 "use client";
+import AccountSecurity from "../AccountSecurity";
 import { childContext, selectChild } from "../../lib/guardian-context";
 import { useSectionHash } from "../core/useSectionHash";
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
@@ -446,6 +447,7 @@ export default function AthleteProfile({
           </div>
         </Modal>
       )}
+      <AccountSecurity />
     </div>
   );
 }

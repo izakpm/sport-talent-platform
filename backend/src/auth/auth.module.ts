@@ -1,3 +1,6 @@
+import { AccountSecurityService } from './account-security.service';
+import { AccountSecurityController } from './account-security.controller';
+import { SecurityEmailService } from './security-email.service';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -22,7 +25,13 @@ import { deploymentConfig } from '../deployment-config';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, GoogleStrategy],
-  controllers: [AuthController],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    GoogleStrategy,
+    AccountSecurityService,
+    SecurityEmailService,
+  ],
+  controllers: [AuthController, AccountSecurityController],
 })
 export class AuthModule {}

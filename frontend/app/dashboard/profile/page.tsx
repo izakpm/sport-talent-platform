@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useState, type CSSProperties } from "react";
 import { childContext } from "../../lib/guardian-context";
+import AccountSecurity from "../AccountSecurity";
 import CoachProfile from "./CoachProfile";
 import AthleteProfile from "./AthleteProfile";
 import SchoolProfile from "../schools/SchoolProfile";
@@ -290,6 +291,7 @@ export default function DashboardProfilePage() {
           discoverability on PlayVerified.
         </p>
       </SurfaceCard>
+      <AccountSecurity />
     </div>
   );
 }

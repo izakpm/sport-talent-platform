@@ -1,0 +1,110 @@
+.card {
+  margin-top: 28px;
+  border: 1px solid #d6e1e8;
+  border-top: 3px solid #ffcc00;
+  border-radius: 16px;
+  background: #fff;
+  color: #0b2130;
+  overflow: hidden;
+}
+.card header {
+  background: #0b2130;
+  padding: 22px 26px;
+  color: #fff;
+}
+.card h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.card p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 8px 0 16px;
+}
+.card header p {
+  color: #bed0dc;
+  margin-bottom: 0;
+}
+.content {
+  padding: 26px;
+}
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 64px;
+  margin-bottom: 22px;
+}
+.details span {
+  display: block;
+  font-size: 12px;
+  color: #61788a;
+  margin-bottom: 5px;
+}
+.details strong {
+  overflow-wrap: anywhere;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.card button {
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #ffcc00;
+  background: #ffcc00;
+  color: #0b2130;
+  font-weight: 600;
+  cursor: pointer;
+}
+.card button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.card .secondary {
+  background: #fff;
+  border-color: #cbdbe5;
+}
+.card a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.fields label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.fields input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbdbe5;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  background: #fff;
+  color: #0b2130;
+}
+.card :focus-visible {
+  outline: 3px solid #1682ac;
+  outline-offset: 3px;
+}
+.error {
+  color: #a92323;
+}
+@media (max-width: 760px) {
+  .fields {
+    grid-template-columns: 1fr;
+  }
+  .content,
+  .card header {
+    padding: 20px;
+  }
+}

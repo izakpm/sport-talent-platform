@@ -8,7 +8,7 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
     const path = (req.path || '').replace(/^\/api(?=\/)/, '');
     if (
       !path.startsWith('/guardian/') &&
-      path !== '/auth/me' &&
+      !['/auth/me', '/auth/security', '/auth/change-password'].includes(path) &&
       path !== `/users/${payload.sub}` &&
       path !== '/resources/capabilities' &&
       !(req.method === 'GET' && /^\/resources(?:\/[0-9a-f-]{36})?$/.test(path))

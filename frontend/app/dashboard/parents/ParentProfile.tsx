@@ -1,4 +1,5 @@
 "use client";
+import AccountSecurity from "../AccountSecurity";
 import Link from "next/link";
 import {
   useEffect,
@@ -348,6 +349,7 @@ export default function ParentProfile() {
           </section>
         </>
       )}
+      <AccountSecurity />
     </div>
   );
 }

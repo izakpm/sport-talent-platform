@@ -6,7 +6,13 @@ import type { Request } from 'express';
 import { deploymentConfig } from '../deployment-config';
 import { PersistedOAuthStateStore } from './persisted-oauth-state.store';
 
-const ALLOWED_ROLES = new Set(['ATHLETE', 'COACH', 'SCHOOL', 'GUARDIAN', 'ORG']);
+const ALLOWED_ROLES = new Set([
+  'ATHLETE',
+  'COACH',
+  'SCHOOL',
+  'GUARDIAN',
+  'ORG',
+]);
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -51,7 +57,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
     if (!email || googleEmail?.verified !== true) {
-      throw new UnauthorizedException('A verified Google email address is required.');
+      throw new UnauthorizedException(
+        'A verified Google email address is required.',
+      );
     }
 
     return this.authService.findOrCreateGoogleUser(
@@ -59,6 +67,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       firstName,
       lastName,
       role,
+      profile.id,
     );
   }
 }

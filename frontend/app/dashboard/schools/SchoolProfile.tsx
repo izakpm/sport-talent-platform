@@ -1,4 +1,5 @@
 "use client";
+import AccountSecurity from "../AccountSecurity";
 import { FormEvent, useEffect, useState } from "react";
 import { fetchWithAuth } from "../../lib/api";
 import type { Workspace } from "./SchoolWorkspace";
@@ -223,6 +224,7 @@ export default function SchoolProfile() {
           )}
         </>
       )}
+      <AccountSecurity />
     </div>
   );
 }

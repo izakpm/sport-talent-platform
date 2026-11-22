@@ -11,6 +11,18 @@ export class User {
   @Column()
   password_hash: string;
 
+  @Column({ type: 'boolean', nullable: true })
+  password_login_enabled: boolean | null;
+
+  @Column({ type: 'text', nullable: true })
+  google_subject: string | null;
+
+  @Column({ default: 0 })
+  session_version: number;
+
+  @Column({ nullable: true })
+  status: string;
+
   @Column()
   role: string;
 

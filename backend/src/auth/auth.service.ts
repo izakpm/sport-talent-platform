@@ -27,7 +27,12 @@ export class AuthService {
       email.trim().toLowerCase(),
     );
 
-    if (!user) {
+    if (
+      !user ||
+      user.status === 'SUSPENDED' ||
+      user.password_login_enabled === false ||
+      !user.email
+    ) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -50,6 +55,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (user.password_login_enabled !== true) {
+      await this.usersService.update(user.id, { password_login_enabled: true });
+      user.password_login_enabled = true;
+    }
     return this.signUser(user);
   }
 
@@ -70,11 +79,13 @@ export class AuthService {
     const user = await this.usersService.create({
       email: data.email.trim().toLowerCase(),
       password_hash: hashedPassword,
+      password_login_enabled: true,
       role: data.role === 'ORG' ? 'SCHOOL' : data.role,
       first_name: data.first_name,
       last_name: data.last_name,
     });
-    const { password_hash, ...publicUser } = user;
+    const { password_hash, google_subject, session_version, ...publicUser } =
+      user;
     return publicUser;
   }
 
@@ -83,6 +94,7 @@ export class AuthService {
     firstName: string,
     lastName: string,
     role: string,
+    googleSubject?: string,
   ) {
     let user = await this.usersService.findByEmail(email);
 
@@ -93,12 +105,26 @@ export class AuthService {
       user = await this.usersService.create({
         email,
         password_hash: hashedPassword,
+        password_login_enabled: false,
+        google_subject: googleSubject || null,
         role: role === 'ORG' ? 'SCHOOL' : role || 'ATHLETE',
         first_name: firstName,
         last_name: lastName,
       });
     }
 
+    if (user.status === 'SUSPENDED')
+      throw new UnauthorizedException('Account unavailable.');
+    if (googleSubject) {
+      if (user.google_subject && user.google_subject !== googleSubject)
+        throw new UnauthorizedException('Google account mismatch.');
+      if (!user.google_subject) {
+        await this.usersService.update(user.id, {
+          google_subject: googleSubject,
+        });
+        user.google_subject = googleSubject;
+      }
+    }
     return user;
   }
 
@@ -107,8 +133,14 @@ export class AuthService {
   }
 
   private signUser(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
-    const { password_hash, ...publicUser } = user;
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
+      ver: user.session_version || 0,
+    };
+    const { password_hash, google_subject, session_version, ...publicUser } =
+      user;
 
     return {
       access_token: this.jwtService.sign(payload),

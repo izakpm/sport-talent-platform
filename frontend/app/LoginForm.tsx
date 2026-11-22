@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [googleError, setGoogleError] = useState("");
   const [registered, setRegistered] = useState(false);
+  const [passwordChanged, setPasswordChanged] = useState(false);
 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -24,6 +25,7 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setRegistered(params.get("registered") === "1");
+    setPasswordChanged(params.get("passwordChanged") === "1");
     const token =
       new URLSearchParams(window.location.hash.slice(1)).get("token") ||
       params.get("token");
@@ -130,6 +132,11 @@ export default function LoginPage() {
   return (
     <AuthModal title="Welcome back">
       <p className={styles.intro}>Log in to your PlayVerified account.</p>
+      {passwordChanged && (
+        <p role="status" className={styles.intro}>
+          Your password has changed. Log in again with your new password.
+        </p>
+      )}
       {registered && (
         <p role="status" className={styles.intro}>
           Your account is ready. Log in to get started.
@@ -180,6 +187,11 @@ export default function LoginPage() {
           {busy ? "Logging in..." : "Log in"}
         </button>
       </form>
+      <p className={styles.switch}>
+        <Link href="/forgot-password" scroll={false}>
+          Forgot password?
+        </Link>
+      </p>
       <p className={styles.switch}>
         New to PlayVerified?{" "}
         <Link href="/register" scroll={false}>
