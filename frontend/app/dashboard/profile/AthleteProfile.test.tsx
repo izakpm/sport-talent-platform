@@ -237,3 +237,48 @@ it("saves selection and captaincy independently from one editor", async () => {
     ),
   );
 });
+
+it("offers removal directly on the sport card and waits for confirmation", async () => {
+  const withSport = {
+    ...profile,
+    sports: [
+      {
+        id: "row",
+        sport_id: "rugby",
+        sport_name: "Rugby",
+        position_id: "8",
+        position_name: "Eighth man",
+        is_primary: true,
+        primary_position: true,
+      },
+    ],
+  };
+  (fetchWithAuth as jest.Mock)
+    .mockResolvedValueOnce({ ok: true, json: async () => withSport })
+    .mockResolvedValue({ ok: true, json: async () => profile });
+  render(<AthleteProfile initialTab="sports" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Remove Rugby" }));
+  expect(
+    screen.getByRole("dialog", { name: "Remove Rugby?" }),
+  ).toBeInTheDocument();
+  expect(fetchWithAuth).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole("button", { name: "Keep sport" }));
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Remove Rugby" }));
+  fireEvent.click(screen.getByRole("button", { name: "Remove sport" }));
+  await waitFor(() =>
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+  );
+  expect(fetchWithAuth).toHaveBeenLastCalledWith("/athlete-profile/sport", {
+    method: "PUT",
+    body: JSON.stringify({
+      sport_id: "rugby",
+      position_ids: [],
+      primary_position_id: "",
+      is_primary: false,
+    }),
+  });
+  expect(
+    screen.queryByRole("button", { name: "Remove Rugby" }),
+  ).not.toBeInTheDocument();
+});

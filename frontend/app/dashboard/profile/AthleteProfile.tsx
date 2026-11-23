@@ -109,6 +109,8 @@ export default function AthleteProfile({
     [retry, setRetry] = useState(0),
     [editor, setEditor] = useState<Editor | null>(null),
     [remove, setRemove] = useState<Entry | null>(null),
+    [removeSport, setRemoveSport] = useState<Sport | null>(null),
+    [sportRemovalError, setSportRemovalError] = useState(""),
     [busy, setBusy] = useState(false);
   function saved(data: Profile) {
     setProfile(data);
@@ -407,6 +409,16 @@ export default function AthleteProfile({
                     >
                       Edit positions
                     </button>
+                    <button
+                      className={s.textButton}
+                      aria-label={`Remove ${rows[0].sport_name}`}
+                      onClick={() => {
+                        setSportRemovalError("");
+                        setRemoveSport(rows[0]);
+                      }}
+                    >
+                      Remove sport
+                    </button>
                   </div>
                 </article>
               );
@@ -590,6 +602,58 @@ export default function AthleteProfile({
             setError("");
           }}
         />
+      )}
+      {removeSport && (
+        <Modal
+          title={`Remove ${removeSport.sport_name}?`}
+          description="This removes the sport and its playing positions from your profile. Your activities, achievements, metrics and match records will be kept. You can add the sport again later."
+          close={() => {
+            if (!busy) setRemoveSport(null);
+          }}
+        >
+          {sportRemovalError && (
+            <p role="alert" className={s.formError}>
+              {sportRemovalError}
+            </p>
+          )}
+          <div className={s.formFooter}>
+            <button
+              className={s.secondary}
+              disabled={busy}
+              onClick={() => setRemoveSport(null)}
+            >
+              Keep sport
+            </button>
+            <button
+              className={s.primary}
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                setSportRemovalError("");
+                try {
+                  saved(
+                    await request("/sport", "PUT", {
+                      sport_id: removeSport.sport_id,
+                      position_ids: [],
+                      primary_position_id: "",
+                      is_primary: false,
+                    }),
+                  );
+                  setNotice(
+                    `${removeSport.sport_name} has been removed from your profile.`,
+                  );
+                  setRemoveSport(null);
+                } catch (e) {
+                  setSportRemovalError((e as Error).message);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              {busy ? "Removing…" : "Remove sport"}
+            </button>
+          </div>
+        </Modal>
       )}
       {remove && (
         <Modal
