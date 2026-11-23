@@ -1,0 +1,56 @@
+erDiagram
+    direction LR
+    organisations {
+        uuid id PK "required"
+        text name "nullable"
+        text email "nullable"
+    }
+    organisation_users {
+        uuid id PK "required"
+        uuid user_id FK "nullable"
+        uuid organisation_id FK "nullable"
+        text role "nullable"
+    }
+    organisation_affiliations {
+        uuid id PK "required"
+        uuid user_id FK "required"
+        uuid organisation_id FK "required"
+        text role "required"
+        text status "required"
+        uuid requested_by_user_id FK "required"
+        uuid confirmed_by_user_id FK "nullable"
+    }
+    organisation_directory_sources {
+        text source PK "required"
+        text external_key PK "required"
+        uuid organisation_id FK "required"
+    }
+    school_competition_profiles {
+        uuid organisation_id PK,FK "required"
+    }
+    school_competition_teams {
+        uuid id PK "required"
+        uuid organisation_id FK "required"
+        text name "required"
+        int4 season "required"
+        text sport "required"
+    }
+    school_competition_fixtures {
+        uuid id PK "required"
+        uuid home_team_id FK "required"
+        uuid away_team_id FK "required"
+    }
+    users {
+        uuid id PK "required; reference table"
+    }
+    users |o..o{ organisation_affiliations : "confirmed_by_user_id"
+    organisations ||..o{ organisation_affiliations : "organisation_id"
+    users ||..o{ organisation_affiliations : "requested_by_user_id"
+    users ||..o{ organisation_affiliations : "user_id"
+    organisations ||..o{ organisation_directory_sources : "organisation_id"
+    organisations |o..o{ organisation_users : "organisation_id"
+    users |o..o{ organisation_users : "user_id"
+    school_competition_teams ||..o{ school_competition_fixtures : "away_team_id"
+    school_competition_teams ||..o{ school_competition_fixtures : "home_team_id"
+    organisations ||--o| school_competition_profiles : "organisation_id"
+    school_competition_profiles ||..o{ school_competition_teams : "organisation_id"

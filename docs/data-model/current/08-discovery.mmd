@@ -1,0 +1,60 @@
+erDiagram
+    direction LR
+    events {
+        uuid id PK "required"
+        uuid organisation_id FK "nullable"
+        text name "nullable"
+    }
+    participations {
+        uuid id PK "required"
+        uuid athlete_id FK "nullable"
+        uuid event_id FK "nullable"
+    }
+    videos {
+        uuid id PK "required"
+        uuid athlete_id FK "nullable"
+        uuid activity_id FK "nullable"
+        uuid event_id "nullable"
+        text title "nullable"
+    }
+    connections {
+        uuid id PK "required"
+        uuid athlete_id FK "nullable"
+        uuid scout_id FK "nullable"
+        text status "nullable"
+    }
+    opportunities {
+        uuid id PK "required"
+        uuid organisation_id FK "nullable"
+        text title "nullable"
+        uuid sport_id "nullable"
+        text status "nullable"
+    }
+    opportunity_applications {
+        uuid id PK "required"
+        uuid opportunity_id FK "nullable"
+        uuid athlete_id FK "nullable"
+        text status "nullable"
+    }
+    athlete_profiles {
+        uuid id PK "required; reference table"
+    }
+    scout_profiles {
+        uuid id PK "required; reference table"
+    }
+    organisations {
+        uuid id PK "required; reference table"
+    }
+    activities {
+        uuid id PK "required; reference table"
+    }
+    athlete_profiles |o..o{ connections : "athlete_id"
+    scout_profiles |o..o{ connections : "scout_id"
+    organisations |o..o{ events : "organisation_id"
+    organisations |o..o{ opportunities : "organisation_id"
+    athlete_profiles |o..o{ opportunity_applications : "athlete_id"
+    opportunities |o..o{ opportunity_applications : "opportunity_id"
+    athlete_profiles |o..o{ participations : "athlete_id"
+    events |o..o{ participations : "event_id"
+    activities |o..o{ videos : "activity_id"
+    athlete_profiles |o..o{ videos : "athlete_id"

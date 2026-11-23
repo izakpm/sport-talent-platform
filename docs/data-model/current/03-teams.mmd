@@ -1,0 +1,43 @@
+erDiagram
+    direction LR
+    coach_teams {
+        uuid id PK "required"
+        uuid coach_id FK "required"
+        varchar name "required"
+        varchar sport "required"
+    }
+    coach_team_players {
+        uuid id PK "required"
+        uuid team_id FK "required"
+        varchar status "required"
+    }
+    coach_player_accounts {
+        uuid player_id PK,FK "required"
+        uuid team_id FK "required"
+        uuid user_id FK "required"
+    }
+    team_invitations {
+        uuid id PK "required"
+        uuid team_id FK "required"
+        uuid coach_id FK "required"
+        text status "required"
+        uuid guardian_id FK "nullable"
+        uuid child_id FK "nullable"
+        uuid guardian_link_id FK "nullable"
+    }
+    users {
+        uuid id PK "required; reference table"
+    }
+    guardian_links {
+        uuid id PK "required; reference table"
+    }
+    coach_team_players ||--o| coach_player_accounts : "player_id"
+    coach_teams ||..o{ coach_player_accounts : "team_id"
+    users ||..o{ coach_player_accounts : "user_id"
+    coach_teams ||..o{ coach_team_players : "team_id"
+    users ||..o{ coach_teams : "coach_id"
+    users |o..o{ team_invitations : "child_id"
+    users ||..o{ team_invitations : "coach_id"
+    users |o..o{ team_invitations : "guardian_id"
+    guardian_links |o..o{ team_invitations : "guardian_link_id"
+    coach_teams ||..o{ team_invitations : "team_id"

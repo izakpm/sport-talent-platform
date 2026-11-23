@@ -1,0 +1,19 @@
+{
+  "flowchart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "theme": "base",
+  "er": {
+    "layoutDirection": "LR",
+    "useMaxWidth": false
+  },
+  "themeVariables": {
+    "fontFamily": "Arial",
+    "primaryTextColor": "#0b2130",
+    "primaryColor": "#edf3f6",
+    "lineColor": "#607d8b",
+    "fontSize": "16px",
+    "primaryBorderColor": "#8099a8"
+  }
+}

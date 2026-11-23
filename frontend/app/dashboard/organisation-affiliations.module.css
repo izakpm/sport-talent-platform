@@ -1,0 +1,204 @@
+.card {
+  margin-top: 28px;
+  border: 1px solid #d6e1e8;
+  border-top: 3px solid #ffcc00;
+  border-radius: 16px;
+  background: #fff;
+  color: #0b2130;
+  overflow: hidden;
+}
+.card header {
+  background: #0b2130;
+  padding: 22px 26px;
+  color: #fff;
+}
+.card h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.card header p {
+  color: #bed0dc;
+  margin: 8px 0 0;
+}
+.content {
+  padding: 26px;
+}
+.card p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.description {
+  color: #61788a;
+  margin-top: 0;
+}
+.list,
+.results {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid #d6e1e8;
+}
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+.summary img {
+  object-fit: contain;
+}
+.summary strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.summary span,
+.summary small {
+  display: block;
+  color: #61788a;
+  font-size: 13px;
+}
+.rowActions,
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.badge {
+  border-radius: 6px;
+  background: #edf3f6;
+  color: #405d70;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.card button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #ffcc00;
+  border-radius: 8px;
+  background: #ffcc00;
+  color: #0b2130;
+  font-weight: 600;
+  cursor: pointer;
+}
+.card button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.card .secondary {
+  background: #fff;
+  border-color: #cbdbe5;
+}
+.form {
+  padding: 22px;
+  background: #f5f7f9;
+  border: 1px solid #d6e1e8;
+  border-radius: 12px;
+  margin-top: 18px;
+}
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 18px;
+}
+.card label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+.card input,
+.card select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid #cbdbe5;
+  border-radius: 8px;
+  background: #fff;
+  color: #0b2130;
+  font: inherit;
+}
+.owner {
+  max-width: 420px;
+  margin-bottom: 20px;
+}
+.results {
+  display: grid;
+  gap: 8px;
+  max-height: 330px;
+  overflow: auto;
+}
+.results button {
+  width: 100%;
+  text-align: left;
+}
+.results span {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: #61788a;
+}
+.selection {
+  margin: 18px 0;
+}
+.selection label {
+  max-width: 240px;
+  margin-top: 15px;
+}
+.hint {
+  color: #61788a;
+  font-size: 12px !important;
+}
+.error {
+  color: #a92323;
+  margin: 12px 0;
+}
+.error button {
+  margin-left: 12px;
+}
+.history {
+  margin-top: 24px;
+}
+.history summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.confirm {
+  width: 100%;
+  padding: 16px;
+  background: #fff8d9;
+  border-radius: 8px;
+}
+.confirm button {
+  margin: 0 10px 8px 0;
+}
+.card :focus-visible {
+  outline: 3px solid #1682ac;
+  outline-offset: 3px;
+}
+@media (max-width: 650px) {
+  .fields {
+    grid-template-columns: 1fr;
+  }
+  .content,
+  .card header {
+    padding: 20px;
+  }
+  .form {
+    padding: 15px;
+  }
+  .rowActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

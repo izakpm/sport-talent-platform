@@ -1,0 +1,116 @@
+{
+  "captured_at": "2026-11-23T06:19:30.041Z",
+  "tables": 51,
+  "columns": 433,
+  "foreign_keys": 82,
+  "diagram_relationships": 82,
+  "groups": [
+    {
+      "id": "01-identity",
+      "title": "Identity & account access",
+      "tables": [
+        "users",
+        "athlete_profiles",
+        "coach_profiles",
+        "guardian_profiles",
+        "guardian_links",
+        "scout_profiles",
+        "password_reset_tokens",
+        "oauth_sessions",
+        "auth_rate_limits"
+      ],
+      "foreign_keys": 8
+    },
+    {
+      "id": "02-portfolios",
+      "title": "Sports & sporting portfolios",
+      "tables": [
+        "sports",
+        "positions",
+        "athlete_sports",
+        "athlete_sport_profiles",
+        "athlete_sport_positions",
+        "metrics",
+        "athlete_portfolio_entries",
+        "coach_portfolio"
+      ],
+      "foreign_keys": 8
+    },
+    {
+      "id": "03-teams",
+      "title": "Coach teams & invitations",
+      "tables": [
+        "coach_teams",
+        "coach_team_players",
+        "coach_player_accounts",
+        "team_invitations"
+      ],
+      "foreign_keys": 10
+    },
+    {
+      "id": "04-schedule",
+      "title": "Calendars, attendance, matches & feed",
+      "tables": [
+        "coach_schedule_events",
+        "athlete_calendar_events",
+        "coach_session_attendance",
+        "coach_session_codes",
+        "coach_team_posts",
+        "match_results",
+        "athlete_match_stats"
+      ],
+      "foreign_keys": 14
+    },
+    {
+      "id": "05-activities",
+      "title": "Training & verification",
+      "tables": [
+        "activities",
+        "activity_types",
+        "activity_metrics",
+        "activity_coach_requests",
+        "activity_verifications",
+        "verification_requests",
+        "verification_tokens"
+      ],
+      "foreign_keys": 15
+    },
+    {
+      "id": "06-organisations",
+      "title": "Organisations & school competitions",
+      "tables": [
+        "organisations",
+        "organisation_users",
+        "organisation_affiliations",
+        "organisation_directory_sources",
+        "school_competition_profiles",
+        "school_competition_teams",
+        "school_competition_fixtures"
+      ],
+      "foreign_keys": 11
+    },
+    {
+      "id": "07-resources",
+      "title": "Resource library & publishing",
+      "tables": [
+        "athlete_resources",
+        "resource_assets",
+        "resource_publishers"
+      ],
+      "foreign_keys": 6
+    },
+    {
+      "id": "08-discovery",
+      "title": "Additional events & discovery models",
+      "tables": [
+        "events",
+        "participations",
+        "videos",
+        "connections",
+        "opportunities",
+        "opportunity_applications"
+      ],
+      "foreign_keys": 10
+    }
+  ]
+}

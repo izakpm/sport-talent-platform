@@ -1,0 +1,30 @@
+erDiagram
+    direction LR
+    athlete_resources {
+        uuid id PK "required"
+        varchar title "required"
+        text topic "required"
+        text format "required"
+        text status "required"
+        uuid created_by FK "required"
+        uuid thumbnail_id FK "nullable"
+        uuid media_id FK "nullable"
+        uuid captions_id FK "nullable"
+    }
+    resource_assets {
+        uuid id PK "required"
+        uuid resource_id FK "required"
+        varchar name "required"
+    }
+    resource_publishers {
+        uuid user_id PK,FK "required"
+    }
+    users {
+        uuid id PK "required; reference table"
+    }
+    resource_assets |o..o{ athlete_resources : "captions_id"
+    users ||..o{ athlete_resources : "created_by"
+    resource_assets |o..o{ athlete_resources : "media_id"
+    resource_assets |o..o{ athlete_resources : "thumbnail_id"
+    athlete_resources ||..o{ resource_assets : "resource_id"
+    users ||--o| resource_publishers : "user_id"

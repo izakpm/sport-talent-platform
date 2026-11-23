@@ -1,5 +1,6 @@
 "use client";
 import AccountSecurity from "../AccountSecurity";
+import OrganisationAffiliations from "../OrganisationAffiliations";
 import Link from "next/link";
 import {
   useEffect,
@@ -349,6 +350,7 @@ export default function ParentProfile() {
           </section>
         </>
       )}
+      <OrganisationAffiliations family />
       <AccountSecurity />
     </div>
   );

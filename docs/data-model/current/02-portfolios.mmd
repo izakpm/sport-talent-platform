@@ -1,0 +1,61 @@
+erDiagram
+    direction LR
+    sports {
+        uuid id PK "required"
+        text name "nullable"
+    }
+    positions {
+        uuid id PK "required"
+        uuid sport_id FK "nullable"
+        text name "nullable"
+    }
+    athlete_sports {
+        uuid id PK "required"
+        uuid athlete_id FK "nullable"
+        uuid sport_id FK "nullable"
+        uuid position_id FK "nullable"
+    }
+    athlete_sport_profiles {
+        uuid id PK "required"
+        uuid athlete_id FK "nullable"
+        uuid sport_id FK "nullable"
+    }
+    athlete_sport_positions {
+        uuid id PK "required"
+        uuid athlete_id "nullable"
+        uuid sport_id "nullable"
+        uuid position_id "nullable"
+    }
+    metrics {
+        uuid id PK "required"
+        text name "nullable"
+        uuid sport_id "nullable"
+    }
+    athlete_portfolio_entries {
+        uuid id PK "required"
+        uuid user_id FK "required"
+        text kind "required"
+        text title "required"
+        date date "required"
+    }
+    coach_portfolio {
+        uuid id PK "required"
+        uuid coach_id FK "required"
+        text kind "required"
+        varchar title "required"
+        varchar role "required"
+    }
+    users {
+        uuid id PK "required; reference table"
+    }
+    athlete_profiles {
+        uuid id PK "required; reference table"
+    }
+    users ||..o{ athlete_portfolio_entries : "user_id"
+    athlete_profiles |o..o{ athlete_sport_profiles : "athlete_id"
+    sports |o..o{ athlete_sport_profiles : "sport_id"
+    athlete_profiles |o..o{ athlete_sports : "athlete_id"
+    positions |o..o{ athlete_sports : "position_id"
+    sports |o..o{ athlete_sports : "sport_id"
+    users ||..o{ coach_portfolio : "coach_id"
+    sports |o..o{ positions : "sport_id"

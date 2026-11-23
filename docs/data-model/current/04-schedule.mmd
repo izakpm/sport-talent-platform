@@ -1,0 +1,64 @@
+erDiagram
+    direction LR
+    coach_schedule_events {
+        uuid id PK "required"
+        uuid team_id FK "required"
+        varchar title "required"
+        varchar kind "required"
+        date date "required"
+    }
+    athlete_calendar_events {
+        uuid id PK "required"
+        uuid user_id FK "required"
+        text title "required"
+        text kind "required"
+        date date "required"
+    }
+    coach_session_attendance {
+        uuid event_id PK,FK "required"
+        uuid player_id PK,FK "required"
+        uuid user_id FK "nullable"
+        text status "required"
+        uuid reviewed_by FK "nullable"
+    }
+    coach_session_codes {
+        uuid event_id PK,FK "required"
+    }
+    coach_team_posts {
+        uuid id PK "required"
+        uuid team_id FK "required"
+        uuid coach_id FK "required"
+        varchar title "required"
+        uuid event_id FK "nullable"
+    }
+    match_results {
+        uuid event_id PK,FK "required"
+        uuid recorded_by FK "required"
+    }
+    athlete_match_stats {
+        uuid event_id PK,FK "required"
+        uuid user_id PK,FK "required"
+    }
+    users {
+        uuid id PK "required; reference table"
+    }
+    coach_teams {
+        uuid id PK "required; reference table"
+    }
+    coach_team_players {
+        uuid id PK "required; reference table"
+    }
+    users ||..o{ athlete_calendar_events : "user_id"
+    match_results ||--o{ athlete_match_stats : "event_id"
+    users ||--o{ athlete_match_stats : "user_id"
+    coach_teams ||..o{ coach_schedule_events : "team_id"
+    coach_schedule_events ||--o{ coach_session_attendance : "event_id"
+    coach_team_players ||--o{ coach_session_attendance : "player_id"
+    users |o..o{ coach_session_attendance : "reviewed_by"
+    users |o..o{ coach_session_attendance : "user_id"
+    coach_schedule_events ||--o| coach_session_codes : "event_id"
+    users ||..o{ coach_team_posts : "coach_id"
+    coach_schedule_events |o..o{ coach_team_posts : "event_id"
+    coach_teams ||..o{ coach_team_posts : "team_id"
+    coach_schedule_events ||--o| match_results : "event_id"
+    users ||..o{ match_results : "recorded_by"

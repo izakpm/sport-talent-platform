@@ -1,0 +1,33 @@
+flowchart LR
+    accounts["IDENTITY<br/>users + role profiles<br/>Password recovery and Google sign-in"]
+    families["FAMILIES<br/>guardian_links<br/>Managed children and linked athlete accounts"]
+    portfolios["SPORTING PROFILES<br/>Sports and positions<br/>Achievements, metrics, coaching history, qualifications"]
+    teams["COACH TEAMS<br/>Roster + linked accounts<br/>Invitations and parent approval"]
+    schedule["TEAM CALENDAR<br/>Sessions, fixtures, attendance<br/>Match results, player stats and team feed"]
+    personal["PERSONAL CALENDAR<br/>Athlete-created sessions"]
+    training["TRAINING RECORD<br/>Activities and metrics<br/>Coach requests and verification"]
+    orgs["ORGANISATIONS<br/>School and club details<br/>Organisation users"]
+    affiliations["PROFILE AFFILIATIONS<br/>Private self-reported school and club links<br/>Separate from access permissions"]
+    competition["SCHOOL COMPETITIONS<br/>Imported teams, seasons<br/>Fixtures and results"]
+    library["RESOURCES<br/>Published articles, video and audio<br/>Publisher access and media assets"]
+    discovery["ADDITIONAL SCHEMA<br/>Events, participations, videos<br/>Scout connections and opportunities"]
+    network["PUBLIC NETWORK DIRECTORY<br/>Website JSON files and logos<br/>School and club organisation mappings"]
+    media["SUPABASE STORAGE<br/>Resource media objects<br/>Paths referenced by resource_assets"]
+    accounts --> families
+    accounts --> portfolios
+    accounts --> teams
+    accounts --> personal
+    accounts --> training
+    accounts --> orgs
+    accounts --> affiliations
+    affiliations --> orgs
+    network --> orgs
+    accounts --> library
+    accounts --> discovery
+    teams --> schedule
+    orgs --> competition
+    library --> media
+    classDef core fill:#0b2130,color:#fff,stroke:#ffcc00,stroke-width:2px
+    classDef separate fill:#edf3f6,color:#0b2130,stroke:#859bad
+    class accounts,families,portfolios,teams,schedule,personal,training,orgs,competition,library,affiliations core
+    class discovery,network,media separate

@@ -1,0 +1,22 @@
+flowchart LR
+    users["EXISTING<br/>users<br/>Athlete, coach and parent identities"]
+    organisations["EXISTING<br/>organisations<br/>Canonical school or club record"]
+    affiliation["EXISTING<br/>organisation_affiliations<br/>Private self-reported links<br/>Person, organisation, role and dates"]
+    sources["EXISTING<br/>organisation_directory_sources<br/>238 school and club entries<br/>Mapped to canonical organisations"]
+    review["PROPOSED WORKFLOW<br/>Organisation confirmation<br/>Authorised representatives<br/>Consent and visibility choices"]
+    public["PROPOSED READ MODEL<br/>Public network counts<br/>Unique eligible people by role<br/>Privacy thresholds and opt-in rules"]
+    teams["EXISTING<br/>coach_teams"]
+    ownership["PROPOSED OPTIONAL LINK<br/>coach_teams.organisation_id<br/>Organisation authorises association"]
+    permissions["EXISTING ACCESS BOUNDARIES<br/>guardian_links and team invitations<br/>organisation_users administrative access"]
+    users --> affiliation
+    organisations --> affiliation
+    sources --> organisations
+    affiliation --> review
+    review --> public
+    teams --> ownership
+    ownership --> organisations
+    permissions -. "Remain separate from public affiliation" .-> affiliation
+    classDef existing fill:#edf3f6,color:#0b2130,stroke:#859bad
+    classDef proposed fill:#fff2df,color:#6b350d,stroke:#b56022,stroke-width:2px
+    class users,organisations,teams,permissions,affiliation,sources existing
+    class review,public,ownership proposed

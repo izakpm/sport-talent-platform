@@ -1,4 +1,5 @@
 import { GuardianModule } from './guardian/guardian.module';
+import { AffiliationsModule } from './affiliations/affiliations.module';
 import { ResourcesModule } from './resources/resources.module';
 import { MatchesModule } from './matches/matches.module';
 import { AthleteProfileModule } from './athlete-profile/profile.module';
@@ -59,6 +60,7 @@ import { SchoolsModule } from './schools/schools.module';
     // ✅ Register your modules here
     ActivitiesModule,
     GuardianModule,
+    AffiliationsModule,
     ResourcesModule,
 
     VerificationModule,

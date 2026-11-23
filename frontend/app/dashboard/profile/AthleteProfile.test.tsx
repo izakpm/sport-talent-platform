@@ -1,3 +1,4 @@
+jest.mock("../OrganisationAffiliations", () => ({ __esModule: true, default: () => <section aria-label="Schools and clubs" /> }));
 // Account security has its own API and interaction tests.
 jest.mock("../AccountSecurity", () => ({ __esModule: true, default: () => <section aria-label="Account security" /> }));
 import {render,screen,fireEvent,waitFor} from '@testing-library/react';

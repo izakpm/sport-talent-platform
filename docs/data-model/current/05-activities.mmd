@@ -1,0 +1,74 @@
+erDiagram
+    direction LR
+    activities {
+        uuid id PK "required"
+        uuid athlete_id FK "nullable"
+        uuid sport_id FK "nullable"
+        text title "nullable"
+        uuid activity_type_id FK "nullable"
+    }
+    activity_types {
+        uuid id PK "required"
+        text name "required"
+    }
+    activity_metrics {
+        uuid id PK "required"
+        uuid activity_id FK "nullable"
+        uuid metric_id FK "nullable"
+    }
+    activity_coach_requests {
+        uuid activity_id PK,FK "required"
+        uuid coach_id FK "required"
+        text status "required"
+    }
+    activity_verifications {
+        uuid id PK "required"
+        uuid activity_id FK "nullable"
+        uuid verified_by_user_id FK "nullable"
+        uuid organisation_id FK "nullable"
+        uuid token_id FK "nullable"
+        text status "nullable"
+    }
+    verification_requests {
+        uuid id PK "required"
+        uuid activity_id FK "nullable"
+        uuid requested_by_athlete_id FK "nullable"
+        uuid coach_id "nullable"
+        text status "nullable"
+        uuid athlete_id "nullable"
+    }
+    verification_tokens {
+        uuid id PK "required"
+        uuid issued_to_user_id FK "nullable"
+        uuid organisation_id FK "nullable"
+    }
+    athlete_profiles {
+        uuid id PK "required; reference table"
+    }
+    sports {
+        uuid id PK "required; reference table"
+    }
+    users {
+        uuid id PK "required; reference table"
+    }
+    metrics {
+        uuid id PK "required; reference table"
+    }
+    organisations {
+        uuid id PK "required; reference table"
+    }
+    athlete_profiles |o..o{ activities : "athlete_id"
+    sports |o..o{ activities : "sport_id"
+    activity_types |o..o{ activities : "activity_type_id"
+    activities ||--o| activity_coach_requests : "activity_id"
+    users ||..o{ activity_coach_requests : "coach_id"
+    activities |o..o{ activity_metrics : "activity_id"
+    metrics |o..o{ activity_metrics : "metric_id"
+    activities |o..o{ activity_verifications : "activity_id"
+    organisations |o..o{ activity_verifications : "organisation_id"
+    verification_tokens |o..o{ activity_verifications : "token_id"
+    users |o..o{ activity_verifications : "verified_by_user_id"
+    activities |o..o{ verification_requests : "activity_id"
+    athlete_profiles |o..o{ verification_requests : "requested_by_athlete_id"
+    users |o..o{ verification_tokens : "issued_to_user_id"
+    organisations |o..o{ verification_tokens : "organisation_id"

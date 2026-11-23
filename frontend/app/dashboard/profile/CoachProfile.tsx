@@ -1,5 +1,6 @@
 "use client";
 import AccountSecurity from "../AccountSecurity";
+import OrganisationAffiliations from "../OrganisationAffiliations";
 import CoachPortfolio, { type Kind } from "../coaches/CoachPortfolio";
 import { useSectionHash } from "../core/useSectionHash";
 import {
@@ -388,6 +389,7 @@ export default function CoachProfile() {
           }}
         />
       )}
+      <OrganisationAffiliations />
       <AccountSecurity />
     </div>
   );

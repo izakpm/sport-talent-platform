@@ -39,7 +39,7 @@ export function childWorkspacePath(path: string) {
   );
 }
 export function childRequestPath(path: string) {
-  return /^\/(athlete-profile(?:\/|$)|activities(?:\/|$)|team-hub(?:\/|$)|resources(?:\/|$))/.test(
+  return /^\/(affiliations(?:\/|$)|athlete-profile(?:\/|$)|activities(?:\/|$)|team-hub(?:\/|$)|resources(?:\/|$))/.test(
     path,
   );
 }

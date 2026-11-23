@@ -1,0 +1,56 @@
+erDiagram
+    direction LR
+    users {
+        uuid id PK "required"
+        text email UK "nullable"
+        text role "nullable"
+        text status "nullable"
+    }
+    athlete_profiles {
+        uuid id PK "required"
+        uuid user_id FK "nullable"
+        uuid school_id "nullable"
+        uuid guardian_id FK "nullable"
+    }
+    coach_profiles {
+        uuid id PK "required"
+        uuid user_id FK,UK "nullable"
+        uuid organisation_id "nullable"
+        uuid sport_id "nullable"
+    }
+    guardian_profiles {
+        uuid id PK "required"
+        uuid user_id FK "nullable"
+        text name "nullable"
+    }
+    guardian_links {
+        uuid id PK "required"
+        uuid guardian_id FK "required"
+        uuid child_id FK "required"
+        text mode "required"
+        text status "required"
+    }
+    scout_profiles {
+        uuid id PK "required"
+        uuid user_id FK "nullable"
+        uuid organisation_id "nullable"
+        uuid sport_id "nullable"
+    }
+    password_reset_tokens {
+        text token_hash PK "required"
+        uuid user_id FK "required"
+    }
+    oauth_sessions {
+        varchar sid PK "required"
+    }
+    auth_rate_limits {
+        text bucket PK "required"
+    }
+    guardian_profiles |o..o{ athlete_profiles : "guardian_id"
+    users |o..o{ athlete_profiles : "user_id"
+    users |o..o| coach_profiles : "user_id"
+    users ||..o{ guardian_links : "child_id"
+    users ||..o{ guardian_links : "guardian_id"
+    users |o..o{ guardian_profiles : "user_id"
+    users ||..o{ password_reset_tokens : "user_id"
+    users |o..o{ scout_profiles : "user_id"

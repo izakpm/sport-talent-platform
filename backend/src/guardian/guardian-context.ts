@@ -11,6 +11,9 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
       !['/auth/me', '/auth/security', '/auth/change-password'].includes(path) &&
       path !== `/users/${payload.sub}` &&
       path !== '/resources/capabilities' &&
+      !/^\/affiliations(?:$|\/organisations$|\/[0-9a-f-]{36}\/end$)/i.test(
+        path,
+      ) &&
       !(req.method === 'GET' && /^\/resources(?:\/[0-9a-f-]{36})?$/.test(path))
     )
       throw new ForbiddenException(
@@ -27,7 +30,7 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
     throw new ForbiddenException('Invalid child context.');
   const path = (req.path || '').replace(/^\/api(?=\/)/, '');
   const readable =
-    /^\/(athlete-profile(?:\/|$)|activities(?:\/|$)|team-hub\/(?:teams|feed|calendar|sessions|summary|connections|matches|check-in)(?:\/|$)|resources(?:\/|$))/;
+    /^\/(affiliations(?:\/|$)|athlete-profile(?:\/|$)|activities(?:\/|$)|team-hub\/(?:teams|feed|calendar|sessions|summary|connections|matches|check-in)(?:\/|$)|resources(?:\/|$))/;
   if (!readable.test(path) && !path.startsWith('/team-hub/personal-sessions'))
     throw new ForbiddenException(
       'This feature is not available in a child workspace.',
@@ -42,7 +45,7 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
     );
   if (
     link.mode === 'view' &&
-    !/^\/(?:athlete-profile|team-hub\/(?:teams|feed|calendar|matches))$/.test(
+    !/^\/(?:affiliations|athlete-profile|team-hub\/(?:teams|feed|calendar|matches))$/.test(
       path,
     )
   )
@@ -53,7 +56,7 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
     if (link.mode !== 'managed')
       throw new ForbiddenException('Linked athlete accounts are read-only.');
     const writable =
-      /^\/(?:athlete-profile(?:\/|$)|activities(?:\/|$)|team-hub\/(?:check-in(?:\/preview)?$|personal-sessions(?:\/|$)|sessions\/[0-9a-f-]+\/request$|matches\/[0-9a-f-]+\/stats$))/i;
+      /^\/(?:affiliations(?:$|\/[0-9a-f-]{36}\/end$)|athlete-profile(?:\/|$)|activities(?:\/|$)|team-hub\/(?:check-in(?:\/preview)?$|personal-sessions(?:\/|$)|sessions\/[0-9a-f-]+\/request$|matches\/[0-9a-f-]+\/stats$))/i;
     if (!writable.test(path))
       throw new ForbiddenException(
         'Parents cannot perform this action for an athlete.',
