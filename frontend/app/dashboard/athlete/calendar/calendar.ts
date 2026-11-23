@@ -1,6 +1,10 @@
 import { type HubEvent } from "../../team-hub/api";
 export type CalendarEvent = HubEvent & {
-  source?: "team" | "personal";
+  source?: "team" | "personal" | "invitation";
+  invitee_id?: string | null;
+  invited_at?: string;
+  invitee_name?: string | null;
+  invitation_status?: "pending" | "accepted" | "declined" | null;
   kind: string;
   notes: string;
   timezone: string;

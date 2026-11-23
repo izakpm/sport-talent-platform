@@ -66,6 +66,23 @@ export class HubController {
   ) {
     return this.personal.save(r.user.userId, body);
   }
+  @Get('personal-sessions/connections')
+  @Header('Cache-Control', 'private, no-store')
+  personalConnections(@Req() r: Request) {
+    return this.connections.list(r.user.userId);
+  }
+  @Get('personal-sessions/invitations')
+  @Header('Cache-Control', 'private, no-store')
+  invitations(@Req() r: Request) {
+    return this.personal.invitations(r.user.userId);
+  }
+  @Post('personal-sessions/:id/respond') respond(
+    @Req() r: Request,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
+  ) {
+    return this.personal.respond(r.user.userId, id, body);
+  }
   @Patch('personal-sessions/:id') editPersonal(
     @Req() r: Request,
     @Param('id', ParseUUIDPipe) id: string,

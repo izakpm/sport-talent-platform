@@ -31,6 +31,9 @@ describe('personal calendar', () => {
     { end_time: '15:00' },
     { end_time: '16:00' },
     { notes: 'x'.repeat(2001) },
+    { invitee_id: 'not-a-person' },
+    { invitee_id: [] },
+    { invitation_status: 'accepted' },
   ])('rejects invalid/privileged changes %j', (patch) =>
     expect(() => personalInput({ ...body, ...patch })).toThrow(),
   );
@@ -47,6 +50,61 @@ describe('personal calendar', () => {
   });
 });
 
+describe('personal session invitations', () => {
+  it('checks active connections before saving a guest', async () => {
+    const tx = {
+      query: jest
+        .fn()
+        .mockResolvedValueOnce([{ role: 'ATHLETE' }])
+        .mockResolvedValueOnce([]),
+    };
+    const service = new PersonalCalendarService({
+      transaction: (fn: any) => fn(tx),
+    } as any);
+    await expect(
+      service.save('owner', {
+        ...body,
+        invitee_id: '22222222-2222-2222-2222-222222222222',
+      }),
+    ).rejects.toThrow('active connections');
+    expect(tx.query.mock.calls.some(([q]) => q.includes('INSERT'))).toBe(false);
+  });
+  it('rejects an approval for an outdated plan without writing a decision', async () => {
+    const tx = {
+      query: jest
+        .fn()
+        .mockResolvedValueOnce([{ id: 'guest' }])
+        .mockResolvedValueOnce([{ id: 'event' }])
+        .mockResolvedValueOnce([
+          {
+            id: 'event',
+            invited_at: '2026-11-23T10:00:00Z',
+            starts_at: '2077-03-14T14:00:00Z',
+            cancelled: false,
+          },
+        ]),
+    };
+    const service = new PersonalCalendarService({
+      transaction: (fn: any) => fn(tx),
+    } as any);
+    await expect(
+      service.respond('guest', 'event', {
+        status: 'accepted',
+        invited_at: '2026-11-23T09:00:00Z',
+      }),
+    ).rejects.toThrow('plan has changed');
+    expect(tx.query.mock.calls.some(([q]) => q.startsWith('UPDATE '))).toBe(
+      false,
+    );
+  });
+  it('does not accept a response without the invitation version', async () => {
+    const service = new PersonalCalendarService({} as any);
+    await expect(
+      service.respond('guest', 'event', { status: 'accepted' }),
+    ).rejects.toThrow('current invitation');
+  });
+});
+
 describe('personal session mutation responses', () => {
   it('returns the edited event as an object through a SELECT result', async () => {
     const row = { id: 'event', date: body.date, venue: 'Updated field' };
@@ -55,7 +113,9 @@ describe('personal session mutation responses', () => {
         .fn()
         .mockResolvedValueOnce([{ role: 'ATHLETE' }])
         .mockResolvedValueOnce([{ cancelled: false }])
-        .mockResolvedValueOnce([row]),
+        .mockResolvedValueOnce([row])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([{}]),
     };
     const service = new PersonalCalendarService({
       transaction: (fn: any) => fn(tx),

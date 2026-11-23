@@ -483,3 +483,44 @@
 .banner {
   border-top: var(--feature-card-border-top);
 }
+.invitations {
+  background: white;
+  border: 1px solid #d5e1e9;
+  border-top: 3px solid #ffcc00;
+  border-radius: 14px;
+  padding: 24px;
+  color: #0b2130;
+  margin-bottom: 24px;
+}
+.invitations h2 {
+  margin: 0 0 8px;
+}
+.invitation {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-top: 1px solid #d5e1e9;
+}
+.invitation p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.invitationStatus {
+  display: inline-block;
+  background: #edf3f6;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin: 5px 0;
+}
+@media (max-width: 640px) {
+  .invitations {
+    padding: 18px;
+  }
+  .invitation {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

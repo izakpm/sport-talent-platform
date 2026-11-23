@@ -125,7 +125,10 @@ it("provides onboarding guidance without sample events", async () => {
   expect(screen.queryByText("Match vs North")).not.toBeInTheDocument();
 });
 it("shows load failures rather than pretending the month is empty", async () => {
-  (hub as jest.Mock).mockRejectedValue(new Error("Connection unavailable"));
+  (hub as jest.Mock).mockImplementation(async (path: string) => {
+    if (path === "/personal-sessions/invitations") return [];
+    throw new Error("Connection unavailable");
+  });
   render(<Calendar />);
   expect(await screen.findByRole("alert")).toHaveTextContent(
     "Connection unavailable",

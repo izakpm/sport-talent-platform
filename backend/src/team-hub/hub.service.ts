@@ -1,7 +1,8 @@
 import { ACHIEVEMENT_LINK } from '../athlete-profile/achievement-verification.service';
 import { codeHash } from '../guardian/guardian.service';
 import { requiresParent } from '../guardian/invitation-age';
-import { PERSONAL_EVENT } from './personal-calendar.service';
+import { PERSONAL_EVENT, PERSONAL_INVITEE } from './personal-calendar.service';
+import { INVITATION_EVENT, INVITATION_FROM } from './session-invitation.sql';
 import {
   BadRequestException,
   ConflictException,
@@ -275,10 +276,14 @@ export class HubService {
       [userId, month + '-01'],
     );
     const personalEvents = await this.db.query(
-      `SELECT ${PERSONAL_EVENT} FROM athlete_calendar_events WHERE user_id=$1 AND date >= $2::date AND date < $2::date + interval '1 month'`,
+      `SELECT ${PERSONAL_EVENT},${PERSONAL_INVITEE} FROM athlete_calendar_events WHERE user_id=$1 AND date >= $2::date AND date < $2::date + interval '1 month'`,
       [userId, month + '-01'],
     );
-    return [...teamEvents, ...personalEvents].sort(
+    const invitedEvents = await this.db.query(
+      `SELECT ${INVITATION_EVENT} ${INVITATION_FROM} AND i.status='accepted' AND e.date >= $2::date AND e.date < $2::date + interval '1 month'`,
+      [userId, month + '-01'],
+    );
+    return [...teamEvents, ...personalEvents, ...invitedEvents].sort(
       (a, b) =>
         new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime() ||
         a.id.localeCompare(b.id),

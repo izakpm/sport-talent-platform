@@ -1,5 +1,6 @@
 "use client";
 import { PersonalEditor, CancelPersonal } from "./PersonalEditor";
+import SessionInvitations from "./SessionInvitations";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { hub, type HubTeam } from "../../team-hub/api";
@@ -54,6 +55,7 @@ export default function AthleteCalendar({
           setTeam((previous) =>
             !previous ||
             previous === "personal" ||
+            previous === "invitations" ||
             teams.some((t) => t.id === previous)
               ? previous
               : "",
@@ -150,6 +152,9 @@ export default function AthleteCalendar({
           )}
         </div>
       </header>
+      {!readOnly && (
+        <SessionInvitations onChanged={() => setRetry((n) => n + 1)} />
+      )}
       {notice && (
         <p role="status" className={s.notice}>
           {notice}
@@ -248,6 +253,7 @@ export default function AthleteCalendar({
           <select value={team} onChange={(e) => setTeam(e.target.value)}>
             <option value="">All sessions</option>
             <option value="personal">My personal sessions</option>
+            <option value="invitations">Accepted invitations</option>
             {data?.teams.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -471,6 +477,7 @@ export default function AthleteCalendar({
               <p role="status" className={c.cancellation}>
                 Cancelled — this session is not taking place.{" "}
                 {selected.source !== "personal" &&
+                  selected.source !== "invitation" &&
                   "Check the team feed for your coach’s update."}
               </p>
             )}
@@ -492,7 +499,8 @@ export default function AthleteCalendar({
                 <dt>Venue</dt>
                 <dd>
                   {selected.venue ||
-                    (selected.source === "personal"
+                    (selected.source === "personal" ||
+                    selected.source === "invitation"
                       ? "Not added"
                       : "To be confirmed by your coach")}
                 </dd>
@@ -500,12 +508,26 @@ export default function AthleteCalendar({
             </dl>
             <div>
               <h3>
-                {selected.source === "personal" ? "My notes" : "Coach’s notes"}
+                {selected.source === "personal"
+                  ? "My notes"
+                  : selected.source === "invitation"
+                    ? "Session notes"
+                    : "Coach’s notes"}
               </h3>
               <p className={c.notes}>
                 {selected.notes || "No extra instructions yet."}
               </p>
             </div>
+            {selected.invitee_id && (
+              <p>
+                Invited: {selected.invitee_name || "Connection"} ·{" "}
+                {selected.invitation_status === "accepted"
+                  ? "Accepted"
+                  : selected.invitation_status === "declined"
+                    ? "Declined"
+                    : "Awaiting response"}
+              </p>
+            )}
             <div className={s.formFooter}>
               <button className={s.secondary} onClick={() => setSelected(null)}>
                 Close
@@ -543,11 +565,11 @@ export default function AthleteCalendar({
                     </Link>
                   )}
                 </>
-              ) : (
+              ) : selected.source !== "invitation" ? (
                 <Link className={s.primary} href="/dashboard/athlete/feed">
                   Open team feed ↗
                 </Link>
-              )}
+              ) : null}
             </div>
           </div>
         </Modal>

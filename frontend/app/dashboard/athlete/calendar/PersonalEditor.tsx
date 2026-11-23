@@ -1,5 +1,5 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { hub } from "../../team-hub/api";
 import { Modal } from "../../coaches/CoachWorkspace";
 import { todayDate } from "../../coaches/planning";
@@ -23,6 +23,32 @@ export function PersonalEditor({
   saveRequest?: typeof hub;
   childName?: string;
 }) {
+  const [people, setPeople] = useState<
+    { id: string; name: string; role: string }[] | null
+  >(null);
+  const [connectionsError, setConnectionsError] = useState("");
+  const [invitee, setInvitee] = useState(event?.invitee_id || "");
+  const [connectionsRetry, setConnectionsRetry] = useState(0);
+  useEffect(() => {
+    let active = true;
+    saveRequest<{ people: { id: string; name: string; role: string }[] }>(
+      "/personal-sessions/connections",
+      undefined,
+      "GET",
+    )
+      .then((data) => {
+        if (active) {
+          setPeople(data.people || []);
+          setConnectionsError("");
+        }
+      })
+      .catch((e) => {
+        if (active) setConnectionsError(e.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [saveRequest, connectionsRetry]);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [date, setDate] = useState(
@@ -56,6 +82,7 @@ export function PersonalEditor({
             end_time: end,
             venue: f.get("venue"),
             notes: f.get("notes"),
+            invitee_id: invitee || null,
           },
           event ? "PATCH" : "POST",
         ),
@@ -72,7 +99,7 @@ export function PersonalEditor({
       description={
         childName
           ? `Planning for ${childName}. Times are South African time (SAST).`
-          : "Only you can see this plan. Times are South African time (SAST)."
+          : "Plan on your own or invite a connection. Times are South African time (SAST)."
       }
       close={() => {
         if (!busy) close();
@@ -148,6 +175,52 @@ export function PersonalEditor({
               defaultValue={event?.notes || ""}
             />
           </label>
+          <label>
+            Invite a connection (optional)
+            <select
+              value={invitee}
+              onChange={(e) => setInvitee(e.target.value)}
+              disabled={people === null}
+            >
+              <option value="">Just me — keep this session private</option>
+              {invitee && !people?.some((p) => p.id === invitee) && (
+                <option value={invitee}>
+                  {event?.invitee_name || "Previously invited person"}
+                </option>
+              )}
+              {people?.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} · {p.role === "coach" ? "Coach" : "Teammate"}
+                </option>
+              ))}
+            </select>
+          </label>
+          {people === null && !connectionsError && (
+            <p className={s.formTip}>Loading your connections…</p>
+          )}
+          {people?.length === 0 && (
+            <p className={s.formTip}>
+              No connected coaches or teammates yet. You can still plan a
+              private session.
+            </p>
+          )}
+          {connectionsError && (
+            <p role="alert" className={s.formError}>
+              {connectionsError}{" "}
+              <button
+                type="button"
+                onClick={() => setConnectionsRetry((n) => n + 1)}
+              >
+                Retry connections
+              </button>
+            </p>
+          )}
+          {invitee && (
+            <p className={s.formTip}>
+              This person can see the session details and accept or decline.
+              Changes to the plan will ask them to confirm again.
+            </p>
+          )}
         </fieldset>
         {overlaps.length > 0 && (
           <p className={s.formTip}>

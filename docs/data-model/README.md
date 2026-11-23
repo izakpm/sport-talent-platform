@@ -115,6 +115,8 @@ See the separate [remaining proposals and priorities](proposed/README.md) and [p
 
 ## Maintaining this model
 
+Personal session invitations (23 November 2026): `personal_session_invitations` links one optional guest (`users`) to an organiser-owned `athlete_calendar_events` record. Responses are pending, accepted or declined. Only existing active roster connections are eligible; this creates no team membership or parent permission. Changes require a fresh response, and cancellation remains on the shared event. See `docs/sql/personal-session-invitations.sql`; the generated diagrams predate this addition.
+
 1. Run `node docs/data-model/export-schema.cjs` with authorised access to the private database environment. It uses a read-only transaction and exports metadata only. An optional first argument selects another environment file; never commit that file.
 2. Run `node docs/data-model/build-model.cjs`. It checks table ownership and foreign-key coverage, then generates Mermaid detail diagrams, the dictionary and register. New tables require a deliberate group assignment.
 3. Run `./docs/data-model/render-model.ps1` in PowerShell to render all sources and rebuild the portable viewer. It uses Mermaid CLI 11.12.0 and installed Chrome; pass `-BrowserPath` for another Chromium executable. The first run needs package-download access. The overview and proposed view are curated, not inferred from foreign keys.
