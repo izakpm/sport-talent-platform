@@ -10,6 +10,7 @@ import {
 } from "../team-hub/api";
 import s from "./overview.module.css";
 import Progress from "./Progress";
+import BadgeCollection from "./BadgeCollection";
 import AffiliationBadges from "./AffiliationBadges";
 type Post = {
   id: string;
@@ -130,6 +131,7 @@ export default function AthleteOverview() {
         </div>
       </section>
       <Progress />
+      <BadgeCollection compact />
       <div className={s.stats} aria-label="Your team summary">
         <Metric
           label="My teams"

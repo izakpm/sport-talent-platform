@@ -57,6 +57,7 @@ export function entryInput(body: any) {
           'leadership_role',
           'leadership_date',
           'organisation_id',
+          'selection_level',
         ].includes(k),
     )
   )
@@ -121,6 +122,16 @@ export function entryInput(body: any) {
       'Choose a valid school or club for this achievement.',
     );
   const achievement_type = text('achievement_type', 30) || 'general';
+  const selection_level = text('selection_level', 20) || null;
+  if (
+    selection_level &&
+    (kind !== 'achievement' ||
+      achievement_type !== 'team_selection' ||
+      !['school', 'club', 'provincial', 'national'].includes(selection_level))
+  )
+    throw new BadRequestException(
+      'Choose a valid selection level for a team selection.',
+    );
   const leadership_role = text('leadership_role', 30) || null;
   const leadership_date = text('leadership_date', 10) || null;
   if (
@@ -161,6 +172,7 @@ export function entryInput(body: any) {
     value,
     unit,
     achievement_type,
+    selection_level,
     leadership_role,
     leadership_date,
     organisation_id,

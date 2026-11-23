@@ -225,6 +225,7 @@ it("saves selection and captaincy independently from one editor", async () => {
           kind: "achievement",
           organisation_id: null,
           achievement_type: "team_selection",
+          selection_level: "",
           leadership_role: "Captain",
           leadership_date: "2025-06-02",
           title: "Blue Bulls U15 Invitational",

@@ -13,6 +13,7 @@ type Request = {
   notes: string;
   athlete_name: string;
   achievement_type: string;
+  selection_level?: string | null;
   leadership_role?: string;
   leadership_date?: string;
   request_note: string;
@@ -158,6 +159,14 @@ function Review({
             : "Achievement date"}
           : {date(entry.date)}
         </p>
+        {entry.selection_level && (
+          <p>
+            Selection level:{" "}
+            <strong style={{ textTransform: "capitalize" }}>
+              {entry.selection_level}
+            </strong>
+          </p>
+        )}
         {entry.leadership_role && (
           <p>
             {entry.leadership_role}:{" "}

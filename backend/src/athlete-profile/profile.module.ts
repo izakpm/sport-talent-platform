@@ -16,6 +16,7 @@ import {
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AchievementVerificationService } from './achievement-verification.service';
 import { AthleteProfileService } from './profile.service';
+import { BadgesService } from './badges.service';
 type Request = { user: { userId: string; guardianMode?: string } };
 @Controller('athlete-profile')
 @UseGuards(JwtAuthGuard)
@@ -23,7 +24,13 @@ export class AthleteProfileController {
   constructor(
     private readonly service: AthleteProfileService,
     private readonly verification: AchievementVerificationService,
+    private readonly badges: BadgesService,
   ) {}
+  @Get('badges') @Header('Cache-Control', 'private, no-store') badgeCollection(
+    @Req() r: Request,
+  ) {
+    return this.badges.get(r.user.userId);
+  }
   @Get() @Header('Cache-Control', 'private, no-store') async get(
     @Req() r: Request,
   ) {
@@ -89,6 +96,10 @@ export class AthleteProfileController {
 }
 @Module({
   controllers: [AthleteProfileController],
-  providers: [AthleteProfileService, AchievementVerificationService],
+  providers: [
+    AthleteProfileService,
+    AchievementVerificationService,
+    BadgesService,
+  ],
 })
 export class AthleteProfileModule {}

@@ -45,7 +45,7 @@ export async function guardianContext(db: DataSource, req: any, payload: any) {
     );
   if (
     link.mode === 'view' &&
-    !/^\/(?:affiliations|athlete-profile|team-hub\/(?:teams|feed|calendar|matches))$/.test(
+    !/^\/(?:affiliations|athlete-profile(?:\/badges)?|team-hub\/(?:teams|feed|calendar|matches))$/.test(
       path,
     )
   )

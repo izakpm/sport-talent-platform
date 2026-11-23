@@ -82,6 +82,7 @@ describe('guardian authorization boundaries', () => {
   });
   it.each([
     '/athlete-profile',
+    '/athlete-profile/badges',
     '/team-hub/calendar',
     '/team-hub/feed',
     '/team-hub/matches',

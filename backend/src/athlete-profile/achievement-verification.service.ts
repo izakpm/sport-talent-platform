@@ -111,7 +111,7 @@ export class AchievementVerificationService {
   async pending(coachId: string) {
     await this.authorize(coachId, 'COACH');
     return this.db.query(
-      `SELECT e.id,e.title,e.date::text,e.organization,e.notes,e.achievement_type,e.leadership_role,e.leadership_date::text,e.user_id,concat_ws(' ',u.first_name,u.last_name) AS athlete_name,r.request_note,r.requested_at FROM achievement_coach_requests r JOIN athlete_portfolio_entries e ON e.id=r.entry_id JOIN users u ON u.id=e.user_id WHERE r.coach_id=$1 AND r.status='pending' AND e.kind='achievement' AND u.status IS DISTINCT FROM 'SUSPENDED' AND ${ACHIEVEMENT_LINK} ORDER BY r.requested_at`,
+      `SELECT e.id,e.title,e.date::text,e.organization,e.notes,e.achievement_type,e.selection_level,e.leadership_role,e.leadership_date::text,e.user_id,concat_ws(' ',u.first_name,u.last_name) AS athlete_name,r.request_note,r.requested_at FROM achievement_coach_requests r JOIN athlete_portfolio_entries e ON e.id=r.entry_id JOIN users u ON u.id=e.user_id WHERE r.coach_id=$1 AND r.status='pending' AND e.kind='achievement' AND u.status IS DISTINCT FROM 'SUSPENDED' AND ${ACHIEVEMENT_LINK} ORDER BY r.requested_at`,
       [coachId],
     );
   }

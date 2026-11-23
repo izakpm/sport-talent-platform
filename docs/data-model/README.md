@@ -115,6 +115,8 @@ See the separate [remaining proposals and priorities](proposed/README.md) and [p
 
 ## Maintaining this model
 
+Athlete badges (23 November 2026): `athlete_portfolio_entries.selection_level` explicitly distinguishes school, club, provincial and national team selections. `/athlete-profile/badges` derives provincial selection and captaincy badges from coach-verified achievements, and 10/25/50/100/250-hour milestones from verified training logs and completed team attendance. Overlapping time intervals are merged; matches and future sessions are excluded. Awards are recalculated from source records rather than stored as a second editable counter. See `docs/sql/athlete-badges.sql`; the generated diagrams predate this field.
+
 Personal session invitations (23 November 2026): `personal_session_invitations` links one optional guest (`users`) to an organiser-owned `athlete_calendar_events` record. Responses are pending, accepted or declined. Only existing active roster connections are eligible; this creates no team membership or parent permission. Changes require a fresh response, and cancellation remains on the shared event. See `docs/sql/personal-session-invitations.sql`; the generated diagrams predate this addition.
 
 1. Run `node docs/data-model/export-schema.cjs` with authorised access to the private database environment. It uses a read-only transaction and exports metadata only. An optional first argument selects another environment file; never commit that file.

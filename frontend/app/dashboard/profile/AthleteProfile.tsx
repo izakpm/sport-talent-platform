@@ -1,4 +1,5 @@
 "use client";
+import BadgeCollection from "../athlete/BadgeCollection";
 import AchievementVerification from "./AchievementVerification";
 import AccountSecurity from "../AccountSecurity";
 import AchievementOrganisationPicker, {
@@ -31,6 +32,7 @@ type Entry = {
   value: number | null;
   unit: string | null;
   achievement_type?: "general" | "team_selection";
+  selection_level?: string | null;
   leadership_role?: string | null;
   leadership_date?: string | null;
 };
@@ -414,6 +416,7 @@ export default function AthleteProfile({
       )}
       {tab === "achievement" && (
         <section aria-label="Achievement records">
+          <BadgeCollection refreshKey={entries} />
           <div className={a.sectionHeader}>
             <div>
               <p className={a.sectionKicker}>MY MILESTONES</p>
@@ -465,6 +468,14 @@ export default function AthleteProfile({
                   </div>
                   {e.achievement_type === "team_selection" && (
                     <dl className={a.selectionDetails}>
+                      {e.selection_level && (
+                        <div>
+                          <dt>Selection level</dt>
+                          <dd style={{ textTransform: "capitalize" }}>
+                            {e.selection_level}
+                          </dd>
+                        </div>
+                      )}
                       <div>
                         <dt>Selected</dt>
                         <dd>{entryDate(e.date)}</dd>
@@ -643,6 +654,9 @@ export function ProfileEditor({
   const [leadershipRole, setLeadershipRole] = useState(
     editor.entry?.leadership_role || "",
   );
+  const [selectionLevel, setSelectionLevel] = useState(
+    editor.entry?.selection_level || "",
+  );
   const [confirmRemoval, setConfirmRemoval] = useState(false);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -718,6 +732,8 @@ export function ProfileEditor({
           ? {
               organisation_id: organisation.id,
               achievement_type: achievementType,
+              selection_level:
+                achievementType === "team_selection" ? selectionLevel : "",
               leadership_role:
                 achievementType === "team_selection" ? leadershipRole : "",
               leadership_date:
@@ -1012,6 +1028,23 @@ export function ProfileEditor({
               {editor.kind === "achievement" &&
                 achievementType === "team_selection" && (
                   <>
+                    <label>
+                      Selection level
+                      <select
+                        value={selectionLevel}
+                        onChange={(e) => setSelectionLevel(e.target.value)}
+                      >
+                        <option value="">Not specified</option>
+                        <option value="school">School</option>
+                        <option value="club">Club</option>
+                        <option value="provincial">Provincial</option>
+                        <option value="national">National</option>
+                      </select>
+                      <small>
+                        A provincial selection badge is earned after coach
+                        verification.
+                      </small>
+                    </label>
                     <label>
                       Leadership role
                       <select
