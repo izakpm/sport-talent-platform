@@ -7,6 +7,20 @@ import { Modal } from "../coaches/CoachWorkspace";
 import { dayLabel } from "../athlete/calendar/calendar";
 import s from "../coaches/workspace.module.css";
 import m from "../athlete/matches/matches.module.css";
+const competitionLogos: Record<string, { src: string; alt: string }> = {
+  "virseker-noordvaal-2026": {
+    src: "/competitions/virseker-noordvaal.png",
+    alt: "Virseker Noordvaal Cup 2026",
+  },
+  "afgri-u15-2026": {
+    src: "/competitions/afgri-rugby-week.png",
+    alt: "AFGRI National Rugby Week",
+  },
+};
+function CompetitionLogo({ code, size }: { code?: string | null; size: number }) {
+  const logo = code ? competitionLogos[code] : undefined;
+  return logo ? <Image {...logo} width={size} height={size} /> : null;
+}
 type Stats = {
   position: string;
   minutes: number | null;
@@ -184,14 +198,7 @@ export default function MatchesWorkspace({
           </div>
           {e.competition_label && (
             <div className={m.competition}>
-              {e.competition_code === "virseker-noordvaal-2026" && (
-                <Image
-                  src="/competitions/virseker-noordvaal.png"
-                  alt="Virseker Noordvaal Cup 2026"
-                  width={76}
-                  height={76}
-                />
-              )}
+              <CompetitionLogo code={e.competition_code} size={76} />
               <span>{e.competition_label}</span>
             </div>
           )}
@@ -352,14 +359,7 @@ export default function MatchesWorkspace({
             {e.result ? `vs ${e.result.opponent}` : e.title}
           </strong>
           <span className={m.rowMeta}>
-            {e.competition_code === "virseker-noordvaal-2026" && (
-              <Image
-                src="/competitions/virseker-noordvaal.png"
-                alt="Virseker Noordvaal Cup 2026"
-                width={36}
-                height={36}
-              />
-            )}
+            <CompetitionLogo code={e.competition_code} size={36} />
             <span>{e.competition_label || e.venue || e.sport}</span>
           </span>
         </span>
