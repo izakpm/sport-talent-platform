@@ -10,6 +10,7 @@ import {
 } from "../team-hub/api";
 import s from "./overview.module.css";
 import Progress from "./Progress";
+import AffiliationBadges from "./AffiliationBadges";
 type Post = {
   id: string;
   title: string;
@@ -98,6 +99,7 @@ export default function AthleteOverview() {
           <p className={s.eyebrow}>YOUR SPORT. YOUR STORY.</p>
           <h1>Welcome back{user.first_name ? `, ${user.first_name}` : ""}.</h1>
           <p>Keep showing up. Make every session part of your story.</p>
+          <AffiliationBadges />
         </div>
         <Link className={s.outline} href="/dashboard/profile">
           My sporting profile ↗

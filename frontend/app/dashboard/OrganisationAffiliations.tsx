@@ -49,6 +49,11 @@ export default function OrganisationAffiliations({
   const [selected, setSelected] = useState("");
   const [error, setError] = useState("");
   useEffect(() => {
+    if (window.location.hash !== "#affiliations") return;
+    const frame = requestAnimationFrame(() => document.getElementById("affiliations")?.scrollIntoView({ block: "start" }));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  useEffect(() => {
     if (!family) return;
     let live = true;
     request<GuardianChild[]>("/guardian/children", "")
@@ -66,7 +71,7 @@ export default function OrganisationAffiliations({
     };
   }, [family]);
   return (
-    <section className={s.card} aria-labelledby="affiliations-title">
+    <section id="affiliations" className={s.card} aria-labelledby="affiliations-title">
       <header>
         <h2 id="affiliations-title">Schools &amp; clubs</h2>
         <p>Your sporting community, on your profile.</p>
