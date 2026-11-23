@@ -155,7 +155,37 @@
   border-right: 0;
 }
 .day {
+  position: relative;
   padding: 8px;
+}
+.addDay {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #e6d68f;
+  border-radius: 6px;
+  background: #fff8d9;
+  color: #0b1f2e;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+}
+.addDay:hover:not(:disabled) {
+  background: #ffca05;
+  border-color: #ffca05;
+}
+.addDay:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.addDay:focus-visible {
+  outline: 2px solid #0b1f2e;
+  outline-offset: 2px;
 }
 .dayButton {
   display: flex;
@@ -455,6 +485,16 @@
     width: 100%;
     min-height: 52px;
     font-size: 12px;
+  }
+  .dayWithAdd .dayButton {
+    margin-top: 26px;
+  }
+  .addDay {
+    width: 24px;
+    height: 24px;
+    top: 3px;
+    right: 3px;
+    font-size: 19px;
   }
   .dayEvents {
     display: none;

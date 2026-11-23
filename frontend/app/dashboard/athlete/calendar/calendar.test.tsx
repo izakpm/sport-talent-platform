@@ -138,3 +138,30 @@ it("shows load failures rather than pretending the month is empty", async () => 
   ).not.toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
 });
+
+it("opens a personal session with the clicked calendar date preselected", async () => {
+  render(<Calendar />);
+  const buttons = await screen.findAllByRole("button", {
+    name: /^Plan a session on /,
+  });
+  expect(buttons).toHaveLength(monthDays(month).filter(Boolean).length);
+  fireEvent.click(screen.getByRole("button", { name: "Next month" }));
+  await waitFor(() =>
+    expect(hub).toHaveBeenCalledWith("/calendar?month=" + shiftMonth(month, 1)),
+  );
+  const nextButtons = await screen.findAllByRole("button", {
+    name: /^Plan a session on /,
+  });
+  fireEvent.click(nextButtons[4]);
+  expect(within(screen.getByRole("dialog")).getByLabelText("Date")).toHaveValue(
+    shiftMonth(month, 1) + "-05",
+  );
+});
+it("does not offer day creation controls in read-only calendars", async () => {
+  const AthleteCalendar = require("./AthleteCalendar").default;
+  render(<AthleteCalendar readOnly />);
+  await screen.findByRole("button", { name: /10:00 · Match Match vs North/ });
+  expect(
+    screen.queryByRole("button", { name: /^Plan a session on / }),
+  ).not.toBeInTheDocument();
+});

@@ -348,7 +348,7 @@ export default function AthleteCalendar({
                         const rows = events.filter((e) => e.date === date);
                         return (
                           <section
-                            className={`${c.day} ${date === day ? c.selected : ""} ${date < today ? c.past : ""} ${rows.some((e) => e.kind === "match" && !e.cancelled) ? c.matchDay : ""}`}
+                            className={`${c.day} ${!readOnly ? c.dayWithAdd : ""} ${date === day ? c.selected : ""} ${date < today ? c.past : ""} ${rows.some((e) => e.kind === "match" && !e.cancelled) ? c.matchDay : ""}`}
                             key={date}
                           >
                             <button
@@ -378,6 +378,25 @@ export default function AthleteCalendar({
                                   ))}
                               </span>
                             </button>
+                            {!readOnly && (
+                              <button
+                                type="button"
+                                className={c.addDay}
+                                disabled={date < today}
+                                aria-label={`Plan a session on ${dayLabel(date)}`}
+                                title={
+                                  date < today
+                                    ? "Record past training in Activities"
+                                    : `Plan a session on ${dayLabel(date)}`
+                                }
+                                onClick={() => {
+                                  setDay(date);
+                                  setEditing("new");
+                                }}
+                              >
+                                <span aria-hidden="true">+</span>
+                              </button>
+                            )}
                             <div className={c.dayEvents}>
                               {rows.slice(0, 2).map((e) => (
                                 <button
