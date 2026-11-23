@@ -2,6 +2,8 @@
 
 **Current-state snapshot: 23 November 2026, 06:19 UTC.** Verified against the live Supabase public schema and application source, including the school/club affiliation implementation following commit `45f89b5`.
 
+**Subsequent applied change (23 November 2026):** athlete achievements now support team selections and leadership appointments through [this additive migration](../sql/athlete-achievement-selection.sql). `athlete_portfolio_entries` adds `achievement_type` (`general` or `team_selection`), nullable `leadership_role` (Captain or Vice-captain), and nullable `leadership_date`. The existing `date` is the selection date for team selections. Unknown appointment dates remain null. Both honours appear on one card; general awards remain separate entries. No new relationships or access permissions are introduced. The timestamped diagrams and schema snapshot below predate these three columns.
+
 Start with the [visual explorer](index.html), which opens in a browser without a server or internet connection. It includes a platform overview, eight detailed diagrams, zoom controls and a clearly separated proposed model. Individual SVGs can be opened, shared or printed; Mermaid files remain editable source.
 
 ## Scope and evidence

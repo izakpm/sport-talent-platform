@@ -60,3 +60,33 @@ describe('athlete profile validation', () => {
       }),
     ).toMatchObject({ value: null, unit: null }));
 });
+
+const selection = {
+  kind: 'achievement',
+  title: 'U15 team',
+  date: '2025-06-01',
+  achievement_type: 'team_selection',
+  leadership_role: 'Captain',
+  leadership_date: '2025-06-02',
+};
+it('keeps selection and appointment dates separate', () =>
+  expect(entryInput(selection)).toMatchObject({
+    date: '2025-06-01',
+    leadership_date: '2025-06-02',
+    leadership_role: 'Captain',
+  }));
+it('allows an unknown appointment date without inventing one', () =>
+  expect(entryInput({ ...selection, leadership_date: '' })).toMatchObject({
+    leadership_date: null,
+  }));
+it.each([
+  { leadership_date: '2025-05-31' },
+  { leadership_date: '2025-02-30' },
+  { leadership_date: '2099-01-01' },
+  { leadership_role: '' },
+  { achievement_type: 'general' },
+  { leadership_role: 'Admin' },
+  { kind: 'metric', title: 'Bench press', value: 80 },
+])('rejects inconsistent selection fields %j', (fields) =>
+  expect(() => entryInput({ ...selection, ...fields })).toThrow(),
+);

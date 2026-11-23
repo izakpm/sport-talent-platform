@@ -194,3 +194,44 @@ it("opens the profile section from legacy deep links", async () => {
     await screen.findByRole("button", { name: "Achievements" }),
   ).toHaveAttribute("aria-pressed", "true");
 });
+
+it("saves selection and captaincy independently from one editor", async () => {
+  render(<AthleteProfile initialTab="achievement" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Add achievement +" }),
+  );
+  fireEvent.change(screen.getByLabelText("Achievement type"), {
+    target: { value: "team_selection" },
+  });
+  fireEvent.change(screen.getByLabelText("Team / selection"), {
+    target: { value: "Blue Bulls U15 Invitational" },
+  });
+  fireEvent.change(screen.getByLabelText("Selection date"), {
+    target: { value: "2025-06-01" },
+  });
+  fireEvent.change(screen.getByLabelText("Leadership role"), {
+    target: { value: "Captain" },
+  });
+  fireEvent.change(screen.getByLabelText(/Appointment date/), {
+    target: { value: "2025-06-02" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  await waitFor(() =>
+    expect(fetchWithAuth).toHaveBeenCalledWith(
+      "/athlete-profile/entries",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          kind: "achievement",
+          achievement_type: "team_selection",
+          leadership_role: "Captain",
+          leadership_date: "2025-06-02",
+          title: "Blue Bulls U15 Invitational",
+          date: "2025-06-01",
+          organization: "",
+          notes: "",
+        }),
+      }),
+    ),
+  );
+});

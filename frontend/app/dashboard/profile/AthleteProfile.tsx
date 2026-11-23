@@ -18,6 +18,9 @@ type Entry = {
   notes: string;
   value: number | null;
   unit: string | null;
+  achievement_type?: "general" | "team_selection";
+  leadership_role?: string | null;
+  leadership_date?: string | null;
 };
 type Sport = {
   sport_id: string;
@@ -429,6 +432,24 @@ export default function AthleteProfile({
                     {e.organization && " · "}
                     {entryDate(e.date)}
                   </p>
+                  {e.achievement_type === "team_selection" && (
+                    <dl className={a.selectionDetails}>
+                      <div>
+                        <dt>Selected</dt>
+                        <dd>{entryDate(e.date)}</dd>
+                      </div>
+                      {e.leadership_role && (
+                        <div>
+                          <dt>{e.leadership_role}</dt>
+                          <dd>
+                            {e.leadership_date
+                              ? entryDate(e.leadership_date)
+                              : "Appointment date not recorded"}
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                  )}
                   {e.notes && <p className={a.notes}>{e.notes}</p>}
                   <span className={a.badge}>Self-reported</span>
                 </div>
@@ -576,6 +597,12 @@ export function ProfileEditor({
   saveRequest?: typeof request;
   description?: string;
 }) {
+  const [achievementType, setAchievementType] = useState(
+    editor.entry?.achievement_type || "general",
+  );
+  const [leadershipRole, setLeadershipRole] = useState(
+    editor.entry?.leadership_role || "",
+  );
   const [confirmRemoval, setConfirmRemoval] = useState(false);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -641,6 +668,17 @@ export function ProfileEditor({
     } else {
       body = {
         kind: editor.kind,
+        ...(editor.kind === "achievement"
+          ? {
+              achievement_type: achievementType,
+              leadership_role:
+                achievementType === "team_selection" ? leadershipRole : "",
+              leadership_date:
+                achievementType === "team_selection" && leadershipRole
+                  ? f.get("leadership_date") || ""
+                  : "",
+            }
+          : {}),
         title: editor.kind === "metric" ? metric : f.get("title"),
         date: f.get("date"),
         organization: f.get("organization") || "",
@@ -870,7 +908,25 @@ export function ProfileEditor({
               ) : (
                 <>
                   <label>
-                    Achievement
+                    Achievement type
+                    <select
+                      value={achievementType}
+                      onChange={(e) =>
+                        setAchievementType(
+                          e.target.value as "general" | "team_selection",
+                        )
+                      }
+                    >
+                      <option value="general">
+                        Award or other achievement
+                      </option>
+                      <option value="team_selection">Team selection</option>
+                    </select>
+                  </label>
+                  <label>
+                    {achievementType === "team_selection"
+                      ? "Team / selection"
+                      : "Achievement"}
                     <input
                       required
                       name="title"
@@ -890,7 +946,11 @@ export function ProfileEditor({
                 </>
               )}
               <label>
-                {editor.kind === "metric" ? "Test date" : "Achievement date"}
+                {editor.kind === "metric"
+                  ? "Test date"
+                  : achievementType === "team_selection"
+                    ? "Selection date"
+                    : "Achievement date"}
                 <input
                   required
                   name="date"
@@ -902,6 +962,39 @@ export function ProfileEditor({
                   defaultValue={editor.entry?.date || ""}
                 />
               </label>
+              {editor.kind === "achievement" &&
+                achievementType === "team_selection" && (
+                  <>
+                    <label>
+                      Leadership role
+                      <select
+                        value={leadershipRole}
+                        onChange={(e) => setLeadershipRole(e.target.value)}
+                      >
+                        <option value="">No leadership role</option>
+                        <option value="Captain">Captain</option>
+                        <option value="Vice-captain">Vice-captain</option>
+                      </select>
+                    </label>
+                    {leadershipRole && (
+                      <label>
+                        Appointment date (optional)
+                        <input
+                          name="leadership_date"
+                          type="date"
+                          min="1900-01-01"
+                          max={new Date().toLocaleDateString("en-CA", {
+                            timeZone: "Africa/Johannesburg",
+                          })}
+                          defaultValue={editor.entry?.leadership_date || ""}
+                        />
+                        <small>
+                          Leave blank if the appointment date is not known.
+                        </small>
+                      </label>
+                    )}
+                  </>
+                )}
               <label>
                 Notes
                 <textarea

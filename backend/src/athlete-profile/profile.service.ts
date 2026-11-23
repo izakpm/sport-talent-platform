@@ -31,7 +31,7 @@ export class AthleteProfileService {
         )
       : [];
     const entries = await this.db.query(
-      'SELECT id,kind,title,date::text,organization,notes,value::float,unit FROM athlete_portfolio_entries WHERE user_id=$1 ORDER BY date DESC,created_at DESC',
+      'SELECT id,kind,title,date::text,organization,notes,value::float,unit,achievement_type,leadership_role,leadership_date::text FROM athlete_portfolio_entries WHERE user_id=$1 ORDER BY date DESC,created_at DESC',
       [id],
     );
     return {
@@ -140,9 +140,20 @@ export class AthleteProfileService {
     return this.get(id);
   }
   async saveEntry(id: string, body: any, entryId?: string) {
-    const e = entryInput(body);
+    entryInput(body);
     await this.db.transaction(async (tx) => {
       await this.owner(id, tx, true);
+      let input = body;
+      if (entryId) {
+        const [existing] = await tx.query(
+          'SELECT achievement_type,leadership_role,leadership_date::text FROM athlete_portfolio_entries WHERE user_id=$1 AND id=$2 FOR UPDATE',
+          [id, entryId],
+        );
+        if (!existing) throw new NotFoundException('Record not found.');
+        // Older clients may omit the new fields; preserve them on ordinary edits.
+        input = { ...existing, ...body };
+      }
+      const e = entryInput(input);
       const values = [
         id,
         e.kind,
@@ -152,16 +163,19 @@ export class AthleteProfileService {
         e.notes,
         e.value,
         e.unit,
+        e.achievement_type,
+        e.leadership_role,
+        e.leadership_date,
       ];
       if (entryId) {
         const rows = await tx.query(
-          'UPDATE athlete_portfolio_entries SET kind=$2,title=$3,date=$4,organization=$5,notes=$6,value=$7,unit=$8 WHERE user_id=$1 AND id=$9 RETURNING id',
+          'UPDATE athlete_portfolio_entries SET kind=$2,title=$3,date=$4,organization=$5,notes=$6,value=$7,unit=$8,achievement_type=$9,leadership_role=$10,leadership_date=$11 WHERE user_id=$1 AND id=$12 RETURNING id',
           [...values, entryId],
         );
         if (!rows.length) throw new NotFoundException('Record not found.');
       } else
         await tx.query(
-          'INSERT INTO athlete_portfolio_entries(user_id,kind,title,date,organization,notes,value,unit) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+          'INSERT INTO athlete_portfolio_entries(user_id,kind,title,date,organization,notes,value,unit,achievement_type,leadership_role,leadership_date) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
           values,
         );
     });

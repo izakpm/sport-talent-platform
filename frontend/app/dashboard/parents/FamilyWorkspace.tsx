@@ -617,6 +617,19 @@ export function FamilyContent({ section }: { section: Section }) {
                                     .filter(Boolean)
                                     .join(" · ")}
                                 </p>
+                                {e.achievement_type === "team_selection" && (
+                                  <p>
+                                    Selected: {e.date}
+                                    {e.leadership_role && (
+                                      <>
+                                        {" "}
+                                        · {e.leadership_role}:{" "}
+                                        {e.leadership_date ||
+                                          "Appointment date not recorded"}
+                                      </>
+                                    )}
+                                  </p>
+                                )}
                                 {e.notes && <p>{e.notes}</p>}
                                 {r.child.mode === "managed" && (
                                   <button

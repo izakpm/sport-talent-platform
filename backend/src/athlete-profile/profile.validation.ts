@@ -46,9 +46,17 @@ export function entryInput(body: any) {
     Array.isArray(body) ||
     Object.keys(body).some(
       (k) =>
-        !['kind', 'title', 'date', 'organization', 'notes', 'value'].includes(
-          k,
-        ),
+        ![
+          'kind',
+          'title',
+          'date',
+          'organization',
+          'notes',
+          'value',
+          'achievement_type',
+          'leadership_role',
+          'leadership_date',
+        ].includes(k),
     )
   )
     throw new BadRequestException(
@@ -100,5 +108,48 @@ export function entryInput(body: any) {
     unit = METRICS[title];
   } else if (body.value != null)
     throw new BadRequestException('Achievements do not have a measured value.');
-  return { kind, title, date, organization, notes, value, unit };
+  const achievement_type = text('achievement_type', 30) || 'general';
+  const leadership_role = text('leadership_role', 30) || null;
+  const leadership_date = text('leadership_date', 10) || null;
+  if (
+    !['general', 'team_selection'].includes(achievement_type) ||
+    (leadership_role && !['Captain', 'Vice-captain'].includes(leadership_role))
+  )
+    throw new BadRequestException(
+      'Choose a valid achievement type and leadership role.',
+    );
+  if (
+    (kind !== 'achievement' || achievement_type !== 'team_selection') &&
+    (achievement_type !== 'general' || leadership_role || leadership_date)
+  )
+    throw new BadRequestException('Leadership belongs to a team selection.');
+  if (leadership_date) {
+    const parsedLeadership = new Date(leadership_date + 'T00:00:00Z');
+    if (
+      !leadership_role ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(leadership_date) ||
+      !Number.isFinite(parsedLeadership.getTime()) ||
+      parsedLeadership.toISOString().slice(0, 10) !== leadership_date ||
+      leadership_date < date ||
+      leadership_date >
+        new Date().toLocaleDateString('en-CA', {
+          timeZone: 'Africa/Johannesburg',
+        })
+    )
+      throw new BadRequestException(
+        'Choose a leadership date on or after selection, no later than today.',
+      );
+  }
+  return {
+    kind,
+    title,
+    date,
+    organization,
+    notes,
+    value,
+    unit,
+    achievement_type,
+    leadership_role,
+    leadership_date,
+  };
 }
