@@ -82,15 +82,15 @@
 }
 .activityRow {
   display: grid;
-  grid-template-columns: 125px minmax(0, 1fr) auto 12px;
+  grid-template-columns: 58px 42px minmax(0, 1fr) auto 12px;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   width: 100%;
   border: 1px solid #dce5eb;
   border-radius: 10px;
   background: white;
   color: #0b1f2e;
-  padding: 18px 22px;
+  padding: 14px 20px;
   text-align: left;
   font: inherit;
   cursor: pointer;
@@ -104,14 +104,43 @@
   outline-offset: 3px;
 }
 .rowDate {
-  font-size: 12px;
-  font-weight: 600;
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  background: #f4f6f7;
+  font-variant-numeric: tabular-nums;
+}
+.rowDate > span {
+  display: block;
+  background: #0b1f2e;
+  color: #ffca05;
+  padding: 5px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 10px;
+  font-weight: 700;
+}
+.rowDate strong {
+  display: block;
+  font-size: 25px;
+  line-height: 1.2;
+  padding-top: 4px;
 }
 .rowDate small {
   display: block;
-  font-weight: 400;
-  margin-top: 5px;
+  font-size: 10px;
+  padding: 2px 4px 6px;
   color: #617887;
+}
+.activityIcon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #fff8d9;
+  color: #0b1f2e;
 }
 .rowMain {
   min-width: 0;
@@ -164,28 +193,37 @@
 }
 @media (max-width: 650px) {
   .activityRow {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px 12px;
-    padding: 16px;
+    grid-template-columns: 50px 30px minmax(0, 1fr);
+    gap: 8px 10px;
+    padding: 14px;
   }
   .rowDate {
     grid-column: 1;
-    font-size: 11px;
+    grid-row: 1 / span 2;
+    align-self: start;
   }
-  .rowDate small {
-    display: inline;
-    margin-left: 8px;
+  .activityIcon {
+    grid-column: 2;
+    grid-row: 1;
+    width: 30px;
+    height: 34px;
+    align-self: start;
+    border-radius: 7px;
+  }
+  .activityIcon svg {
+    width: 22px;
+    height: 22px;
   }
   .rowMain {
-    grid-column: 1;
-    grid-row: 2;
+    grid-column: 3;
+    grid-row: 1;
   }
   .rowMain strong {
     font-size: 14px;
   }
   .rowStatus {
-    grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-column: 3;
+    grid-row: 2;
   }
   .rowChevron {
     display: none;

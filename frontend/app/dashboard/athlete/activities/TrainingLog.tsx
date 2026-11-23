@@ -13,6 +13,7 @@ import { notifyAttendance } from "../../team-hub/api";
 import s from "../../coaches/workspace.module.css";
 import a from "./activities.module.css";
 import TrainingSummary from "./TrainingSummary";
+import ActivityIcon from "./ActivityIcon";
 type Action = {
   kind: "request" | "withdraw" | "delete";
   activity: TrainingActivity;
@@ -239,11 +240,20 @@ export default function AthleteActivities() {
                 onClick={() => setSelectedId(v.id)}
                 aria-haspopup="dialog"
               >
-                <span className={a.rowDate}>
-                  {trainingDate(v.date)}
-                  <small>
-                    {v.time ? `${v.time} SAST` : "Time not recorded"}
-                  </small>
+                <span className={a.rowDate} aria-label={trainingDate(v.date)}>
+                  <span>
+                    {v.date
+                      ? new Date(v.date + "T12:00:00Z").toLocaleDateString(
+                          "en-ZA",
+                          { month: "short", timeZone: "UTC" },
+                        )
+                      : "Date"}
+                  </span>
+                  <strong>{v.date ? Number(v.date.slice(8, 10)) : "—"}</strong>
+                  <small>{v.date ? v.date.slice(0, 4) : "Not set"}</small>
+                </span>
+                <span className={a.activityIcon} title={v.training_kind}>
+                  <ActivityIcon kind={v.training_kind || "Other"} />
                 </span>
                 <span className={a.rowMain}>
                   <strong>{v.title || "Training session"}</strong>
@@ -253,6 +263,7 @@ export default function AthleteActivities() {
                       ? `${v.duration_minutes} min`
                       : "Duration not recorded"}
                     {v.sport ? ` · ${v.sport}` : ""}
+                    {v.time ? ` · ${v.time} SAST` : ""}
                   </span>
                 </span>
                 <span className={a.rowStatus}>
