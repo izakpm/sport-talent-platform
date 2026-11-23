@@ -1,4 +1,5 @@
 "use client";
+import { organisationLogoStyle } from "../lib/organisation-logos";
 import { useState } from "react";
 import schools from "./schools.json";
 import universities from "./universities.json";
@@ -144,6 +145,7 @@ export default function NetworkDirectory() {
                     <img
                       src={school.logo}
                       alt={`${school.name} crest`}
+                      style={organisationLogoStyle(school.logo)}
                       width="120"
                       height="120"
                       loading="lazy"

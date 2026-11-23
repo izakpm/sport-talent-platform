@@ -31,7 +31,9 @@ export class AthleteProfileService {
         )
       : [];
     const entries = await this.db.query(
-      'SELECT id,kind,title,date::text,organization,notes,value::float,unit,achievement_type,leadership_role,leadership_date::text FROM athlete_portfolio_entries WHERE user_id=$1 ORDER BY date DESC,created_at DESC',
+      `SELECT e.id,e.kind,e.title,e.date::text,e.organization,e.notes,e.value::float,e.unit,e.achievement_type,e.leadership_role,e.leadership_date::text,e.organisation_id,o.name AS organisation_name,
+        (SELECT d.logo_url FROM organisation_directory_sources d WHERE d.organisation_id=e.organisation_id AND d.logo_url IS NOT NULL ORDER BY (d.source='playverified-network') DESC,d.source,d.external_key LIMIT 1) AS organisation_logo_url
+        FROM athlete_portfolio_entries e LEFT JOIN organisations o ON o.id=e.organisation_id WHERE e.user_id=$1 ORDER BY e.date DESC,e.created_at DESC`,
       [id],
     );
     return {
@@ -146,7 +148,7 @@ export class AthleteProfileService {
       let input = body;
       if (entryId) {
         const [existing] = await tx.query(
-          'SELECT achievement_type,leadership_role,leadership_date::text FROM athlete_portfolio_entries WHERE user_id=$1 AND id=$2 FOR UPDATE',
+          'SELECT achievement_type,leadership_role,leadership_date::text,organisation_id FROM athlete_portfolio_entries WHERE user_id=$1 AND id=$2 FOR UPDATE',
           [id, entryId],
         );
         if (!existing) throw new NotFoundException('Record not found.');
@@ -154,6 +156,15 @@ export class AthleteProfileService {
         input = { ...existing, ...body };
       }
       const e = entryInput(input);
+      if (e.organisation_id) {
+        const [org] = await tx.query(
+          "SELECT name FROM organisations WHERE id=$1 AND upper(type) IN ('SCHOOL','CLUB') FOR SHARE",
+          [e.organisation_id],
+        );
+        if (!org)
+          throw new BadRequestException('Choose an available school or club.');
+        e.organization = org.name;
+      }
       const values = [
         id,
         e.kind,
@@ -166,16 +177,17 @@ export class AthleteProfileService {
         e.achievement_type,
         e.leadership_role,
         e.leadership_date,
+        e.organisation_id,
       ];
       if (entryId) {
         const rows = await tx.query(
-          'UPDATE athlete_portfolio_entries SET kind=$2,title=$3,date=$4,organization=$5,notes=$6,value=$7,unit=$8,achievement_type=$9,leadership_role=$10,leadership_date=$11 WHERE user_id=$1 AND id=$12 RETURNING id',
+          'UPDATE athlete_portfolio_entries SET kind=$2,title=$3,date=$4,organization=$5,notes=$6,value=$7,unit=$8,achievement_type=$9,leadership_role=$10,leadership_date=$11,organisation_id=$12 WHERE user_id=$1 AND id=$13 RETURNING id',
           [...values, entryId],
         );
         if (!rows.length) throw new NotFoundException('Record not found.');
       } else
         await tx.query(
-          'INSERT INTO athlete_portfolio_entries(user_id,kind,title,date,organization,notes,value,unit,achievement_type,leadership_role,leadership_date) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+          'INSERT INTO athlete_portfolio_entries(user_id,kind,title,date,organization,notes,value,unit,achievement_type,leadership_role,leadership_date,organisation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
           values,
         );
     });

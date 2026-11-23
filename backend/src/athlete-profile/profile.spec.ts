@@ -90,3 +90,22 @@ it.each([
 ])('rejects inconsistent selection fields %j', (fields) =>
   expect(() => entryInput({ ...selection, ...fields })).toThrow(),
 );
+
+it('accepts a directory reference only for achievements', () => {
+  const id = 'b8213c7d-6111-4761-9d70-dfbb4af03a89';
+  expect(entryInput({ ...selection, organisation_id: id })).toMatchObject({
+    organisation_id: id,
+  });
+  expect(() =>
+    entryInput({ ...selection, organisation_id: 'not-an-id' }),
+  ).toThrow();
+  expect(() =>
+    entryInput({
+      kind: 'metric',
+      title: 'Bench press',
+      date: '2025-06-01',
+      value: 80,
+      organisation_id: id,
+    }),
+  ).toThrow();
+});

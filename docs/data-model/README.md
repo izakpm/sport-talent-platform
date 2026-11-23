@@ -6,6 +6,8 @@
 
 Start with the [visual explorer](index.html), which opens in a browser without a server or internet connection. It includes a platform overview, eight detailed diagrams, zoom controls and a clearly separated proposed model. Individual SVGs can be opened, shared or printed; Mermaid files remain editable source.
 
+**Achievement directory links (23 November 2026):** [achievement-organisations.sql](../sql/achievement-organisations.sql) adds nullable `athlete_portfolio_entries.organisation_id → organisations.id` (`ON DELETE SET NULL`). This links achievements to shared school/club names and directory logos, independently of memberships, affiliations, parent approvals and verification. Metrics cannot have this link. A manual `organization` label is still supported for competitions and unlisted organisations. Logos are read from `organisation_directory_sources`, not supplied by the browser. This relationship postdates the timestamped visual snapshot.
+
 ## Scope and evidence
 
 The read-only inspection found **51 tables, 433 columns and 82 foreign keys** in the public application schema. No account or business records were exported. This snapshot includes the newly applied affiliation migration; the diagram exporter itself changes no database records. Supabase-managed `auth`, `storage` and system schemas are outside this snapshot. Source-code review explains how the application uses the structures; it is not an end-to-end test of every feature or a data-quality audit.

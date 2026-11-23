@@ -1,5 +1,8 @@
 "use client";
 import AccountSecurity from "../AccountSecurity";
+import AchievementOrganisationPicker, {
+  type AchievementOrganisation,
+} from "./AchievementOrganisationPicker";
 import AchievementOrganisationLogo from "./AchievementOrganisationLogo";
 import OrganisationAffiliations from "../OrganisationAffiliations";
 import { childContext, selectChild } from "../../lib/guardian-context";
@@ -16,6 +19,9 @@ type Entry = {
   title: string;
   date: string;
   organization: string;
+  organisation_id?: string | null;
+  organisation_name?: string | null;
+  organisation_logo_url?: string | null;
   notes: string;
   value: number | null;
   unit: string | null;
@@ -429,7 +435,8 @@ export default function AthleteProfile({
                 <div className={a.achievementBody}>
                   <div className={a.achievementHeading}>
                     <AchievementOrganisationLogo
-                      organization={e.organization}
+                      organization={e.organisation_name || e.organization}
+                      logoUrl={e.organisation_logo_url}
                     />
                     <div>
                       <h3>{e.title}</h3>
@@ -605,6 +612,12 @@ export function ProfileEditor({
   saveRequest?: typeof request;
   description?: string;
 }) {
+  const [organisation, setOrganisation] = useState<AchievementOrganisation>({
+    id: editor.entry?.organisation_id || null,
+    name: editor.entry?.organisation_name || editor.entry?.organization || "",
+    logo_url: editor.entry?.organisation_logo_url,
+  });
+  const [pendingOrganisation, setPendingOrganisation] = useState(false);
   const [achievementType, setAchievementType] = useState(
     editor.entry?.achievement_type || "general",
   );
@@ -639,6 +652,12 @@ export function ProfileEditor({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    if (editor.kind === "achievement" && pendingOrganisation) {
+      setError(
+        "Choose a school or club from the results, or clear the search.",
+      );
+      return;
+    }
     const f = new FormData(event.currentTarget);
     let body: object,
       path = "",
@@ -678,6 +697,7 @@ export function ProfileEditor({
         kind: editor.kind,
         ...(editor.kind === "achievement"
           ? {
+              organisation_id: organisation.id,
               achievement_type: achievementType,
               leadership_role:
                 achievementType === "team_selection" ? leadershipRole : "",
@@ -689,7 +709,10 @@ export function ProfileEditor({
           : {}),
         title: editor.kind === "metric" ? metric : f.get("title"),
         date: f.get("date"),
-        organization: f.get("organization") || "",
+        organization:
+          editor.kind === "achievement"
+            ? organisation.name
+            : editor.entry?.organization || "",
         notes: f.get("notes") || "",
         ...(editor.kind === "metric" ? { value: Number(f.get("value")) } : {}),
       };
@@ -943,14 +966,11 @@ export function ProfileEditor({
                       defaultValue={editor.entry?.title || ""}
                     />
                   </label>
-                  <label>
-                    School, club or competition
-                    <input
-                      name="organization"
-                      maxLength={160}
-                      defaultValue={editor.entry?.organization || ""}
-                    />
-                  </label>
+                  <AchievementOrganisationPicker
+                    value={organisation}
+                    onChange={setOrganisation}
+                    onPendingChange={setPendingOrganisation}
+                  />
                 </>
               )}
               <label>

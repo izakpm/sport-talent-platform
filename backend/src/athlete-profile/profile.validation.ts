@@ -56,6 +56,7 @@ export function entryInput(body: any) {
           'achievement_type',
           'leadership_role',
           'leadership_date',
+          'organisation_id',
         ].includes(k),
     )
   )
@@ -108,6 +109,17 @@ export function entryInput(body: any) {
     unit = METRICS[title];
   } else if (body.value != null)
     throw new BadRequestException('Achievements do not have a measured value.');
+  const organisation_id = text('organisation_id', 36) || null;
+  if (
+    organisation_id &&
+    (kind !== 'achievement' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        organisation_id,
+      ))
+  )
+    throw new BadRequestException(
+      'Choose a valid school or club for this achievement.',
+    );
   const achievement_type = text('achievement_type', 30) || 'general';
   const leadership_role = text('leadership_role', 30) || null;
   const leadership_date = text('leadership_date', 10) || null;
@@ -151,5 +163,6 @@ export function entryInput(body: any) {
     achievement_type,
     leadership_role,
     leadership_date,
+    organisation_id,
   };
 }

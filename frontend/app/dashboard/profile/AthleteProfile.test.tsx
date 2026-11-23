@@ -223,6 +223,7 @@ it("saves selection and captaincy independently from one editor", async () => {
         method: "POST",
         body: JSON.stringify({
           kind: "achievement",
+          organisation_id: null,
           achievement_type: "team_selection",
           leadership_role: "Captain",
           leadership_date: "2025-06-02",

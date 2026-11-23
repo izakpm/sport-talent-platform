@@ -82,8 +82,8 @@ describe("institution directory", () => {
     ].flatMap((name) =>
       within(screen.getByRole("region", { name })).getAllByRole("article"),
     );
-    expect(grouped).toHaveLength(254);
-    expect(new Set(grouped).size).toBe(254);
+    expect(grouped).toHaveLength(schools.length + universities.length + clubs.length);
+    expect(new Set(grouped).size).toBe(schools.length + universities.length + clubs.length);
     expect(
       screen.queryByRole("button", { name: "Show more schools" }),
     ).not.toBeInTheDocument();

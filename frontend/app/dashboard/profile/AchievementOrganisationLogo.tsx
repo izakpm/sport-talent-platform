@@ -1,28 +1,23 @@
-import Image from "next/image";
-
-const logos: Record<string, { src: string; alt: string }> = {
-  "blue bulls": {
-    src: "/organisations/blue-bulls.png",
-    alt: "Blue Bulls Rugby Union",
-  },
-  "blue bulls rugby union": {
-    src: "/organisations/blue-bulls.png",
-    alt: "Blue Bulls Rugby Union",
-  },
-};
+import { organisationLogoStyle } from "../../lib/organisation-logos";
 
 export default function AchievementOrganisationLogo({
   organization,
+  logoUrl,
 }: {
   organization: string;
+  logoUrl?: string | null;
 }) {
-  const logo = logos[organization.trim().replace(/\s+/g, " ").toLowerCase()];
+  const logo = logoUrl ? { src: logoUrl, alt: organization } : null;
   return logo ? (
-    <Image
+    <img
       {...logo}
       width={48}
       height={68}
-      style={{ objectFit: "contain", flexShrink: 0 }}
+      style={{
+        objectFit: "contain",
+        flexShrink: 0,
+        ...organisationLogoStyle(logo.src),
+      }}
     />
   ) : null;
 }

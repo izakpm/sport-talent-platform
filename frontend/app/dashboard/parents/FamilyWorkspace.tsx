@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import AchievementOrganisationLogo from "../profile/AchievementOrganisationLogo";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -606,6 +607,14 @@ export function FamilyContent({ section }: { section: Section }) {
                             .filter((e) => e.kind === tab)
                             .map((e) => (
                               <div className={p.record} key={e.id}>
+                                {e.kind === "achievement" && (
+                                  <AchievementOrganisationLogo
+                                    organization={
+                                      e.organisation_name || e.organization
+                                    }
+                                    logoUrl={e.organisation_logo_url}
+                                  />
+                                )}
                                 <h3>{e.title}</h3>
                                 {e.value !== null && e.value !== undefined && (
                                   <strong>
