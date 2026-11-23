@@ -1,4 +1,5 @@
 "use client";
+import AchievementVerification from "./AchievementVerification";
 import AccountSecurity from "../AccountSecurity";
 import AchievementOrganisationPicker, {
   type AchievementOrganisation,
@@ -19,6 +20,10 @@ type Entry = {
   title: string;
   date: string;
   organization: string;
+  verification_status?: "self_reported" | "pending" | "verified" | "declined";
+  verification_coach_name?: string;
+  review_note?: string;
+  reviewed_at?: string;
   organisation_id?: string | null;
   organisation_name?: string | null;
   organisation_logo_url?: string | null;
@@ -178,6 +183,17 @@ export default function AthleteProfile({
       .sort((left, right) => right.date.localeCompare(left.date)),
   );
   function entryActions(e: Entry) {
+    if (
+      e.verification_status === "pending" ||
+      e.verification_status === "verified"
+    )
+      return (
+        <small className={a.lockedRecord}>
+          {e.verification_status === "pending"
+            ? "Withdraw the request to edit."
+            : "Verified record · editing locked"}
+        </small>
+      );
     return (
       <div className={a.actions}>
         <button
@@ -466,7 +482,10 @@ export default function AthleteProfile({
                     </dl>
                   )}
                   {e.notes && <p className={a.notes}>{e.notes}</p>}
-                  <span className={a.badge}>Self-reported</span>
+                  <AchievementVerification
+                    entry={e}
+                    onChanged={() => setRetry((n) => n + 1)}
+                  />
                 </div>
                 {entryActions(e)}
               </article>

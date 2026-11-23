@@ -7,6 +7,7 @@ import {
   type HubEvent,
   type HubTeam,
 } from "../../team-hub/api";
+import AchievementRequests from "../../profile/AchievementRequests";
 import TrainingRequests from "../../team-hub/TrainingRequests";
 import SessionAttendance from "../../team-hub/SessionAttendance";
 import { Modal } from "../CoachWorkspace";
@@ -28,6 +29,7 @@ type Pending = {
 const tabs = [
   ["requests", "Attendance requests"],
   ["training", "Training logs"],
+  ["achievements", "Achievements"],
   ["registers", "Session registers"],
 ] as const;
 const dateLabel = (date: string) =>
@@ -46,6 +48,7 @@ export default function Page() {
     teams: HubTeam[];
     pending: Pending[];
   } | null>(null);
+  const [achievementCount, setAchievementCount] = useState<number | null>(null);
   const [trainingCount, setTrainingCount] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -140,7 +143,9 @@ export default function Page() {
         : b.starts_at.localeCompare(a.starts_at),
     );
   const total =
-    data && trainingCount !== null ? data.pending.length + trainingCount : null;
+    data && trainingCount !== null && achievementCount !== null
+      ? data.pending.length + trainingCount + achievementCount
+      : null;
   return (
     <div className={s.workspace}>
       <header className={s.header}>
@@ -148,7 +153,7 @@ export default function Page() {
           <p className={s.eyebrow}>COACH VERIFICATION</p>
           <h1>Recognise the work.</h1>
           <p className={s.subtitle}>
-            Review athlete requests and keep your team's attendance up to date.
+            Review athlete achievements, training and team attendance.
           </p>
         </div>
         <Link href="/dashboard/coaches/schedule" className={s.primary}>
@@ -164,8 +169,8 @@ export default function Page() {
               : "Their effort. Your confirmation."}
           </h2>
           <p>
-            Confirm attendance, review logged training or open a session
-            register for QR check-in.
+            Confirm achievements and training, or open a session register for QR
+            check-in.
           </p>
         </div>
         <div className={f.summary}>
@@ -186,13 +191,13 @@ export default function Page() {
             onKeyDown={(e) => {
               const next =
                 e.key === "ArrowRight"
-                  ? (index + 1) % 3
+                  ? (index + 1) % tabs.length
                   : e.key === "ArrowLeft"
-                    ? (index + 2) % 3
+                    ? (index + tabs.length - 1) % tabs.length
                     : e.key === "Home"
                       ? 0
                       : e.key === "End"
-                        ? 2
+                        ? tabs.length - 1
                         : -1;
               if (next >= 0) {
                 e.preventDefault();
@@ -208,7 +213,9 @@ export default function Page() {
               ? ` (${data.pending.length})`
               : id === "training" && trainingCount !== null
                 ? ` (${trainingCount})`
-                : ""}
+                : id === "achievements" && achievementCount !== null
+                  ? ` (${achievementCount})`
+                  : ""}
           </button>
         ))}
       </div>
@@ -314,6 +321,15 @@ export default function Page() {
         tabIndex={0}
       >
         <TrainingRequests onCount={setTrainingCount} />
+      </section>
+      <section
+        hidden={tab !== "achievements"}
+        role="tabpanel"
+        id="verification-panel-achievements"
+        aria-labelledby="verification-tab-achievements"
+        tabIndex={0}
+      >
+        <AchievementRequests onCount={setAchievementCount} />
       </section>
       <section
         hidden={tab !== "registers"}

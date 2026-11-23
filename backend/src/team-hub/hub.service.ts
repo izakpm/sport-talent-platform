@@ -1,3 +1,4 @@
+import { ACHIEVEMENT_LINK } from '../athlete-profile/achievement-verification.service';
 import { codeHash } from '../guardian/guardian.service';
 import { requiresParent } from '../guardian/invitation-age';
 import { PERSONAL_EVENT } from './personal-calendar.service';
@@ -302,7 +303,7 @@ export class HubService {
   async summary(userId: string) {
     await this.authorize(userId, 'COACH');
     const [row] = await this.db.query(
-      `SELECT ((SELECT count(*) FROM coach_session_attendance a JOIN coach_schedule_events e ON e.id=a.event_id JOIN coach_teams t ON t.id=e.team_id WHERE t.coach_id=$1 AND a.status='pending' AND NOT e.cancelled) + (SELECT count(*) FROM activity_coach_requests r JOIN activities a ON a.id=r.activity_id JOIN athlete_profiles ap ON ap.id=a.athlete_id JOIN users u ON u.id=ap.user_id WHERE r.coach_id=$1 AND r.status='pending' AND u.status IS DISTINCT FROM 'SUSPENDED' AND EXISTS(SELECT 1 FROM coach_player_accounts m JOIN coach_team_players p ON p.id=m.player_id JOIN coach_teams t ON t.id=m.team_id WHERE m.user_id=ap.user_id AND t.coach_id=r.coach_id AND p.status='active')))::int AS pending`,
+      `SELECT ((SELECT count(*) FROM coach_session_attendance a JOIN coach_schedule_events e ON e.id=a.event_id JOIN coach_teams t ON t.id=e.team_id WHERE t.coach_id=$1 AND a.status='pending' AND NOT e.cancelled) + (SELECT count(*) FROM activity_coach_requests r JOIN activities a ON a.id=r.activity_id JOIN athlete_profiles ap ON ap.id=a.athlete_id JOIN users u ON u.id=ap.user_id WHERE r.coach_id=$1 AND r.status='pending' AND u.status IS DISTINCT FROM 'SUSPENDED' AND EXISTS(SELECT 1 FROM coach_player_accounts m JOIN coach_team_players p ON p.id=m.player_id JOIN coach_teams t ON t.id=m.team_id WHERE m.user_id=ap.user_id AND t.coach_id=r.coach_id AND p.status='active')) + (SELECT count(*) FROM achievement_coach_requests r JOIN athlete_portfolio_entries e ON e.id=r.entry_id JOIN users u ON u.id=e.user_id WHERE r.coach_id=$1 AND r.status='pending' AND u.status IS DISTINCT FROM 'SUSPENDED' AND ${ACHIEVEMENT_LINK}))::int AS pending`,
       [userId],
     );
     return row;

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -32,8 +33,8 @@ export class AthleteProfileService {
       : [];
     const entries = await this.db.query(
       `SELECT e.id,e.kind,e.title,e.date::text,e.organization,e.notes,e.value::float,e.unit,e.achievement_type,e.leadership_role,e.leadership_date::text,e.organisation_id,o.name AS organisation_name,
-        (SELECT d.logo_url FROM organisation_directory_sources d WHERE d.organisation_id=e.organisation_id AND d.logo_url IS NOT NULL ORDER BY (d.source='playverified-network') DESC,d.source,d.external_key LIMIT 1) AS organisation_logo_url
-        FROM athlete_portfolio_entries e LEFT JOIN organisations o ON o.id=e.organisation_id WHERE e.user_id=$1 ORDER BY e.date DESC,e.created_at DESC`,
+        (SELECT d.logo_url FROM organisation_directory_sources d WHERE d.organisation_id=e.organisation_id AND d.logo_url IS NOT NULL ORDER BY (d.source='playverified-network') DESC,d.source,d.external_key LIMIT 1) AS organisation_logo_url,COALESCE(r.status,'self_reported') AS verification_status,r.coach_id AS verification_coach_id,r.review_note,r.reviewed_at,concat_ws(' ',c.first_name,c.last_name) AS verification_coach_name
+        FROM athlete_portfolio_entries e LEFT JOIN organisations o ON o.id=e.organisation_id LEFT JOIN achievement_coach_requests r ON r.entry_id=e.id LEFT JOIN users c ON c.id=r.coach_id WHERE e.user_id=$1 ORDER BY e.date DESC,e.created_at DESC`,
       [id],
     );
     return {
@@ -152,6 +153,7 @@ export class AthleteProfileService {
           [id, entryId],
         );
         if (!existing) throw new NotFoundException('Record not found.');
+        await this.editable(tx, entryId);
         // Older clients may omit the new fields; preserve them on ordinary edits.
         input = { ...existing, ...body };
       }
@@ -185,6 +187,10 @@ export class AthleteProfileService {
           [...values, entryId],
         );
         if (!rows.length) throw new NotFoundException('Record not found.');
+        await tx.query(
+          "DELETE FROM achievement_coach_requests WHERE entry_id=$1 AND status='declined'",
+          [entryId],
+        );
       } else
         await tx.query(
           'INSERT INTO athlete_portfolio_entries(user_id,kind,title,date,organization,notes,value,unit,achievement_type,leadership_role,leadership_date,organisation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
@@ -193,13 +199,34 @@ export class AthleteProfileService {
     });
     return this.get(id);
   }
-  async remove(id: string, entryId: string) {
-    await this.owner(id);
-    const rows = await this.db.query(
-      'DELETE FROM athlete_portfolio_entries WHERE user_id=$1 AND id=$2 RETURNING id',
-      [id, entryId],
+  async editable(tx: any, entryId: string) {
+    const [request] = await tx.query(
+      'SELECT status FROM achievement_coach_requests WHERE entry_id=$1',
+      [entryId],
     );
-    if (!rows.length) throw new NotFoundException('Record not found.');
+    if (request?.status === 'pending')
+      throw new ConflictException(
+        'Withdraw the verification request before editing or removing this achievement.',
+      );
+    if (request?.status === 'verified')
+      throw new ConflictException(
+        'Verified achievements are locked to protect the confirmed record.',
+      );
+  }
+  async remove(id: string, entryId: string) {
+    await this.db.transaction(async (tx) => {
+      await this.owner(id, tx, true);
+      const [entry] = await tx.query(
+        'SELECT id FROM athlete_portfolio_entries WHERE user_id=$1 AND id=$2 FOR UPDATE',
+        [id, entryId],
+      );
+      if (!entry) throw new NotFoundException('Record not found.');
+      await this.editable(tx, entryId);
+      await tx.query(
+        'DELETE FROM athlete_portfolio_entries WHERE user_id=$1 AND id=$2',
+        [id, entryId],
+      );
+    });
     return this.get(id);
   }
 }

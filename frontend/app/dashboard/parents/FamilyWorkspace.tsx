@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import AchievementVerification from "../profile/AchievementVerification";
 import AchievementOrganisationLogo from "../profile/AchievementOrganisationLogo";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -640,16 +641,30 @@ export function FamilyContent({ section }: { section: Section }) {
                                   </p>
                                 )}
                                 {e.notes && <p>{e.notes}</p>}
-                                {r.child.mode === "managed" && (
-                                  <button
-                                    className={s.secondary}
-                                    onClick={() =>
-                                      openProfile(r, { kind: e.kind, entry: e })
-                                    }
-                                  >
-                                    Edit {e.title}
-                                  </button>
+                                {e.kind === "achievement" && (
+                                  <AchievementVerification
+                                    entry={e}
+                                    childId={r.child.id}
+                                    readOnly={r.child.mode !== "managed"}
+                                    onChanged={() => setRetry((n) => n + 1)}
+                                  />
                                 )}
+                                {r.child.mode === "managed" &&
+                                  !["pending", "verified"].includes(
+                                    e.verification_status || "",
+                                  ) && (
+                                    <button
+                                      className={s.secondary}
+                                      onClick={() =>
+                                        openProfile(r, {
+                                          kind: e.kind,
+                                          entry: e,
+                                        })
+                                      }
+                                    >
+                                      Edit {e.title}
+                                    </button>
+                                  )}
                               </div>
                             ))
                         ) : (

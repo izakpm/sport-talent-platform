@@ -3,6 +3,35 @@
     linear-gradient(90deg, #0b1f2ef5 20%, #0b1f2e80),
     url("/Athlete.png") center 35% / cover;
 }
+.verificationControls {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-top: 12px;
+}
+.verificationControls small,
+.lockedRecord {
+  font-size: 12px;
+  color: #617887;
+}
+.lockedRecord {
+  max-width: 170px;
+  line-height: 1.5;
+}
+.badge[data-status="verified"] {
+  background: #edf7ef;
+  color: #237442;
+  border: 1px solid #badbc4;
+}
+.badge[data-status="pending"] {
+  background: #fff5cf;
+  color: #705900;
+  border: 1px solid #ead892;
+}
+.badge[data-status="declined"] {
+  background: #fff0ea;
+  color: #943f20;
+}
 .orgPicker {
   display: grid;
   gap: 12px;
