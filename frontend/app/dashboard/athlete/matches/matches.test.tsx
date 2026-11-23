@@ -259,6 +259,22 @@ it("shows competition branding and published provenance without implying coach v
     "https://www.checkelog.co.za/match",
   );
 });
+it("distinguishes verified participation from result provenance and unknown times", async () => {
+  (hub as jest.Mock).mockResolvedValue([
+    {
+      ...match,
+      attendance_status: "verified",
+      notes: "[TIME_NOT_RECORDED]",
+      result: { ...match.result!, source_label: "Results image" },
+    },
+  ]);
+  render(<Matches />);
+  expect(await screen.findByText("Participation verified")).toBeInTheDocument();
+  await openMatch();
+  expect(screen.getByText("Published result")).toBeInTheDocument();
+  expect(screen.getByText(/Kick-off time not recorded/)).toBeInTheDocument();
+  expect(screen.queryByText("Coach-recorded result")).not.toBeInTheDocument();
+});
 it("counts an equal-score knockout decision as a win and explains it", async () => {
   const result = {
     ...match.result!,

@@ -82,7 +82,8 @@ export class MatchesService {
     return this.db.query(
       `SELECT e.id,e.team_id,e.title,e.cancelled,e.competition_code,e.competition_label,to_char(e.date,'YYYY-MM-DD') date,to_char(e.start_time,'HH24:MI') start_time,to_char(e.end_time,'HH24:MI') end_time,e.venue,e.notes,t.name team_name,t.timezone,t.sport,(e.date+e.start_time) AT TIME ZONE t.timezone starts_at,(e.date+e.end_time) AT TIME ZONE t.timezone ends_at,
  CASE WHEN r.event_id IS NULL THEN NULL ELSE jsonb_build_object('opponent',r.opponent,'team_score',r.team_score,'opponent_score',r.opponent_score,'updated_at',r.updated_at,'source_label',r.source_label,'source_url',r.source_url,'outcome_override',r.outcome_override,'decision_note',r.decision_note) END result,
- CASE WHEN s.event_id IS NULL THEN NULL ELSE to_jsonb(s)-'user_id'-'event_id' END stats
+ CASE WHEN s.event_id IS NULL THEN NULL ELSE to_jsonb(s)-'user_id'-'event_id' END stats,
+ (SELECT a.status FROM coach_session_attendance a WHERE a.event_id=e.id AND a.user_id=$1 ORDER BY a.reviewed_at DESC NULLS LAST LIMIT 1) AS attendance_status
  FROM coach_schedule_events e JOIN coach_teams t ON t.id=e.team_id LEFT JOIN match_results r ON r.event_id=e.id LEFT JOIN athlete_match_stats s ON s.event_id=e.id AND s.user_id=$1
  WHERE e.kind='match' AND ${role === 'COACH' ? 't.coach_id=$1' : `(EXISTS(SELECT 1 FROM coach_player_accounts a JOIN coach_team_players p ON p.id=a.player_id WHERE a.team_id=t.id AND a.user_id=$1 AND p.status='active') OR s.user_id=$1)`} ORDER BY e.date DESC,e.start_time DESC,e.id`,
       [userId],

@@ -32,6 +32,7 @@ export type Match = {
   timezone: string;
   sport: string;
   cancelled: boolean;
+  attendance_status?: string | null;
   competition_code?: string | null;
   competition_label?: string | null;
   result: {
@@ -198,7 +199,15 @@ export default function MatchesWorkspace({
             {e.result ? `${e.team_name} vs ${e.result.opponent}` : e.title}
           </h3>
           <p className={m.details}>
-            {dayLabel(e.date)} · {e.start_time}–{e.end_time} ({e.timezone})
+            {!coach && e.attendance_status === "verified" && !e.cancelled && (
+              <span className={m.verifiedParticipation}>
+                Participation verified
+              </span>
+            )}
+            {dayLabel(e.date)} ·{" "}
+            {e.notes?.includes("[TIME_NOT_RECORDED]")
+              ? "Kick-off time not recorded"
+              : `${e.start_time}–${e.end_time} (${e.timezone})`}
           </p>
           <p className={m.venue}>{e.venue || "Venue to be confirmed"}</p>
           {e.result && (
@@ -365,6 +374,11 @@ export default function MatchesWorkspace({
             {e.result?.decision_note ? "*" : ""}
           </span>
           {e.result && <small>Team score first</small>}
+          {!coach && e.attendance_status === "verified" && !e.cancelled && (
+            <small className={m.verifiedParticipation}>
+              Participation verified
+            </small>
+          )}
         </span>
         <span className={m.rowArrow} aria-hidden="true">
           ›
