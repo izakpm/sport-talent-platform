@@ -3,6 +3,228 @@
     linear-gradient(90deg, #0b1f2ef5 20%, #0b1f2e80),
     url("/Athlete.png") center 35% / cover;
 }
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: #0b1f2e;
+  color: #fff;
+  border-top: var(--feature-card-border-top, 3px solid #ffca05);
+  border-radius: 14px;
+  padding: 26px 30px;
+  margin-bottom: 22px;
+}
+.sectionHeader h2 {
+  font-size: 24px;
+  margin: 0;
+}
+.sectionHeader p:not(.sectionKicker) {
+  color: #c4d4df;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 8px;
+  max-width: 620px;
+}
+.sectionHeader > button {
+  flex-shrink: 0;
+}
+.sectionKicker {
+  color: #ffca05;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+.portfolioCard,
+.achievementCard,
+.emptyCard {
+  background: #fff;
+  border: 1px solid #dce5eb;
+  border-radius: 14px;
+  padding: 24px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.cardTop h3,
+.achievementBody h3 {
+  font-size: 19px;
+  font-weight: 650;
+  margin: 0;
+  line-height: 1.4;
+}
+.primaryBadge {
+  background: #fff4c2;
+  color: #624d00;
+  font-size: 11px;
+  font-weight: 650;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+.fieldLabel {
+  color: #617887;
+  font-size: 12px;
+  margin: 20px 0 7px;
+}
+.positionName {
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.positionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.positionTags span {
+  background: #f0f4f6;
+  border: 1px solid #e4eaee;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.cardFooter {
+  border-top: 1px solid #e4eaee;
+  padding-top: 18px;
+  margin-top: 22px;
+}
+.achievementList {
+  display: grid;
+  gap: 14px;
+}
+.achievementCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+.achievementBody {
+  flex: 1;
+  min-width: 0;
+}
+.dateTile {
+  flex-shrink: 0;
+  width: 68px;
+  text-align: center;
+  background: #f3f5f6;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.dateTile span {
+  display: block;
+  background: #0b1f2e;
+  color: #ffca05;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 8px;
+}
+.dateTile strong {
+  display: block;
+  font-size: 23px;
+  padding: 9px 3px;
+}
+.recordMeta {
+  color: #617887;
+  font-size: 12px;
+  margin: 8px 0;
+  line-height: 1.6;
+}
+.metricValue {
+  font-size: 38px;
+  line-height: 1.2;
+  font-weight: 750;
+  margin: 8px 0 15px;
+}
+.metricValue span {
+  font-size: 16px;
+  color: #617887;
+  font-weight: 500;
+}
+.portfolioCard .notes,
+.achievementCard .notes {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+.history {
+  border-top: 1px solid #e4eaee;
+  margin-top: 18px;
+  padding-top: 16px;
+}
+.history summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+  padding: 5px 0;
+}
+.historyRow {
+  border-top: 1px solid #e4eaee;
+  padding-top: 16px;
+  margin-top: 16px;
+}
+.historyHeading {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 13px;
+}
+.emptyCard {
+  color: #617887;
+  line-height: 1.7;
+}
+.tabs button:focus-visible,
+.history summary:focus-visible {
+  outline: 2px solid #a38200;
+  outline-offset: 3px;
+}
+@media (max-width: 750px) {
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+  .tabs button {
+    white-space: normal;
+  }
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px;
+    gap: 18px;
+  }
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+  .portfolioCard,
+  .achievementCard {
+    padding: 20px;
+  }
+  .achievementCard {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .achievementBody {
+    flex-basis: calc(100% - 82px);
+  }
+  .achievementCard > .actions {
+    width: 100%;
+    border-top: 1px solid #e4eaee;
+    padding-top: 14px;
+  }
+}
 .heading {
   margin-bottom: 26px;
 }

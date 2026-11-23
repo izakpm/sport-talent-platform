@@ -71,6 +71,12 @@ async function request(
   return data;
 }
 const shown = (v?: string) => v || "Not added";
+const entryDate = (date: string) =>
+  new Date(date + "T12:00:00").toLocaleDateString("en-ZA", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 export default function AthleteProfile({
   initialTab = "details",
 }: {
@@ -153,6 +159,37 @@ export default function AthleteProfile({
     sports.find((v) => v.is_primary && v.primary_position) ||
     sports.find((v) => v.is_primary) ||
     sports[0];
+  const achievements = entries.filter((e) => e.kind === "achievement");
+  const metricGroups = [
+    ...new Set(entries.filter((e) => e.kind === "metric").map((e) => e.title)),
+  ].map((title) =>
+    entries
+      .filter((e) => e.kind === "metric" && e.title === title)
+      .sort((left, right) => right.date.localeCompare(left.date)),
+  );
+  function entryActions(e: Entry) {
+    return (
+      <div className={a.actions}>
+        <button
+          className={s.secondary}
+          aria-label={`Edit ${e.title}`}
+          onClick={() => setEditor({ kind: e.kind, entry: e })}
+        >
+          Edit
+        </button>
+        <button
+          className={s.textButton}
+          aria-label={`Remove ${e.title}`}
+          onClick={() => {
+            setError("");
+            setRemove(e);
+          }}
+        >
+          Remove
+        </button>
+      </div>
+    );
+  }
   return (
     <div className={s.workspace}>
       <header className={a.heading}>
@@ -284,9 +321,16 @@ export default function AthleteProfile({
         </div>
       )}
       {tab === "sports" && (
-        <section className={p.panel}>
-          <div className={p.panelHead}>
-            <h2>Where I play</h2>
+        <section aria-label="Sports and positions">
+          <div className={a.sectionHeader}>
+            <div>
+              <p className={a.sectionKicker}>MY GAME</p>
+              <h2>Sports & positions</h2>
+              <p>
+                Your main sport, your strongest position and where else you
+                play.
+              </p>
+            </div>
             <button
               className={s.primary}
               onClick={() => setEditor({ kind: "sport" })}
@@ -294,118 +338,178 @@ export default function AthleteProfile({
               Add sport +
             </button>
           </div>
-          <p className={p.hint}>
-            Choose your primary sport, your main position and the other
-            positions you play.
-          </p>
           {!sportIds.length && (
-            <p className={p.empty}>
+            <p className={a.emptyCard}>
               Add your first sport to start building your playing profile.
             </p>
           )}
-          {sportIds.map((id) => {
-            const rows = sports.filter((v) => v.sport_id === id);
-            return (
-              <article className={a.record} key={id}>
-                <div>
-                  <h3>{rows[0].sport_name}</h3>
-                  {rows.some((v) => v.is_primary) && (
-                    <span className={a.badge}>Primary sport</span>
-                  )}
-                  <p>
-                    {rows
-                      .map(
-                        (v) =>
-                          v.position_name +
-                          (v.primary_position ? " (primary)" : ""),
-                      )
-                      .join(" · ")}
+          <div className={a.cardGrid}>
+            {sportIds.map((id) => {
+              const rows = sports.filter((v) => v.sport_id === id);
+              const primary = rows.find((v) => v.primary_position);
+              return (
+                <article className={a.portfolioCard} key={id}>
+                  <div className={a.cardTop}>
+                    <h3>{rows[0].sport_name}</h3>
+                    {rows.some((v) => v.is_primary) && (
+                      <span className={a.primaryBadge}>Primary sport</span>
+                    )}
+                  </div>
+                  <p className={a.fieldLabel}>Primary position</p>
+                  <p className={a.positionName}>
+                    {primary?.position_name || "Choose your main position"}
                   </p>
-                </div>
-                <button
-                  className={s.secondary}
-                  onClick={() => setEditor({ kind: "sport", sport: id })}
-                >
-                  Edit positions
-                </button>
-              </article>
-            );
-          })}
+                  <p className={a.fieldLabel}>
+                    {primary ? "Other positions" : "Playing positions"}
+                  </p>
+                  <div className={a.positionTags}>
+                    {rows
+                      .filter((v) => !v.primary_position)
+                      .map((v) => (
+                        <span key={v.position_id}>{v.position_name}</span>
+                      ))}
+                    {rows.every((v) => v.primary_position) && (
+                      <span>None added</span>
+                    )}
+                  </div>
+                  <div className={a.cardFooter}>
+                    <button
+                      className={s.secondary}
+                      onClick={() => setEditor({ kind: "sport", sport: id })}
+                    >
+                      Edit positions
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </section>
       )}
-      {(tab === "achievement" || tab === "metric") && (
-        <section className={p.panel}>
-          <div className={p.panelHead}>
-            <h2>
-              {tab === "achievement"
-                ? "Milestones worth remembering"
-                : "Measure your progress"}
-            </h2>
+      {tab === "achievement" && (
+        <section aria-label="Achievement records">
+          <div className={a.sectionHeader}>
+            <div>
+              <p className={a.sectionKicker}>MY MILESTONES</p>
+              <h2>Selections, honours & achievements</h2>
+              <p>
+                The teams you represented, the responsibility you earned and the
+                moments that matter.
+              </p>
+            </div>
             <button
               className={s.primary}
-              onClick={() => setEditor({ kind: tab })}
+              onClick={() => setEditor({ kind: "achievement" })}
             >
-              {tab === "achievement" ? "Add achievement +" : "Record result +"}
+              Add achievement +
             </button>
           </div>
-          <p className={p.hint}>
-            {tab === "achievement"
-              ? "Add team selections, awards and competition results."
-              : "Record each test with its date. Add testing conditions or repetitions in the notes so results can be compared fairly."}{" "}
-            These records are self-reported, not coach-verified.
-          </p>
-          {!entries.some((e) => e.kind === tab) && (
-            <p className={p.empty}>
-              {tab === "achievement"
-                ? "Your selections, awards and milestones belong here. Add your first achievement."
-                : "Start with a benchmark: bench press, squat, sprint time or another available test."}
+          {!achievements.length && (
+            <p className={a.emptyCard}>
+              Your selections, awards and milestones belong here. Add your first
+              achievement.
             </p>
           )}
-          {entries
-            .filter((e) => e.kind === tab)
-            .map((e) => (
-              <article className={a.record} key={e.id}>
-                <div>
-                  <span className={a.badge}>Self-reported</span>
-                  <h3>
-                    {e.title}
-                    {e.kind === "metric" && (
-                      <span className={a.result}>
-                        {" "}
-                        {e.value} <small>{e.unit}</small>
-                      </span>
-                    )}
-                  </h3>
-                  <p>
+          <div className={a.achievementList}>
+            {achievements.map((e) => (
+              <article className={a.achievementCard} key={e.id}>
+                <div className={a.dateTile}>
+                  <span>
                     {new Date(e.date + "T12:00:00").toLocaleDateString(
                       "en-ZA",
-                      { day: "numeric", month: "short", year: "numeric" },
+                      { month: "short" },
                     )}
-                    {e.organization ? " · " + e.organization : ""}
+                  </span>
+                  <strong>{e.date.slice(0, 4)}</strong>
+                </div>
+                <div className={a.achievementBody}>
+                  <h3>{e.title}</h3>
+                  <p className={a.recordMeta}>
+                    {e.organization}
+                    {e.organization && " · "}
+                    {entryDate(e.date)}
                   </p>
                   {e.notes && <p className={a.notes}>{e.notes}</p>}
+                  <span className={a.badge}>Self-reported</span>
                 </div>
-                <div className={a.actions}>
-                  <button
-                    className={s.secondary}
-                    aria-label={`Edit ${e.title}`}
-                    onClick={() => setEditor({ kind: e.kind, entry: e })}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className={s.textButton}
-                    aria-label={`Remove ${e.title}`}
-                    onClick={() => {
-                      setError("");
-                      setRemove(e);
-                    }}
-                  >
-                    Remove
-                  </button>
-                </div>
+                {entryActions(e)}
               </article>
             ))}
+          </div>
+        </section>
+      )}
+      {tab === "metric" && (
+        <section aria-label="Performance records">
+          <div className={a.sectionHeader}>
+            <div>
+              <p className={a.sectionKicker}>MY BENCHMARKS</p>
+              <h2>Measure your progress</h2>
+              <p>
+                Your latest result for each test. Open its history to view or
+                edit earlier records.
+              </p>
+            </div>
+            <button
+              className={s.primary}
+              onClick={() => setEditor({ kind: "metric" })}
+            >
+              Record result +
+            </button>
+          </div>
+          {!metricGroups.length && (
+            <p className={a.emptyCard}>
+              Start with a benchmark: bench press, squat, sprint time or another
+              available test.
+            </p>
+          )}
+          <div className={a.cardGrid}>
+            {metricGroups.map((records) => {
+              const latest = records[0];
+              return (
+                <article className={a.portfolioCard} key={latest.title}>
+                  <div className={a.cardTop}>
+                    <h3>{latest.title}</h3>
+                    <span className={a.badge}>Self-reported</span>
+                  </div>
+                  <p className={a.fieldLabel}>
+                    Latest result · {entryDate(latest.date)}
+                  </p>
+                  <p className={a.metricValue}>
+                    {latest.value} <span>{latest.unit}</span>
+                  </p>
+                  {latest.organization && (
+                    <p className={a.recordMeta}>{latest.organization}</p>
+                  )}
+                  {latest.notes && <p className={a.notes}>{latest.notes}</p>}
+                  <div className={a.cardFooter}>{entryActions(latest)}</div>
+                  {records.length > 1 && (
+                    <details className={a.history}>
+                      <summary>Previous results ({records.length - 1})</summary>
+                      {records.slice(1).map((e) => (
+                        <div className={a.historyRow} key={e.id}>
+                          <div className={a.historyHeading}>
+                            <time dateTime={e.date}>{entryDate(e.date)}</time>
+                            <strong>
+                              {e.value} {e.unit}
+                            </strong>
+                          </div>
+                          {e.organization && (
+                            <p className={a.recordMeta}>{e.organization}</p>
+                          )}
+                          {e.notes && <p className={a.notes}>{e.notes}</p>}
+                          {entryActions(e)}
+                        </div>
+                      ))}
+                    </details>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+          <p className={p.hint}>
+            Results are self-reported. Include repetitions and test conditions
+            in the notes so comparisons stay meaningful.
+          </p>
         </section>
       )}
       {editor && (
@@ -448,8 +552,12 @@ export default function AthleteProfile({
           </div>
         </Modal>
       )}
-      <OrganisationAffiliations />
-      <AccountSecurity />
+      {tab === "details" && (
+        <>
+          <OrganisationAffiliations />
+          <AccountSecurity />
+        </>
+      )}
     </div>
   );
 }
