@@ -136,6 +136,20 @@
   flex: 1;
   min-width: 0;
 }
+.achievementHeading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.achievementHeading > div {
+  min-width: 0;
+}
+@media (max-width: 750px) {
+  .achievementHeading {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
 .dateTile {
   flex-shrink: 0;
   width: 68px;

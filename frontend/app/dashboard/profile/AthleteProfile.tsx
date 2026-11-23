@@ -1,5 +1,6 @@
 "use client";
 import AccountSecurity from "../AccountSecurity";
+import AchievementOrganisationLogo from "./AchievementOrganisationLogo";
 import OrganisationAffiliations from "../OrganisationAffiliations";
 import { childContext, selectChild } from "../../lib/guardian-context";
 import { useSectionHash } from "../core/useSectionHash";
@@ -426,12 +427,19 @@ export default function AthleteProfile({
                   <strong>{e.date.slice(0, 4)}</strong>
                 </div>
                 <div className={a.achievementBody}>
-                  <h3>{e.title}</h3>
-                  <p className={a.recordMeta}>
-                    {e.organization}
-                    {e.organization && " · "}
-                    {entryDate(e.date)}
-                  </p>
+                  <div className={a.achievementHeading}>
+                    <AchievementOrganisationLogo
+                      organization={e.organization}
+                    />
+                    <div>
+                      <h3>{e.title}</h3>
+                      <p className={a.recordMeta}>
+                        {e.organization}
+                        {e.organization && " · "}
+                        {entryDate(e.date)}
+                      </p>
+                    </div>
+                  </div>
                   {e.achievement_type === "team_selection" && (
                     <dl className={a.selectionDetails}>
                       <div>
