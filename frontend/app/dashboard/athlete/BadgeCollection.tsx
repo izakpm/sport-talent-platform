@@ -129,26 +129,26 @@ export default function BadgeCollection({
     ? [
         ...earned.filter((b) => b.kind !== "training"),
         ...earned.filter((b) => b.kind === "training").reverse(),
-      ]
-        .slice(0, 3)
-        .concat(next ? [next] : [])
+      ].slice(0, 3)
     : [...earned, ...all.filter((b) => !b.earned)];
   return (
-    <section className={s.collection} aria-label="Your badges">
-      <header className={s.header}>
-        <div>
-          <p className={s.eyebrow}>EARNED THROUGH EFFORT</p>
-          <h2>Your badges</h2>
-          <p>
-            {data
-              ? `${earned.length} earned · Built on verified training and achievements.`
-              : "Your commitment, recognised."}
-          </p>
-        </div>
-        {compact && (
-          <Link href="/dashboard/profile#achievement">View all badges ↗</Link>
-        )}
-      </header>
+    <section
+      className={compact ? s.strip : s.collection}
+      aria-label="Your badges"
+    >
+      {!compact && (
+        <header className={s.header}>
+          <div>
+            <p className={s.eyebrow}>EARNED THROUGH EFFORT</p>
+            <h2>Your badges</h2>
+            <p>
+              {data
+                ? `${earned.length} earned · Built on verified training and achievements.`
+                : "Your commitment, recognised."}
+            </p>
+          </div>
+        </header>
+      )}
       {error && (
         <p role="alert" className={s.error}>
           {error}{" "}
@@ -158,72 +158,97 @@ export default function BadgeCollection({
       {!data && !error && <p role="status">Loading your badges…</p>}
       {data && (
         <>
-          <div className={s.progressPanel}>
-            <div>
-              <span className={s.eyebrow}>VERIFIED TRAINING</span>
-              <strong>{duration(data.training.verified_minutes)}</strong>
-              <p>
-                {next
-                  ? `${duration(data.training.remaining_minutes)} to your ${next.hours}-hour badge`
-                  : "All five training milestones earned. Keep building your record."}
-              </p>
+          {!compact && (
+            <div className={s.progressPanel}>
+              <div>
+                <span className={s.eyebrow}>VERIFIED TRAINING</span>
+                <strong>{duration(data.training.verified_minutes)}</strong>
+                <p>
+                  {next
+                    ? `${duration(data.training.remaining_minutes)} to your ${next.hours}-hour badge`
+                    : "All five training milestones earned. Keep building your record."}
+                </p>
+              </div>
+              <div className={s.progressTrack}>
+                {next ? (
+                  <>
+                    <div className={s.progressLabels}>
+                      <span>Next: {next.hours}-hour club</span>
+                      <span>
+                        {Math.floor(
+                          (data.training.verified_minutes /
+                            (next.hours! * 60)) *
+                            100,
+                        )}
+                        %
+                      </span>
+                    </div>
+                    <progress
+                      aria-label={`Progress towards ${next.hours} verified training hours`}
+                      value={data.training.verified_minutes}
+                      max={next.hours! * 60}
+                    />
+                  </>
+                ) : (
+                  <span>250-hour club ✓</span>
+                )}
+                <small>
+                  Lifetime total · Completed, verified training only.
+                  Overlapping records count once; matches do not count.
+                </small>
+              </div>
             </div>
-            <div className={s.progressTrack}>
-              {next ? (
-                <>
-                  <div className={s.progressLabels}>
-                    <span>Next: {next.hours}-hour club</span>
-                    <span>
-                      {Math.floor(
-                        (data.training.verified_minutes / (next.hours! * 60)) *
-                          100,
-                      )}
-                      %
-                    </span>
-                  </div>
-                  <progress
-                    aria-label={`Progress towards ${next.hours} verified training hours`}
-                    value={data.training.verified_minutes}
-                    max={next.hours! * 60}
-                  />
-                </>
-              ) : (
-                <span>250-hour club ✓</span>
-              )}
-              <small>
-                Lifetime total · Completed, verified training only. Overlapping
-                records count once; matches do not count.
-              </small>
-            </div>
-          </div>
-          <div className={s.grid}>
+          )}
+          <div className={compact ? s.stripBadges : s.grid}>
             {shown.map((b) => (
               <button
                 key={b.id}
-                className={s.badge}
+                className={compact ? s.miniBadge : s.badge}
+                aria-label={
+                  compact
+                    ? `${b.title}${b.organisation ? ` · ${b.organisation}` : ""} · Earned`
+                    : undefined
+                }
+                title={
+                  compact
+                    ? `${b.title}${b.organisation ? ` · ${b.organisation}` : ""}`
+                    : undefined
+                }
                 data-earned={b.earned}
                 onClick={() => setSelected(b)}
                 aria-haspopup="dialog"
               >
                 <Emblem badge={b} />
-                <strong>{b.title}</strong>
-                {b.kind !== "training" && (
-                  <span>
-                    {b.organisation || b.achievement} · {b.season}
-                  </span>
+                {!compact && (
+                  <>
+                    <strong>{b.title}</strong>
+                    {b.kind !== "training" && (
+                      <span>
+                        {b.organisation || b.achievement} · {b.season}
+                      </span>
+                    )}
+                    <small>
+                      {b.earned
+                        ? "Earned"
+                        : b.kind === "training"
+                          ? "Working towards"
+                          : b.verification_status === "pending"
+                            ? "Awaiting coach review"
+                            : "Needs coach verification"}
+                    </small>
+                  </>
                 )}
-                <small>
-                  {b.earned
-                    ? "Earned"
-                    : b.kind === "training"
-                      ? "Working towards"
-                      : b.verification_status === "pending"
-                        ? "Awaiting coach review"
-                        : "Needs coach verification"}
-                </small>
               </button>
             ))}
           </div>
+          {compact && !shown.length && (
+            <Link
+              className={s.firstBadge}
+              href="/dashboard/profile#achievement"
+            >
+              Your first badge awaits ↗
+            </Link>
+          )}
           {!compact && !data.sporting.length && (
             <p className={s.hint}>
               Add a provincial team selection or captaincy under your
@@ -300,6 +325,11 @@ export default function BadgeCollection({
               Badges reflect the current verified records and are recalculated
               if those records are corrected.
             </p>
+            {compact && (
+              <Link href="/dashboard/profile#achievement">
+                All badges & progress ↗
+              </Link>
+            )}
           </div>
         </Modal>
       )}

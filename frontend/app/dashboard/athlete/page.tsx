@@ -102,9 +102,12 @@ export default function AthleteOverview() {
           <p>Keep showing up. Make every session part of your story.</p>
           <AffiliationBadges />
         </div>
-        <Link className={s.outline} href="/dashboard/profile">
-          My sporting profile ↗
-        </Link>
+        <div className={s.headerActions}>
+          <Link className={s.outline} href="/dashboard/profile">
+            My sporting profile ↗
+          </Link>
+          <BadgeCollection compact />
+        </div>
       </header>
       {error && (
         <div role="alert" className={s.error}>
@@ -131,7 +134,6 @@ export default function AthleteOverview() {
         </div>
       </section>
       <Progress />
-      <BadgeCollection compact />
       <div className={s.stats} aria-label="Your team summary">
         <Metric
           label="My teams"

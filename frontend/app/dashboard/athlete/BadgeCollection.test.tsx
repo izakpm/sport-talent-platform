@@ -60,11 +60,18 @@ it("shows verified progress and keeps pending selection badges unearned", async 
 });
 it("keeps the overview compact and links to the full collection", async () => {
   render(<BadgeCollection compact />);
-  await screen.findByText("42h");
+  const badge = await screen.findByRole("button", {
+    name: "25-hour club · Earned",
+  });
+  expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
   expect(
-    screen.getByRole("link", { name: "View all badges ↗" }),
+    screen.queryByRole("heading", { name: "Your badges" }),
+  ).not.toBeInTheDocument();
+  expect(screen.getAllByRole("button", { name: /hour club/ })).toHaveLength(2);
+  fireEvent.click(badge);
+  expect(
+    screen.getByRole("link", { name: "All badges & progress ↗" }),
   ).toHaveAttribute("href", "/dashboard/profile#achievement");
-  expect(screen.getAllByRole("button", { name: /hour club/ })).toHaveLength(3);
   expect(
     screen.queryByRole("button", { name: /Provincial selection/ }),
   ).not.toBeInTheDocument();
