@@ -89,3 +89,33 @@ it('handles athletes past the final milestone', () => {
     remaining_minutes: 0,
   });
 });
+
+it('resets training progress yearly and retains repeat awards', () => {
+  const { annualTrainingMilestones } = require('./badges.service');
+  const rows = [
+    interval('2025-06-01T06:00:00Z', 10),
+    interval('2026-06-01T06:00:00Z', 10),
+  ];
+  const result = annualTrainingMilestones(
+    rows,
+    Date.parse('2026-11-23T00:00:00Z'),
+  );
+  expect(result.verified_minutes).toBe(600);
+  expect(result.awards.map((b) => b.season)).toEqual(['2026', '2025']);
+  const nextYear = annualTrainingMilestones(
+    rows,
+    Date.parse('2027-01-01T00:00:00Z'),
+  );
+  expect(nextYear.verified_minutes).toBe(0);
+  expect(nextYear.awards).toHaveLength(2);
+});
+it('splits training at SAST New Year and deduplicates overlapping records', () => {
+  const { annualTrainingMilestones } = require('./badges.service');
+  const crossing = interval('2025-12-31T21:00:00Z', 2);
+  const result = annualTrainingMilestones(
+    [crossing, crossing],
+    Date.parse('2026-01-02T00:00:00Z'),
+  );
+  expect(result.verified_minutes).toBe(60);
+  expect(result.awards).toHaveLength(0);
+});

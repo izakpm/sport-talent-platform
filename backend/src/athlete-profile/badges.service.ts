@@ -66,6 +66,7 @@ export function selectionBadges(entries: any[]) {
         entry_id: e.id,
         achievement: e.title,
         organisation: e.organisation_name || e.organization,
+        organisation_id: e.organisation_id || null,
         logo_url: e.organisation_logo_url || null,
         earned: e.verification_status === 'verified',
         verification_status: e.verification_status,
@@ -89,9 +90,63 @@ export function selectionBadges(entries: any[]) {
           kind: 'captain',
           title: 'Team captain',
           achieved_at: e.leadership_date || null,
+          season: (e.leadership_date || e.date).slice(0, 4),
         });
       return badges;
     });
+}
+export function annualTrainingMilestones(
+  records: Interval[],
+  now = Date.now(),
+) {
+  const yearOf = (time: number) => new Date(time + 7200000).getUTCFullYear();
+  const year = yearOf(now);
+  const byYear = new Map<number, Interval[]>();
+  for (const record of records) {
+    let start = new Date(record.starts_at).getTime();
+    const end = new Date(record.ends_at).getTime();
+    if (
+      !Number.isFinite(start) ||
+      !Number.isFinite(end) ||
+      end <= start ||
+      end > now ||
+      end - start > 86400000
+    )
+      continue;
+    while (start < end) {
+      const season = yearOf(start);
+      const stop = Math.min(end, Date.UTC(season + 1, 0, 1) - 7200000);
+      const rows = byYear.get(season) || [];
+      rows.push({ starts_at: new Date(start), ends_at: new Date(stop) });
+      byYear.set(season, rows);
+      start = stop;
+    }
+  }
+  if (!byYear.has(year)) byYear.set(year, []);
+  const seasons = [...byYear.keys()]
+    .sort((a, b) => b - a)
+    .map((season) => ({
+      year: season,
+      ...trainingMilestones(byYear.get(season)!, now),
+    }));
+  const current = seasons.find((s) => s.year === year)!;
+  return {
+    ...current,
+    milestones: current.milestones.map((b) => ({
+      ...b,
+      id: `${b.id}-${year}`,
+      season: String(year),
+    })),
+    awards: seasons.flatMap((s) =>
+      s.milestones
+        .filter((b) => b.earned)
+        .map((b) => ({
+          ...b,
+          id: `${b.id}-${s.year}`,
+          season: String(s.year),
+        })),
+    ),
+  };
 }
 @Injectable()
 export class BadgesService {
@@ -121,7 +176,7 @@ export class BadgesService {
       [userId],
     );
     return {
-      training: trainingMilestones(records),
+      training: annualTrainingMilestones(records),
       sporting: selectionBadges(profile.entries),
     };
   }

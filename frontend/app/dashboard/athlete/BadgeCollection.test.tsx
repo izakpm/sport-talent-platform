@@ -85,3 +85,52 @@ it("does not present a failed load as zero earned badges", async () => {
     screen.getByRole("button", { name: "Retry badges" }),
   ).toBeInTheDocument();
 });
+
+it("groups repeat awards and shows every distinct earned badge", async () => {
+  (fetchWithAuth as jest.Mock).mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      ...data,
+      training: {
+        ...data.training,
+        awards: [
+          ...data.training.milestones
+            .filter((b) => b.earned)
+            .map((b) => ({ ...b, season: "2026" })),
+          {
+            ...data.training.milestones[0],
+            id: "old-training",
+            season: "2025",
+          },
+        ],
+      },
+      sporting: [
+        { ...data.sporting[0], id: "bulls-1", earned: true, season: "2026" },
+        { ...data.sporting[0], id: "bulls-2", earned: true, season: "2024" },
+        ...[1, 2, 3].map((n) => ({
+          id: "captain-" + n,
+          kind: "captain",
+          title: "Team captain",
+          earned: true,
+          season: "202" + n,
+          achievement: "Captain " + n,
+        })),
+      ],
+    }),
+  });
+  render(<BadgeCollection compact />);
+  const bulls = await screen.findByRole("button", {
+    name: /Provincial selection.*Earned 2 times/,
+  });
+  expect(screen.getAllByRole("button")).toHaveLength(4);
+  expect(
+    screen.getByRole("button", { name: /Team captain.*Earned 3 times/ }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: /10-hour club.*Earned 2 times/ }),
+  ).toBeInTheDocument();
+  fireEvent.click(bulls);
+  expect(
+    within(screen.getByRole("dialog")).getByText(/2024 · U15 selection/),
+  ).toBeInTheDocument();
+});

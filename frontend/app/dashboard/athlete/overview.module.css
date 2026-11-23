@@ -45,6 +45,7 @@
   margin-bottom: 28px;
 }
 .headerActions {
+  max-width: 55%;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -388,6 +389,7 @@
 }
 @media (max-width: 600px) {
   .headerActions {
+    max-width: 100%;
     width: 100%;
     flex-direction: row;
     align-items: center;

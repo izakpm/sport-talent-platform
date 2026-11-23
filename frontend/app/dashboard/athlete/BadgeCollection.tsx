@@ -13,6 +13,8 @@ type Badge = {
   achieved_at?: string | null;
   achievement?: string;
   organisation?: string;
+  organisation_id?: string;
+  awards?: Badge[];
   logo_url?: string | null;
   season?: string;
   coach_name?: string;
@@ -21,6 +23,8 @@ type Badge = {
 };
 type Data = {
   training: {
+    year?: number;
+    awards?: Badge[];
     verified_minutes: number;
     next_hours: number | null;
     remaining_minutes: number;
@@ -122,15 +126,42 @@ export default function BadgeCollection({
       window.removeEventListener("attendance-updated", load);
     };
   }, [retry, refreshKey]);
-  const all = data ? [...data.sporting, ...data.training.milestones] : [],
-    earned = all.filter((b) => b.earned);
+  const all = data
+    ? [
+        ...data.sporting,
+        ...(data.training.awards ||
+          data.training.milestones.filter((b) => b.earned)),
+      ]
+    : [];
+  const earned = all.filter((b) => b.earned);
+  const grouped = new Map<string, Badge>();
+  for (const badge of [
+    ...earned.filter((b) => b.kind !== "training"),
+    ...earned
+      .filter((b) => b.kind === "training")
+      .sort((a, b) => (b.hours || 0) - (a.hours || 0)),
+  ]) {
+    const key =
+      badge.kind === "training"
+        ? "training-" + badge.hours
+        : badge.kind === "captain"
+          ? "captain"
+          : "provincial-" +
+            (badge.organisation_id ||
+              badge.organisation?.trim().toLowerCase() ||
+              badge.id);
+    const group = grouped.get(key);
+    if (group) group.awards!.push(badge);
+    else grouped.set(key, { ...badge, id: key, awards: [badge] });
+  }
   const next = data?.training.milestones.find((b) => !b.earned);
   const shown = compact
-    ? [
-        ...earned.filter((b) => b.kind !== "training"),
-        ...earned.filter((b) => b.kind === "training").reverse(),
-      ].slice(0, 3)
-    : [...earned, ...all.filter((b) => !b.earned)];
+    ? [...grouped.values()]
+    : [
+        ...grouped.values(),
+        ...(data?.sporting.filter((b) => !b.earned) || []),
+        ...(data?.training.milestones.filter((b) => !b.earned) || []),
+      ];
   return (
     <section
       className={compact ? s.strip : s.collection}
@@ -161,7 +192,9 @@ export default function BadgeCollection({
           {!compact && (
             <div className={s.progressPanel}>
               <div>
-                <span className={s.eyebrow}>VERIFIED TRAINING</span>
+                <span className={s.eyebrow}>
+                  VERIFIED TRAINING · {data.training.year || "This year"}
+                </span>
                 <strong>{duration(data.training.verified_minutes)}</strong>
                 <p>
                   {next
@@ -193,8 +226,8 @@ export default function BadgeCollection({
                   <span>250-hour club ✓</span>
                 )}
                 <small>
-                  Lifetime total · Completed, verified training only.
-                  Overlapping records count once; matches do not count.
+                  Calendar-year total (SAST) · Completed, verified training
+                  only. Overlapping records count once; matches do not count.
                 </small>
               </div>
             </div>
@@ -206,7 +239,7 @@ export default function BadgeCollection({
                 className={compact ? s.miniBadge : s.badge}
                 aria-label={
                   compact
-                    ? `${b.title}${b.organisation ? ` · ${b.organisation}` : ""} · Earned`
+                    ? `${b.title}${b.organisation ? ` · ${b.organisation}` : ""} · Earned${(b.awards?.length || 0) > 1 ? ` ${b.awards!.length} times` : ""}`
                     : undefined
                 }
                 title={
@@ -218,13 +251,25 @@ export default function BadgeCollection({
                 onClick={() => setSelected(b)}
                 aria-haspopup="dialog"
               >
-                <Emblem badge={b} />
+                <span className={s.awardEmblem}>
+                  <Emblem badge={b} />
+                  {(b.awards?.length || 0) > 1 && (
+                    <sup
+                      className={s.awardCount}
+                      aria-label={`${b.awards!.length} awards`}
+                    >
+                      {b.awards!.length}
+                    </sup>
+                  )}
+                </span>
                 {!compact && (
                   <>
                     <strong>{b.title}</strong>
                     {b.kind !== "training" && (
                       <span>
-                        {b.organisation || b.achievement} · {b.season}
+                        {b.awards && b.awards.length > 1
+                          ? `${b.awards.length} awards · ${[...new Set(b.awards.map((a) => a.season))].join(", ")}`
+                          : `${b.organisation || b.achievement} · ${b.season}`}
                       </span>
                     )}
                     <small>
@@ -267,16 +312,39 @@ export default function BadgeCollection({
         >
           <div className={s.detail}>
             <Emblem badge={selected} />
-            {selected.kind === "training" ? (
+            {selected.awards && selected.awards.length > 1 ? (
+              <>
+                <h3>Earned {selected.awards.length} times</h3>
+                <ul className={s.awardHistory}>
+                  {selected.awards.map((a) => (
+                    <li key={a.id}>
+                      <strong>
+                        {a.season} · {a.achievement || a.title}
+                      </strong>
+                      {a.organisation && <span>{a.organisation}</span>}
+                      {a.achieved_at && <span>{date(a.achieved_at)}</span>}
+                      {a.coach_name && <span>Verified by {a.coach_name}</span>}
+                    </li>
+                  ))}
+                </ul>
+                {selected.kind === "training" && (
+                  <p>
+                    Each award represents {selected.hours} verified training
+                    hours in a separate calendar year (SAST).
+                  </p>
+                )}
+              </>
+            ) : selected.kind === "training" ? (
               <>
                 <h3>{selected.hours} verified training hours</h3>
                 <p>
                   Earned through completed training logs and coach-verified team
                   attendance. Matches, future sessions and unverified records do
-                  not count. Overlapping records are counted once.
+                  not count. Overlapping records are counted once. Each
+                  milestone can be earned once per calendar year (SAST).
                 </p>
                 <p>
-                  Your verified total:{" "}
+                  Your {data?.training.year || "current year"} verified total:{" "}
                   <strong>
                     {duration(data?.training.verified_minutes || 0)}
                   </strong>
@@ -311,7 +379,7 @@ export default function BadgeCollection({
                 )}
               </>
             )}
-            {selected.achieved_at && (
+            {selected.achieved_at && (selected.awards?.length || 0) <= 1 && (
               <p>
                 {selected.kind === "captain"
                   ? "Appointed"
