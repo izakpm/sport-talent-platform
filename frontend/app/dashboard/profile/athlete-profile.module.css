@@ -191,14 +191,6 @@
   outline-offset: 3px;
 }
 @media (max-width: 750px) {
-  .tabs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    overflow: visible;
-  }
-  .tabs button {
-    white-space: normal;
-  }
   .sectionHeader {
     flex-direction: column;
     align-items: flex-start;
@@ -355,5 +347,11 @@
   }
   .tabs button {
     padding: 10px 12px;
+    white-space: normal;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
   }
 }
