@@ -1,4 +1,10 @@
-export default function ActivityIcon({ kind }: { kind: string }) {
+export default function ActivityIcon({
+  kind,
+  size = 26,
+}: {
+  kind: string;
+  size?: number;
+}) {
   const type = kind.toLowerCase();
   const shape = /gym|strength/.test(type) ? (
     <>
@@ -32,8 +38,8 @@ export default function ActivityIcon({ kind }: { kind: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="26"
-      height="26"
+      width={size}
+      height={size}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.7"

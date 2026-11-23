@@ -208,8 +208,37 @@
   white-space: nowrap;
 }
 .event strong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 9px;
   font-weight: 600;
+}
+.event strong svg {
+  flex-shrink: 0;
+}
+.event strong > span {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+.mobileKinds {
+  display: none;
+}
+.sessionIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  color: #0b1f2e;
+  background: #fff8d9;
+  flex-shrink: 0;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 }
 .event span {
   font-size: 11px;
@@ -435,6 +464,12 @@
     min-height: 12px;
     font-size: 9px;
     font-weight: 500;
+  }
+  .mobileKinds {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 3px;
   }
   .dayPanel {
     padding: 18px;

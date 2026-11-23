@@ -545,6 +545,9 @@
   display: block;
 }
 .calendarEvent .eventTime {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 9px;
   font-weight: 750;
   margin-bottom: 2px;
@@ -618,8 +621,8 @@
   width: 38px;
   height: 38px;
   border-radius: 9px;
-  background: var(--session-soft);
-  color: var(--session-color);
+  background: #fff8d9;
+  color: #0b1f2e;
   font-size: 12px;
   font-weight: 750;
   flex-shrink: 0;

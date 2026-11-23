@@ -1,4 +1,5 @@
 "use client";
+import ActivityIcon from "../components/ActivityIcon";
 
 import Link from "next/link";
 import {
@@ -197,7 +198,10 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
       >
         {compact ? (
           <>
-            <span className={styles.eventTime}>{session.start_time}</span>
+            <span className={styles.eventTime}>
+              <ActivityIcon kind={session.kind} size={14} />
+              {session.start_time}
+            </span>
             <span>
               {session.cancelled
                 ? `Cancelled · ${session.title}`
@@ -207,7 +211,9 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
           </>
         ) : (
           <>
-            <span className={styles.typeMark}>{typeOf(session.kind).mark}</span>
+            <span className={styles.typeMark}>
+              <ActivityIcon kind={session.kind} size={24} />
+            </span>
             <span className={styles.eventBody}>
               <strong>
                 {session.cancelled
@@ -626,7 +632,7 @@ export default function CoachWorkspace({ mode }: { mode: Mode }) {
                     <div className={styles.legend}>
                       {SESSION_TYPES.map((t) => (
                         <span key={t.id}>
-                          <i style={{ background: t.color }} />
+                          <ActivityIcon kind={t.id} size={16} />
                           {t.label}
                         </span>
                       ))}
@@ -998,7 +1004,9 @@ function SessionEditor({
                 style={sessionStyle(t.id)}
                 onClick={() => chooseType(t.id)}
               >
-                <span>{t.mark}</span>
+                <span>
+                  <ActivityIcon kind={t.id} size={18} />
+                </span>
                 {t.label}
               </button>
             ))}

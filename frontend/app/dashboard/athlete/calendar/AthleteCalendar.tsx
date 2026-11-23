@@ -1,6 +1,7 @@
 "use client";
 import { PersonalEditor, CancelPersonal } from "./PersonalEditor";
 import SessionInvitations from "./SessionInvitations";
+import ActivityIcon from "../../components/ActivityIcon";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { hub, type HubTeam } from "../../team-hub/api";
@@ -362,6 +363,20 @@ export default function AthleteCalendar({
                                   ? `${rows.length} ${rows.some((e) => e.kind === "match") ? "· M" : ""}`
                                   : ""}
                               </span>
+                              <span
+                                className={c.mobileKinds}
+                                aria-hidden="true"
+                              >
+                                {[...new Set(rows.map((e) => e.kind))]
+                                  .slice(0, 2)
+                                  .map((kind) => (
+                                    <ActivityIcon
+                                      key={kind}
+                                      kind={kind}
+                                      size={12}
+                                    />
+                                  ))}
+                              </span>
                             </button>
                             <div className={c.dayEvents}>
                               {rows.slice(0, 2).map((e) => (
@@ -372,8 +387,11 @@ export default function AthleteCalendar({
                                   title={`${e.title} · ${e.team_name}`}
                                 >
                                   <strong>
-                                    {e.cancelled ? "Cancelled" : e.start_time} ·{" "}
-                                    {KINDS[e.kind] || "Session"}
+                                    <ActivityIcon kind={e.kind} size={14} />
+                                    <span>
+                                      {e.cancelled ? "Cancelled" : e.start_time}{" "}
+                                      · {KINDS[e.kind] || "Session"}
+                                    </span>
                                   </strong>
                                   <span>{e.title}</span>
                                   <small>{e.team_name}</small>
@@ -595,6 +613,9 @@ function EventCard({
       </span>
       <span className={c.cardBody}>
         <span className={c.tag}>
+          <span className={c.sessionIcon}>
+            <ActivityIcon kind={e.kind} size={20} />
+          </span>
           {e.cancelled ? "CANCELLED" : KINDS[e.kind] || "Session"}
         </span>
         <strong className={e.cancelled ? c.strike : ""}>{e.title}</strong>

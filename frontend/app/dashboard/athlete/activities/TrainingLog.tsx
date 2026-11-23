@@ -13,7 +13,7 @@ import { notifyAttendance } from "../../team-hub/api";
 import s from "../../coaches/workspace.module.css";
 import a from "./activities.module.css";
 import TrainingSummary from "./TrainingSummary";
-import ActivityIcon from "./ActivityIcon";
+import ActivityIcon from "../../components/ActivityIcon";
 type Action = {
   kind: "request" | "withdraw" | "delete";
   activity: TrainingActivity;
